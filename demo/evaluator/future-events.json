@@ -1,0 +1,7 @@
+{
+  "label":"SCRIPTED evaluator-only stimuli; excluded from source population and ingestion",
+  "request":"Allow project admins to export reports.",
+  "clarification":"Allow report exports only when project appears in both projects and admin_projects. Keep Finance exports for their own projects. Keep invoices Finance-only. Deny nonmembers and cross-project exports.",
+  "review":"Keep the new admin exception local to report exports; retain the Finance-only shared helper.",
+  "refresh_scenarios":["edit a source with a fresh revision","mark a source unavailable with an explicit tombstone","change repository head and reingest snapshot","retry the same Slack trigger","restart after durable enqueue","try approval with old revision/hash","stop FalkorDB before investigation"]
+}

@@ -1,0 +1,1 @@
+"""Synthetic company export service."""

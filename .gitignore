@@ -27,3 +27,8 @@ coverage/
 tmp/
 
 # The local Markdown tracker under .scratch/ is intentionally versioned.
+
+# Actron local artifacts and static check caches
+.actron/
+.mypy_cache/
+.ruff_cache/

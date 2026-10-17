@@ -1,0 +1,11 @@
+{
+  "project":"atlas",
+  "paths":["app/permissions.py","app/reports.py","app/invoices.py","tests/test_exports.py",".github/workflows/ci.yml"],
+  "components":[
+    {"id":"reports","path":"app/reports.py","behaviors":["report_export"],"calls":["permissions"],"method":"curated"},
+    {"id":"invoices","path":"app/invoices.py","behaviors":["invoice_export"],"calls":["permissions"],"method":"curated"},
+    {"id":"permissions","path":"app/permissions.py","behaviors":[],"calls":[],"method":"curated"}
+  ],
+  "checks":[{"id":"exports","path":"tests/test_exports.py","command":["python","-B","-m","unittest","discover","-s","tests","-v"],"behaviors":["report_export","invoice_export"],"components":["reports","invoices","permissions"],"method":"curated"}],
+  "gaps":["Curated Python call map for the synthetic repository only; no dynamic-call completeness claim."]
+}
