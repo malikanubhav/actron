@@ -1,0 +1,2446 @@
+{
+ "category": "linear",
+ "action_classifications": [
+  {
+   "action_name": "Get User",
+   "tool_name": "get_user",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieves comprehensive user profile information and details from Linear by providing their email address as an identifier",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearUser",
+    "Viewer"
+   ]
+  },
+  {
+   "action_name": "Create Issue",
+   "tool_name": "create_issue",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Creates a new task or issue in your Linear workspace with customizable fields including title, description, assignee, priority, and other relevant attributes",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearIssue",
+    "LinearState",
+    "LinearLabel",
+    "Issuecreate"
+   ]
+  },
+  {
+   "action_name": "Update Issue",
+   "tool_name": "update_issue",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Modifies an existing issue in Linear by updating its properties such as status, priority, assignee, description, or other relevant fields based on the issue ID",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearIssue",
+    "LinearState",
+    "LinearLabel",
+    "Issueupdate"
+   ]
+  },
+  {
+   "action_name": "Get Issues",
+   "tool_name": "get_issues",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Fetches a collection of issues associated with a specific team in Linear, with options to filter by status, priority, assignee, and other criteria for targeted issue management",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearTeam",
+    "LinearIssue"
+   ]
+  },
+  {
+   "action_name": "Get Projects",
+   "tool_name": "get_projects",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Obtains a comprehensive list of all projects within your Linear workspace, including their details, status, and associated metadata for project management purposes",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearProject"
+   ]
+  },
+  {
+   "action_name": "Get Teams",
+   "tool_name": "get_teams",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Fetches a complete list of all teams configured in your Linear workspace along with their associated information, enabling team-based task organization and management",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearTeam"
+   ]
+  },
+  {
+   "action_name": "Get Issue",
+   "tool_name": "get_issue",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieves detailed information about a specific issue in Linear by providing its unique issue ID, including its current status, assignee, comments, and all associated metadata",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearIssue"
+   ]
+  },
+  {
+   "action_name": "Get User Issues",
+   "tool_name": "get_user_issues",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieves all issues assigned to a specific Linear user. If no user ID is provided, retrieves issues for the authenticated user, including issue details such as status, priority, team, project, labels, and due date",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearUser",
+    "LinearIssue"
+   ]
+  },
+  {
+   "action_name": "List Users",
+   "tool_name": "list_users",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieves all users (members) from the Linear workspace, including their name, email, role, admin status, and last activity timestamp",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearUser"
+   ]
+  },
+  {
+   "action_name": "Get Team States",
+   "tool_name": "get_team_states",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieves all workflow states for a team — use this to find valid state IDs for creating or updating issues. States include type, color, and position for correct ordering.",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearTeam",
+    "LinearState"
+   ]
+  },
+  {
+   "action_name": "Get Team Labels",
+   "tool_name": "get_team_labels",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieves all labels for a team — use this to find valid label IDs for creating or updating issues. Labels include color and parent group for rendering.",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearTeam",
+    "LinearLabel"
+   ]
+  },
+  {
+   "action_name": "Create Comment",
+   "tool_name": "create_comment",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Adds a comment to a Linear issue with markdown support and optional threading for replies",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearIssue",
+    "LinearComment",
+    "Commentcreate"
+   ]
+  },
+  {
+   "action_name": "Get Comments",
+   "tool_name": "get_comments",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieves all comments on a Linear issue with full author details, edit timestamps, and thread structure",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearIssue",
+    "LinearComment"
+   ]
+  },
+  {
+   "action_name": "Get Inbox",
+   "tool_name": "get_inbox",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieves the authenticated user's Linear inbox notifications, including issue assignments, mentions, comments, and status changes. Supports pagination and unread-only filtering.",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearUser",
+    "LinearIssue",
+    "LinearNotification",
+    "Inbox"
+   ]
+  },
+  {
+   "action_name": "Get Custom Views",
+   "tool_name": "get_custom_views",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Lists all Custom Views in the Linear workspace. Custom Views are saved filtered views of issues created by workspace members. Returns view name, description, icon, color, owner, and team scope. Use the returned view ID with Get View Issues to fetch the issues inside a view.",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearCustomView",
+    "View",
+    "Customview"
+   ]
+  },
+  {
+   "action_name": "Get View Issues",
+   "tool_name": "get_view_issues",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Opens a Linear Custom View and returns all issues matching that view's saved filters. Pass the view ID from Get Custom Views. Returns full issue details with state, assignee, labels, project, and pagination.",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearIssue",
+    "LinearCustomView",
+    "Customview"
+   ]
+  },
+  {
+   "action_name": "Search",
+   "tool_name": "search",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Full-text search across Linear issues and projects by title, description, or project name. Returns matching issues and projects in a single response.",
+   "requires_params": false,
+   "source_node_types": [
+    "LinearIssue",
+    "LinearProject",
+    "Searchissue"
+   ]
+  }
+ ],
+ "core_entities": null,
+ "created_at": "2026-06-23 06:52:34.864000",
+ "created_by": "6a393849aec62f685585768e",
+ "domain": "",
+ "entry_points": null,
+ "nodes": [
+  {
+   "name": "LinearUser",
+   "label": "LinearUser",
+   "description": "Represents a user in the Linear workspace, including personal details, role, and activity status.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier for the user",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Full name of the user",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "email",
+     "type": "string",
+     "description": "Email address of the user",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "role",
+     "type": "string",
+     "description": "Role of the user in the workspace (e.g., Member, Admin)",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isAdmin",
+     "type": "boolean",
+     "description": "Indicates if the user has admin privileges",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "lastActive",
+     "type": "datetime",
+     "description": "Timestamp of the user's last activity",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "avatarUrl",
+     "type": "string",
+     "description": "URL to the user's profile picture",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "displayName",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "active",
+     "type": "boolean",
+     "description": "Active user",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get User",
+    "Get User Issues",
+    "List Users",
+    "Get Inbox"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "LinearTeam",
+   "label": "LinearTeam",
+   "description": "Represents a team within the Linear workspace used for organizing issues and workflows.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier for the team",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Name of the team",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "key",
+     "type": "string",
+     "description": "Short identifier prefix used for issues in the team",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Optional description of the team",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Timestamp when the team was created",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updatedAt",
+     "type": "datetime",
+     "description": "Timestamp when the team was last updated",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get Teams",
+    "Get Team States",
+    "Get Team Labels",
+    "Get Issues"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "LinearIssue",
+   "label": "LinearIssue",
+   "description": "Represents a task or issue in Linear, which can be assigned, prioritized, and tracked through workflow states.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier for the issue",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Title or subject of the issue",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Detailed description of the issue in markdown format",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "priority",
+     "type": "integer",
+     "description": "Priority level of the issue (e.g., 0: No priority, 1: Urgent)",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "assigneeId",
+     "type": "string",
+     "description": "ID of the user assigned to the issue",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "stateId",
+     "type": "string",
+     "description": "ID of the current workflow state of the issue",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "teamId",
+     "type": "string",
+     "description": "ID of the team to which the issue belongs",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "projectId",
+     "type": "string",
+     "description": "ID of the project the issue is associated with",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "labelIds",
+     "type": "array",
+     "description": "List of label IDs associated with the issue",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "dueDate",
+     "type": "date",
+     "description": "Due date for the issue",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Timestamp when the issue was created",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updatedAt",
+     "type": "datetime",
+     "description": "Timestamp when the issue was last updated",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "number",
+     "type": "integer",
+     "description": "Sequential number for the issue within its team",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "identifier",
+     "type": "string",
+     "description": "Human-readable identifier (e.g., ENG-123)",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": true,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "creatorId",
+     "type": "string",
+     "description": "Id of the user who created the issue",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "parentId",
+     "type": "string",
+     "description": "Parent issue id for sub-issues",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "branchName",
+     "type": "string",
+     "description": "Git branch name Linear suggests for the issue; used to link pull requests",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "stateType",
+     "type": "string",
+     "description": "Workflow state type (backlog, unstarted, started, completed, canceled)",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "estimate",
+     "type": "float",
+     "description": "Estimate",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "completedAt",
+     "type": "datetime",
+     "description": "Completion time",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "canceledAt",
+     "type": "datetime",
+     "description": "Cancel time",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "createdByActron",
+     "type": "boolean",
+     "description": "Created by the Actron ticket step",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "attachmentUrls",
+     "type": "array",
+     "description": "URLs of attachments (for example GitHub pull requests linked by Linear's GitHub integration); read by linking for IMPLEMENTED_BY",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "version",
+     "type": "integer",
+     "description": "Description edit version, starting at 1",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Create Issue",
+    "Update Issue",
+    "Get Issues",
+    "Get Issue",
+    "Get User Issues",
+    "Create Comment",
+    "Get Comments",
+    "Get Inbox",
+    "Get View Issues",
+    "Search"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "LinearState",
+   "label": "LinearState",
+   "description": "Represents a workflow state (e.g., Todo, In Progress, Done) within a team’s issue lifecycle.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier for the state",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Name of the state (e.g., 'Todo')",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "type",
+     "type": "string",
+     "description": "Type of state (e.g., 'unstarted', 'started', 'completed')",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "color",
+     "type": "string",
+     "description": "Color code representing the state in the UI",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "position",
+     "type": "float",
+     "description": "Ordering position of the state within the workflow",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "teamId",
+     "type": "string",
+     "description": "ID of the team this state belongs to",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get Team States",
+    "Update Issue",
+    "Create Issue"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "LinearLabel",
+   "label": "LinearLabel",
+   "description": "Represents a tag or label used to categorize issues within a team, including color and grouping.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier for the label",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Name of the label",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "color",
+     "type": "string",
+     "description": "Color code used to represent the label visually",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "teamId",
+     "type": "string",
+     "description": "ID of the team this label belongs to",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "groupId",
+     "type": "string",
+     "description": "Optional parent group ID for hierarchical organization",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get Team Labels",
+    "Create Issue",
+    "Update Issue"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "LinearProject",
+   "label": "LinearProject",
+   "description": "Represents a project in Linear used to group related issues and track progress toward goals.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier for the project",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Name of the project",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Detailed description of the project",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "status",
+     "type": "string",
+     "description": "Current status of the project (e.g., 'Planned', 'Active', 'Done')",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "leadId",
+     "type": "string",
+     "description": "ID of the user leading the project",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "teamId",
+     "type": "string",
+     "description": "ID of the team associated with the project",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "startDate",
+     "type": "date",
+     "description": "Planned start date of the project",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "targetDate",
+     "type": "date",
+     "description": "Target completion date of the project",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Timestamp when the project was created",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updatedAt",
+     "type": "datetime",
+     "description": "Timestamp when the project was last updated",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get Projects",
+    "Search"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "LinearComment",
+   "label": "LinearComment",
+   "description": "Represents a comment made on an issue in Linear, supporting markdown and threaded replies.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier for the comment",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "issueId",
+     "type": "string",
+     "description": "ID of the issue the comment is attached to",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "body",
+     "type": "string",
+     "description": "Content of the comment in markdown format",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "authorId",
+     "type": "string",
+     "description": "ID of the user who authored the comment",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "parentId",
+     "type": "string",
+     "description": "ID of the parent comment if this is a reply in a thread",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "editedAt",
+     "type": "datetime",
+     "description": "Timestamp when the comment was last edited (null if never edited)",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Timestamp when the comment was created",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "updatedAt",
+     "type": "datetime",
+     "description": "Last update, used as the incremental cursor",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "version",
+     "type": "integer",
+     "description": "Edit version, starting at 1",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Create Comment",
+    "Get Comments"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "LinearNotification",
+   "label": "LinearNotification",
+   "description": "Represents an inbox notification for a user, such as mentions, assignments, or status changes.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier for the notification",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "userId",
+     "type": "string",
+     "description": "ID of the user receiving the notification",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "type",
+     "type": "string",
+     "description": "Type of notification (e.g., 'IssueAssigned', 'Mention', 'StatusChange')",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "issueId",
+     "type": "string",
+     "description": "ID of the issue related to the notification",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "actorId",
+     "type": "string",
+     "description": "ID of the user who triggered the notification",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "read",
+     "type": "boolean",
+     "description": "Indicates whether the notification has been read",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Timestamp when the notification was generated",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "content",
+     "type": "string",
+     "description": "Summary or message content of the notification",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get Inbox"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "LinearCustomView",
+   "label": "LinearCustomView",
+   "description": "Represents a saved filtered view of issues created by a user, allowing customized issue filtering and display.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier for the custom view",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Name of the custom view",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Optional description of the view",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "icon",
+     "type": "string",
+     "description": "Icon identifier used in the UI for the view",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "color",
+     "type": "string",
+     "description": "Color associated with the view in the UI",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ownerId",
+     "type": "string",
+     "description": "ID of the user who created the view",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "teamId",
+     "type": "string",
+     "description": "ID of the team this view is scoped to (optional)",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "filters",
+     "type": "object",
+     "description": "Serialized filter criteria used to define the view",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Timestamp when the view was created",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updatedAt",
+     "type": "datetime",
+     "description": "Timestamp when the view was last updated",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get Custom Views",
+    "Get View Issues"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Issueupdate",
+   "label": "LinearIssueupdate",
+   "description": "Issueupdate entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Update Issue"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Commentcreate",
+   "label": "LinearCommentcreate",
+   "description": "Commentcreate entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Create Comment"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Inbox",
+   "label": "LinearInbox",
+   "description": "Inbox entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get Inbox"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Searchissue",
+   "label": "LinearSearchissue",
+   "description": "Searchissue entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Search"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Parent",
+   "label": "LinearParent",
+   "description": "Parent entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [],
+   "is_core": false
+  },
+  {
+   "name": "Issueid",
+   "label": "LinearIssueid",
+   "description": "Issueid entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [],
+   "is_core": false
+  },
+  {
+   "name": "Added_label",
+   "label": "LinearAdded_label",
+   "description": "Added_label entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [],
+   "is_core": false
+  },
+  {
+   "name": "Removed_label",
+   "label": "LinearRemoved_label",
+   "description": "Removed_label entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [],
+   "is_core": false
+  },
+  {
+   "name": "Cycle",
+   "label": "LinearCycle",
+   "description": "Cycle entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [],
+   "is_core": false
+  },
+  {
+   "name": "Viewer",
+   "label": "LinearViewer",
+   "description": "Viewer entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get User"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Issuecreate",
+   "label": "LinearIssuecreate",
+   "description": "Issuecreate entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Create Issue"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Assignee",
+   "label": "LinearAssignee",
+   "description": "Assignee entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [],
+   "is_core": false
+  },
+  {
+   "name": "View",
+   "label": "LinearView",
+   "description": "View entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get Custom Views"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Customview",
+   "label": "LinearCustomview",
+   "description": "Customview entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get Custom Views",
+    "Get View Issues"
+   ],
+   "is_core": false
+  }
+ ],
+ "relationships": [
+  {
+   "name": "ASSIGNED_TO",
+   "label": "",
+   "description": "Indicates that an issue is assigned to a specific user.",
+   "from_node": "LinearIssue",
+   "to_node": "LinearUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "CREATED_BY",
+   "label": "",
+   "description": "Indicates the user who authored a comment.",
+   "from_node": "LinearComment",
+   "to_node": "LinearUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "MENTIONS_USER",
+   "label": "",
+   "description": "Indicates that a comment mentions another user.",
+   "from_node": "LinearComment",
+   "to_node": "LinearUser",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "BELONGS_TO_TEAM",
+   "label": "",
+   "description": "Indicates that an issue belongs to a specific team.",
+   "from_node": "LinearIssue",
+   "to_node": "LinearTeam",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_STATE",
+   "label": "",
+   "description": "Indicates the current workflow state of an issue.",
+   "from_node": "LinearIssue",
+   "to_node": "LinearState",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_LABEL",
+   "label": "",
+   "description": "Indicates that an issue is tagged with a specific label.",
+   "from_node": "LinearIssue",
+   "to_node": "LinearLabel",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "BELONGS_TO_PROJECT",
+   "label": "",
+   "description": "Indicates that an issue is part of a specific project.",
+   "from_node": "LinearIssue",
+   "to_node": "LinearProject",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "CONTAINS_ISSUE",
+   "label": "",
+   "description": "Indicates that a project includes a specific issue.",
+   "from_node": "LinearProject",
+   "to_node": "LinearIssue",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_COMMENT",
+   "label": "",
+   "description": "Indicates that an issue has one or more comments.",
+   "from_node": "LinearIssue",
+   "to_node": "LinearComment",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "REPLIES_TO",
+   "label": "",
+   "description": "Indicates that a comment is a reply to another comment (threading).",
+   "from_node": "LinearComment",
+   "to_node": "LinearComment",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RECEIVES_NOTIFICATION",
+   "label": "",
+   "description": "Indicates that a user receives a notification in their inbox.",
+   "from_node": "LinearUser",
+   "to_node": "LinearNotification",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "TRIGGERS_NOTIFICATION",
+   "label": "",
+   "description": "Indicates that a user's action triggered a notification.",
+   "from_node": "LinearUser",
+   "to_node": "LinearNotification",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "FILTERS_ISSUES",
+   "label": "",
+   "description": "Indicates that a custom view returns a set of issues based on saved filters.",
+   "from_node": "LinearCustomView",
+   "to_node": "LinearIssue",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "OWNED_BY",
+   "label": "",
+   "description": "Indicates the user who created and owns the custom view.",
+   "from_node": "LinearCustomView",
+   "to_node": "LinearUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "SCOPED_TO_TEAM",
+   "label": "",
+   "description": "Indicates that a custom view is limited to issues within a specific team.",
+   "from_node": "LinearCustomView",
+   "to_node": "LinearTeam",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "DEFINES_WORKFLOW",
+   "label": "",
+   "description": "Indicates that a team defines a set of workflow states for its issues.",
+   "from_node": "LinearTeam",
+   "to_node": "LinearState",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "USES_LABEL",
+   "label": "",
+   "description": "Indicates that a team uses a set of labels to categorize its issues.",
+   "from_node": "LinearTeam",
+   "to_node": "LinearLabel",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Create Issue needs team_id from Get Teams (entity: Team)",
+   "from_node": "Team",
+   "to_node": "Issue",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_PROJECT",
+   "label": "",
+   "description": "Create Issue needs project_id from Get Projects (entity: Project)",
+   "from_node": "Project",
+   "to_node": "Issue",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Projects needs team_id from Get Teams (entity: Team)",
+   "from_node": "Team",
+   "to_node": "Project",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE",
+   "label": "",
+   "description": "Create Comment may provide context for Get Issue input 'include_comments' (entity: Comment)",
+   "from_node": "Comment",
+   "to_node": "Issue",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "List Users needs team_id from Get Teams (entity: Team)",
+   "from_node": "Team",
+   "to_node": "User",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_ISSUE",
+   "label": "",
+   "description": "Create Comment needs issue_id from Create Issue (entity: Issue)",
+   "from_node": "Issue",
+   "to_node": "Comment",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Custom Views needs team_id from Get Teams (entity: Team)",
+   "from_node": "Team",
+   "to_node": "Customview",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_VIEWER",
+   "label": "",
+   "description": "User has embedded viewer",
+   "from_node": "User",
+   "to_node": "Viewer",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUECREATE",
+   "label": "",
+   "description": "Issue has embedded issuecreate",
+   "from_node": "Issue",
+   "to_node": "Issuecreate",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUECREATE.ISSUE",
+   "label": "",
+   "description": "Issue has embedded issuecreate.issue",
+   "from_node": "Issue",
+   "to_node": "Issuecreate.issue",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_ASSIGNEE",
+   "label": "",
+   "description": "Issue is scoped to Assignee (requires assignee_id)",
+   "from_node": "Issue",
+   "to_node": "Assignee",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_STATE",
+   "label": "",
+   "description": "Issue is scoped to State (requires state_id)",
+   "from_node": "Issue",
+   "to_node": "State",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_PARENT",
+   "label": "",
+   "description": "Issue is scoped to Parent (requires parent_id)",
+   "from_node": "Issue",
+   "to_node": "Parent",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CYCLE",
+   "label": "",
+   "description": "Issue is scoped to Cycle (requires cycle_id)",
+   "from_node": "Issue",
+   "to_node": "Cycle",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUEUPDATE",
+   "label": "",
+   "description": "Issue has embedded issueupdate",
+   "from_node": "Issue",
+   "to_node": "Issueupdate",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUEUPDATE.ISSUE",
+   "label": "",
+   "description": "Issue has embedded issueupdate.issue",
+   "from_node": "Issue",
+   "to_node": "Issueupdate.issue",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_ISSUES.NODES",
+   "label": "",
+   "description": "Issue contains issues.nodes",
+   "from_node": "Issue",
+   "to_node": "Issues.node",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUES.NODES[].STATE",
+   "label": "",
+   "description": "Issue has embedded issues.nodes[].state",
+   "from_node": "Issue",
+   "to_node": "Issues.nodes[].state",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUES.NODES[].ASSIGNEE",
+   "label": "",
+   "description": "Issue has embedded issues.nodes[].assignee",
+   "from_node": "Issue",
+   "to_node": "Issues.nodes[].assignee",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUES.NODES[].CREATOR",
+   "label": "",
+   "description": "Issue has embedded issues.nodes[].creator",
+   "from_node": "Issue",
+   "to_node": "Issues.nodes[].creator",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUES.NODES[].TEAM",
+   "label": "",
+   "description": "Issue has embedded issues.nodes[].team",
+   "from_node": "Issue",
+   "to_node": "Issues.nodes[].team",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUES.NODES[].PROJECT",
+   "label": "",
+   "description": "Issue has embedded issues.nodes[].project",
+   "from_node": "Issue",
+   "to_node": "Issues.nodes[].project",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUES.NODES[].CYCLE",
+   "label": "",
+   "description": "Issue has embedded issues.nodes[].cycle",
+   "from_node": "Issue",
+   "to_node": "Issues.nodes[].cycle",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUES.NODES[].PARENT",
+   "label": "",
+   "description": "Issue has embedded issues.nodes[].parent",
+   "from_node": "Issue",
+   "to_node": "Issues.nodes[].parent",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUES.PAGEINFO",
+   "label": "",
+   "description": "Issue has embedded issues.pageinfo",
+   "from_node": "Issue",
+   "to_node": "Issues.pageinfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_LABEL",
+   "label": "",
+   "description": "Issue is scoped to Label (requires label_id)",
+   "from_node": "Issue",
+   "to_node": "Label",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_PROJECTS.NODES",
+   "label": "",
+   "description": "Project contains projects.nodes",
+   "from_node": "Project",
+   "to_node": "Projects.node",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PROJECTS.NODES[].LEAD",
+   "label": "",
+   "description": "Project has embedded projects.nodes[].lead",
+   "from_node": "Project",
+   "to_node": "Projects.nodes[].lead",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PROJECTS.PAGEINFO",
+   "label": "",
+   "description": "Project has embedded projects.pageinfo",
+   "from_node": "Project",
+   "to_node": "Projects.pageinfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAMS.NODES",
+   "label": "",
+   "description": "Team contains teams.nodes",
+   "from_node": "Team",
+   "to_node": "Teams.node",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.STATE",
+   "label": "",
+   "description": "Issue has embedded issue.state",
+   "from_node": "Issue",
+   "to_node": "Issue.state",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.ASSIGNEE",
+   "label": "",
+   "description": "Issue has embedded issue.assignee",
+   "from_node": "Issue",
+   "to_node": "Issue.assignee",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.CREATOR",
+   "label": "",
+   "description": "Issue has embedded issue.creator",
+   "from_node": "Issue",
+   "to_node": "Issue.creator",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.PROJECT",
+   "label": "",
+   "description": "Issue has embedded issue.project",
+   "from_node": "Issue",
+   "to_node": "Issue.project",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.CYCLE",
+   "label": "",
+   "description": "Issue has embedded issue.cycle",
+   "from_node": "Issue",
+   "to_node": "Issue.cycle",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.PARENT",
+   "label": "",
+   "description": "Issue has embedded issue.parent",
+   "from_node": "Issue",
+   "to_node": "Issue.parent",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.TEAM",
+   "label": "",
+   "description": "Issue has embedded issue.team",
+   "from_node": "Issue",
+   "to_node": "Issue.team",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_USERS.NODES",
+   "label": "",
+   "description": "User contains users.nodes",
+   "from_node": "User",
+   "to_node": "Users.node",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_USERS.PAGEINFO",
+   "label": "",
+   "description": "User has embedded users.pageinfo",
+   "from_node": "User",
+   "to_node": "Users.pageinfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_COMMENTCREATE",
+   "label": "",
+   "description": "Comment has embedded commentcreate",
+   "from_node": "Comment",
+   "to_node": "Commentcreate",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_COMMENTCREATE.COMMENT",
+   "label": "",
+   "description": "Comment has embedded commentcreate.comment",
+   "from_node": "Comment",
+   "to_node": "Commentcreate.comment",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_COMMENTCREATE.COMMENT.USER",
+   "label": "",
+   "description": "Comment has embedded commentcreate.comment.user",
+   "from_node": "Comment",
+   "to_node": "Commentcreate.comment.user",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_COMMENTCREATE.COMMENT.PARENT",
+   "label": "",
+   "description": "Comment has embedded commentcreate.comment.parent",
+   "from_node": "Comment",
+   "to_node": "Commentcreate.comment.parent",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_PARENT",
+   "label": "",
+   "description": "Comment is scoped to Parent (requires parent_id)",
+   "from_node": "Comment",
+   "to_node": "Parent",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_ISSUE.COMMENTS.NODES",
+   "label": "",
+   "description": "Comment contains issue.comments.nodes",
+   "from_node": "Comment",
+   "to_node": "Issue.comments.node",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.COMMENTS.NODES[].USER",
+   "label": "",
+   "description": "Comment has embedded issue.comments.nodes[].user",
+   "from_node": "Comment",
+   "to_node": "Issue.comments.nodes[].user",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.COMMENTS.NODES[].PARENT",
+   "label": "",
+   "description": "Comment has embedded issue.comments.nodes[].parent",
+   "from_node": "Comment",
+   "to_node": "Issue.comments.nodes[].parent",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.COMMENTS.NODES[].CHILDREN",
+   "label": "",
+   "description": "Comment has embedded issue.comments.nodes[].children",
+   "from_node": "Comment",
+   "to_node": "Issue.comments.nodes[].children",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE.COMMENTS.PAGEINFO",
+   "label": "",
+   "description": "Comment has embedded issue.comments.pageinfo",
+   "from_node": "Comment",
+   "to_node": "Issue.comments.pageinfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_NOTIFICATIONS.NODES",
+   "label": "",
+   "description": "Inbox contains notifications.nodes",
+   "from_node": "Inbox",
+   "to_node": "Notifications.node",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_NOTIFICATIONS.NODES[].ACTOR",
+   "label": "",
+   "description": "Inbox has embedded notifications.nodes[].actor",
+   "from_node": "Inbox",
+   "to_node": "Notifications.nodes[].actor",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_NOTIFICATIONS.NODES[].ISSUE",
+   "label": "",
+   "description": "Inbox has embedded notifications.nodes[].issue",
+   "from_node": "Inbox",
+   "to_node": "Notifications.nodes[].issue",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_NOTIFICATIONS.NODES[].COMMENT",
+   "label": "",
+   "description": "Inbox has embedded notifications.nodes[].comment",
+   "from_node": "Inbox",
+   "to_node": "Notifications.nodes[].comment",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_NOTIFICATIONS.NODES[].PROJECT",
+   "label": "",
+   "description": "Inbox has embedded notifications.nodes[].project",
+   "from_node": "Inbox",
+   "to_node": "Notifications.nodes[].project",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_NOTIFICATIONS.PAGEINFO",
+   "label": "",
+   "description": "Inbox has embedded notifications.pageinfo",
+   "from_node": "Inbox",
+   "to_node": "Notifications.pageinfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CUSTOMVIEWS.NODES",
+   "label": "",
+   "description": "CustomView contains customViews.nodes",
+   "from_node": "Customview",
+   "to_node": "Customviews.node",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CUSTOMVIEWS.NODES[].OWNER",
+   "label": "",
+   "description": "CustomView has embedded customviews.nodes[].owner",
+   "from_node": "Customview",
+   "to_node": "Customviews.nodes[].owner",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CUSTOMVIEWS.NODES[].TEAM",
+   "label": "",
+   "description": "CustomView has embedded customviews.nodes[].team",
+   "from_node": "Customview",
+   "to_node": "Customviews.nodes[].team",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CUSTOMVIEWS.PAGEINFO",
+   "label": "",
+   "description": "CustomView has embedded customviews.pageinfo",
+   "from_node": "Customview",
+   "to_node": "Customviews.pageinfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Create Issue needs team_id from Get Team States (entity: Team)",
+   "from_node": "State",
+   "to_node": "Issue",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Create Issue needs team_id from Get Team Labels (entity: Team)",
+   "from_node": "Label",
+   "to_node": "Issue",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_STATE",
+   "label": "",
+   "description": "Create Issue needs state_id from Get Team States (entity: State)",
+   "from_node": "State",
+   "to_node": "Issue",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_LABEL",
+   "label": "",
+   "description": "Create Issue needs label_ids from Get Team Labels (entity: Label)",
+   "from_node": "Label",
+   "to_node": "Issue",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE",
+   "label": "",
+   "description": "Get Team Labels may provide context for Update Issue input 'added_label_ids' (entity: Label)",
+   "from_node": "Label",
+   "to_node": "Issue",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Projects needs team_id from Get Team States (entity: Team)",
+   "from_node": "State",
+   "to_node": "Project",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Projects needs team_id from Get Team Labels (entity: Team)",
+   "from_node": "Label",
+   "to_node": "Project",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PROJECT",
+   "label": "",
+   "description": "Get Team States may provide context for Get Projects input 'state' (entity: State)",
+   "from_node": "State",
+   "to_node": "Project",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_USER",
+   "label": "",
+   "description": "Get User Issues needs user_id from Get User (entity: User)",
+   "from_node": "User",
+   "to_node": "Issue",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "List Users needs team_id from Get Team States (entity: Team)",
+   "from_node": "State",
+   "to_node": "User",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "List Users needs team_id from Get Team Labels (entity: Team)",
+   "from_node": "Label",
+   "to_node": "User",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Team States needs team_id from Get Teams (entity: Team)",
+   "from_node": "Team",
+   "to_node": "State",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Team States needs team_id from Get Team Labels (entity: Team)",
+   "from_node": "Label",
+   "to_node": "State",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Team Labels needs team_id from Get Teams (entity: Team)",
+   "from_node": "Team",
+   "to_node": "Label",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Team Labels needs team_id from Get Team States (entity: Team)",
+   "from_node": "State",
+   "to_node": "Label",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Custom Views needs team_id from Get Teams (entity: Team)",
+   "from_node": "Team",
+   "to_node": "View",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Custom Views needs team_id from Get Team States (entity: Team)",
+   "from_node": "State",
+   "to_node": "View",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Get Custom Views needs team_id from Get Team Labels (entity: Team)",
+   "from_node": "Label",
+   "to_node": "View",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ISSUE",
+   "label": "",
+   "description": "Get Custom Views entity references Customview (via output field 'customViews')",
+   "from_node": "View",
+   "to_node": "Issue",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_VIEW",
+   "label": "",
+   "description": "Get View Issues needs view_id from Get Custom Views (entity: View)",
+   "from_node": "View",
+   "to_node": "Issue",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_VIEW",
+   "label": "",
+   "description": "Get View Issues entity references Customview (via output field 'customView')",
+   "from_node": "Issue",
+   "to_node": "View",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  }
+ ],
+ "summary": "",
+ "updated_at": "2026-09-01 05:05:26.222000",
+ "usage_count": 7,
+ "use_cases": null,
+ "version": "1.0"
+}

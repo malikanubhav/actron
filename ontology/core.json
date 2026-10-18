@@ -1,0 +1,1685 @@
+{
+ "category": "core",
+ "version": "1.0",
+ "domain": "software_engineering",
+ "summary": "The connecting layer. It joins Slack, Linear, GitHub and the code into one graph: one Person per human across all tools, pending references that resolve when a source arrives, explicit and inferred mentions from any text to tickets, pull requests and code, the meaning layer (Feature, Decision, Procedure, KNOWS_ABOUT), and a thin record of each Actron request, its investigation and its build. Authoritative workflow state (ticket revisions, approvals, build logs) lives in the application database; the graph keeps what the agent needs to reason and remember. This file also defines the metadata every node and link carries, and node groups that relationships may use as their from_node or to_node; the loader expands a group into one relationship per member.",
+ "core_entities": [
+  "Person",
+  "Decision",
+  "Feature",
+  "Request"
+ ],
+ "entry_points": [
+  "Request",
+  "Person",
+  "Feature"
+ ],
+ "use_cases": [
+  "Starting from a Slack request, what tickets, pull requests, decisions and functions are connected to it?",
+  "Which earlier decisions constrain the code this request would change, and where was each decided?",
+  "Who knows this function or feature best, across commits, reviews, tickets and Slack?",
+  "How are changes usually made in this part of the code (test command, files that change together)?",
+  "What did Actron find for this request, what did it hand to the builder, and what did the build produce?",
+  "Which references are still waiting for a source to be connected?"
+ ],
+ "common_node_properties": [
+  {
+   "name": "source",
+   "type": "string",
+   "description": "slack, linear, github, code, git or actron",
+   "required": true,
+   "indexed": true,
+   "unique": false
+  },
+  {
+   "name": "sourceUrl",
+   "type": "string",
+   "description": "Link to the record in its tool, when one exists",
+   "required": false,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "workspaceId",
+   "type": "string",
+   "description": "Actron workspace (tenant) the node belongs to; one graph per workspace",
+   "required": true,
+   "indexed": true,
+   "unique": false
+  },
+  {
+   "name": "ingestedAt",
+   "type": "datetime",
+   "description": "First written",
+   "required": true,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "refreshedAt",
+   "type": "datetime",
+   "description": "Last written by ingestion",
+   "required": true,
+   "indexed": true,
+   "unique": false
+  },
+  {
+   "name": "ontologyVersion",
+   "type": "string",
+   "description": "Version of the ontology file that defined the node",
+   "required": true,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "deleted",
+   "type": "boolean",
+   "description": "Removed or no longer accessible in the source (tombstone)",
+   "required": false,
+   "indexed": true,
+   "unique": false
+  },
+  {
+   "name": "deletedAt",
+   "type": "datetime",
+   "description": "When the deletion was observed",
+   "required": false,
+   "indexed": false,
+   "unique": false
+  }
+ ],
+ "common_relationship_properties": [
+  {
+   "name": "method",
+   "type": "string",
+   "description": "explicit (an id or path written in the source), structural (from the API or parser), extracted (model read the text), inferred (model or heuristic judgement), confirmed (a person confirmed it)",
+   "required": true,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "confidence",
+   "type": "float",
+   "description": "0 to 1. 1 for explicit and structural links; the model probability otherwise",
+   "required": true,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "sourceRef",
+   "type": "string",
+   "description": "Id of the node the link was derived from",
+   "required": false,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "quote",
+   "type": "string",
+   "description": "Exact supporting text, when the link came from text",
+   "required": false,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "createdAt",
+   "type": "datetime",
+   "description": "When the link was written",
+   "required": true,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "model",
+   "type": "string",
+   "description": "Model and version for extracted or inferred links",
+   "required": false,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "flag",
+   "type": "string",
+   "description": "possible when a link check scored it between 0.5 and 0.7",
+   "required": false,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "deleted",
+   "type": "boolean",
+   "description": "Link no longer holds (its source was deleted, or the reference was edited out); kept for history and excluded from normal queries",
+   "required": false,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "deletedAt",
+   "type": "datetime",
+   "description": "When the link was tombstoned",
+   "required": false,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "active",
+   "type": "boolean",
+   "description": "CONSTRAINS only: false when a later decision superseded the constraint for this target while it stays in force for others",
+   "required": false,
+   "indexed": false,
+   "unique": false
+  },
+  {
+   "name": "supersededBy",
+   "type": "string",
+   "description": "CONSTRAINS only: id of the decision that superseded this constraint for this target",
+   "required": false,
+   "indexed": false,
+   "unique": false
+  }
+ ],
+ "node_groups": {
+  "TextSource": [
+   "SlackMessage",
+   "LinearIssue",
+   "LinearComment",
+   "GithubPullRequest",
+   "GithubIssue",
+   "GithubIssueComment",
+   "GithubReview",
+   "GithubReviewComment",
+   "GitCommit",
+   "CodeDocument"
+  ],
+  "Mentionable": [
+   "LinearIssue",
+   "GithubPullRequest",
+   "GithubIssue",
+   "GitCommit",
+   "CodeFile",
+   "CodeFunction",
+   "CodeClass",
+   "CodeComponent",
+   "Feature",
+   "Person",
+   "SlackMessage",
+   "SlackUser",
+   "LinearUser",
+   "GithubUser"
+  ],
+  "CodeTarget": [
+   "CodeFunction",
+   "CodeClass",
+   "CodeFile",
+   "CodeComponent"
+  ],
+  "Constrainable": [
+   "CodeFunction",
+   "CodeClass",
+   "CodeFile",
+   "CodeComponent",
+   "Feature"
+  ],
+  "Knowable": [
+   "CodeFunction",
+   "CodeClass",
+   "CodeFile",
+   "CodeComponent",
+   "Feature"
+  ],
+  "Evidence": [
+   "Decision",
+   "Feature",
+   "LinearIssue",
+   "GithubPullRequest",
+   "GithubIssue",
+   "GithubReviewComment",
+   "SlackMessage",
+   "CodeFunction",
+   "CodeClass",
+   "CodeFile",
+   "CodeDocument",
+   "Procedure"
+  ],
+  "ChangeRecord": [
+   "GitCommit",
+   "GithubPullRequest"
+  ]
+ },
+ "action_classifications": [
+  {
+   "action_name": "Resolve Identities",
+   "tool_name": "resolve_identities",
+   "action_direction": "pull",
+   "action_type": "linking",
+   "description": "Match Slack users, GitHub users, Linear users and git authors to one Person by email, then by an explicit mapping. Ambiguous matches stay unresolved.",
+   "requires_params": false,
+   "source_node_types": [
+    "Person",
+    "Identity"
+   ]
+  },
+  {
+   "action_name": "Link Explicit References",
+   "tool_name": "link_references",
+   "action_direction": "pull",
+   "action_type": "linking",
+   "description": "Find ticket ids, PR and issue numbers, URLs, file paths and symbol names in text. Resolve them now or store a pending Reference.",
+   "requires_params": false,
+   "source_node_types": [
+    "Reference"
+   ]
+  },
+  {
+   "action_name": "Infer Meaning Links",
+   "tool_name": "infer_links",
+   "action_direction": "pull",
+   "action_type": "linking",
+   "description": "Judge candidate links from text to features and code with a model; keep those above a threshold.",
+   "requires_params": false,
+   "source_node_types": [
+    "Feature"
+   ]
+  },
+  {
+   "action_name": "Extract Decisions",
+   "tool_name": "extract_decisions",
+   "action_direction": "pull",
+   "action_type": "linking",
+   "description": "Create Decision nodes with the exact quote and their source; approved only with explicit evidence.",
+   "requires_params": false,
+   "source_node_types": [
+    "Decision"
+   ]
+  },
+  {
+   "action_name": "Check Links",
+   "tool_name": "check_links",
+   "action_direction": "pull",
+   "action_type": "linking",
+   "description": "Verify each model-made link against its source text; flag or drop weak links.",
+   "requires_params": false,
+   "source_node_types": []
+  },
+  {
+   "action_name": "Score Knowledge",
+   "tool_name": "score_knowledge",
+   "action_direction": "pull",
+   "action_type": "linking",
+   "description": "Compute KNOWS_ABOUT from commits, blame, reviews, tickets and Slack participation.",
+   "requires_params": false,
+   "source_node_types": [
+    "Person"
+   ]
+  },
+  {
+   "action_name": "Learn Procedures",
+   "tool_name": "learn_procedures",
+   "action_direction": "pull",
+   "action_type": "linking",
+   "description": "Learn how changes are made in an area from merged pull requests and successful builds.",
+   "requires_params": false,
+   "source_node_types": [
+    "Procedure"
+   ]
+  },
+  {
+   "action_name": "Record Request",
+   "tool_name": "record_request",
+   "action_direction": "push",
+   "action_type": "workflow",
+   "description": "Write the thin Request, Investigation and BuildRun records and their links.",
+   "requires_params": true,
+   "source_node_types": [
+    "Request",
+    "Investigation",
+    "BuildRun"
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "name": "Workspace",
+   "label": "Workspace",
+   "description": "An Actron workspace (tenant). Each workspace has its own FalkorDB graph; this node is the root of that graph.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:workspace:<id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Workspace name",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "slackTeamId",
+     "type": "string",
+     "description": "Connected Slack workspace id",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "graphName",
+     "type": "string",
+     "description": "FalkorDB graph name",
+     "required": true,
+     "indexed": false,
+     "unique": true
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [],
+   "is_core": false
+  },
+  {
+   "name": "Person",
+   "label": "Person",
+   "description": "One human across all tools.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:person:<uuid>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "displayName",
+     "type": "string",
+     "description": "Best available name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "primaryEmail",
+     "type": "string",
+     "description": "Main email",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "emails",
+     "type": "array",
+     "description": "All known emails",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "avatarUrl",
+     "type": "string",
+     "description": "Avatar",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "displayName",
+   "source_actions": [
+    "Resolve Identities"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "Identity",
+   "label": "Identity",
+   "description": "One account of a person in one tool, and how it was matched.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:identity:<provider>:<account id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "provider",
+     "type": "string",
+     "description": "slack, github, linear or git",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "accountId",
+     "type": "string",
+     "description": "Account id in the provider",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "handle",
+     "type": "string",
+     "description": "Login or display handle",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "email",
+     "type": "string",
+     "description": "Email on the account",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "matchMethod",
+     "type": "string",
+     "description": "email, mapping_file, confirmed or unresolved",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "matchConfidence",
+     "type": "float",
+     "description": "0 to 1",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "handle",
+   "source_actions": [
+    "Resolve Identities"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Team",
+   "label": "Team",
+   "description": "A group of people (from a Linear team or a Slack user group).",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:team:<uuid>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Team name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "Resolve Identities"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Reference",
+   "label": "Reference",
+   "description": "A reference found in text (ENG-17, #123, a URL, a path, a symbol). Resolved at once when the target exists, otherwise kept pending and resolved when that source is ingested.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:ref:<kind>:<normalised key>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "kind",
+     "type": "string",
+     "description": "linear_issue, github_pr, github_issue, commit, file, symbol, slack_message (a Slack permalink or channel:ts), url",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "key",
+     "type": "string",
+     "description": "Normalised key used to find the target (ENG-17, owner/name#123, path, sha)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "rawText",
+     "type": "string",
+     "description": "Text as written",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "status",
+     "type": "string",
+     "description": "pending, resolved or ambiguous",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "resolvedAt",
+     "type": "datetime",
+     "description": "When it was resolved",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "key",
+   "source_actions": [
+    "Link Explicit References"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Feature",
+   "label": "Feature",
+   "description": "A named behaviour of the product (for example 'report export'), linked to the code that implements it and the text that discusses it.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:feature:<slug>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Short name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "One or two sentences (full-text indexed)",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "aliases",
+     "type": "array",
+     "description": "Other names used for it",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdBy",
+     "type": "string",
+     "description": "model or person",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "confidence",
+     "type": "float",
+     "description": "0 to 1",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "Infer Meaning Links"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "Decision",
+   "label": "Decision",
+   "description": "A statement of how the software should or should not behave, with its exact source quote. Approved only with explicit evidence; otherwise proposed.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:decision:<uuid>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "statement",
+     "type": "string",
+     "description": "The decision in one sentence (full-text indexed)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "status",
+     "type": "string",
+     "description": "approved, proposed, superseded or rejected (rejected is set only when a later approved decision explicitly reverses this one without replacing it)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "quote",
+     "type": "string",
+     "description": "Exact text from the source",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "quoteSpan",
+     "type": "array",
+     "description": "[start, end] character offsets in the source text",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "decidedAt",
+     "type": "datetime",
+     "description": "Time of the source text",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "approvalEvidence",
+     "type": "string",
+     "description": "Why it counts as approved (an explicit approval in the source), if it does",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "confidence",
+     "type": "float",
+     "description": "Model probability that this is a decision",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "extractedBy",
+     "type": "string",
+     "description": "Model and version",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "scope",
+     "type": "string",
+     "description": "Where the decision applies, in plain words",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "statementHistory",
+     "type": "array",
+     "description": "Earlier statements when the source text was edited, oldest first",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "statement",
+   "source_actions": [
+    "Extract Decisions"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "Procedure",
+   "label": "Procedure",
+   "description": "How changes are usually made in an area of the code: test command, files that change together, review norms. Learned from merged pull requests and successful builds, and reused by the next build.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:procedure:<area slug>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Short title",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "area",
+     "type": "string",
+     "description": "Component or path prefix it applies to",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "steps",
+     "type": "array",
+     "description": "Ordered steps in plain language",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "testCommand",
+     "type": "string",
+     "description": "Command that validates changes here",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "coChangedPaths",
+     "type": "array",
+     "description": "Paths that usually change together",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "successCount",
+     "type": "integer",
+     "description": "Builds that followed it and passed",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "lastUsedAt",
+     "type": "datetime",
+     "description": "Last use",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "confidence",
+     "type": "float",
+     "description": "0 to 1",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "title",
+   "source_actions": [
+    "Learn Procedures"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "Request",
+   "label": "Request",
+   "description": "A feature request, bug report or question raised through Slack or the UI. Thin graph record; full workflow state is in the application database under the same id.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:request:<id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "kind",
+     "type": "string",
+     "description": "feature, bug or question",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Short title",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "text",
+     "type": "string",
+     "description": "Request text (full-text indexed)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "state",
+     "type": "string",
+     "description": "Mirror of the current workflow state",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "outcome",
+     "type": "string",
+     "description": "answered, merged, closed, cancelled, or empty while open",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Created time",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "closedAt",
+     "type": "datetime",
+     "description": "Closed time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "title",
+   "source_actions": [
+    "Record Request"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "Investigation",
+   "label": "Investigation",
+   "description": "What the investigator agent found for a request: the evidence it handed to the builder.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:investigation:<id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Plain-language summary",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "conflictLabel",
+     "type": "string",
+     "description": "conflict, possible_conflict or none",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "toolCallCount",
+     "type": "integer",
+     "description": "Graph tool calls made",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "startedAt",
+     "type": "datetime",
+     "description": "Start",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "finishedAt",
+     "type": "datetime",
+     "description": "End",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "summary",
+   "source_actions": [
+    "Record Request"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "BuildRun",
+   "label": "BuildRun",
+   "description": "One run of the coding agent for an approved request.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "actron:build:<id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "status",
+     "type": "string",
+     "description": "queued, running, passed, failed, stopped",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "branch",
+     "type": "string",
+     "description": "Branch on the fork",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "baseSha",
+     "type": "string",
+     "description": "Base commit",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "headSha",
+     "type": "string",
+     "description": "Resulting commit",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "testsPassed",
+     "type": "integer",
+     "description": "Passing tests",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "testsFailed",
+     "type": "integer",
+     "description": "Failing tests",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "startedAt",
+     "type": "datetime",
+     "description": "Start",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "finishedAt",
+     "type": "datetime",
+     "description": "End",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "branch",
+   "source_actions": [
+    "Record Request"
+   ],
+   "is_core": false
+  }
+ ],
+ "relationships": [
+  {
+   "name": "HAS_IDENTITY",
+   "label": "HAS_IDENTITY",
+   "description": "Person owns an account.",
+   "from_node": "Person",
+   "to_node": "Identity",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "identity"
+  },
+  {
+   "name": "IS_SLACK_USER",
+   "label": "IS_SLACK_USER",
+   "description": "Identity is this Slack user.",
+   "from_node": "Identity",
+   "to_node": "SlackUser",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "identity"
+  },
+  {
+   "name": "IS_GITHUB_USER",
+   "label": "IS_GITHUB_USER",
+   "description": "Identity is this GitHub user.",
+   "from_node": "Identity",
+   "to_node": "GithubUser",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "identity"
+  },
+  {
+   "name": "IS_LINEAR_USER",
+   "label": "IS_LINEAR_USER",
+   "description": "Identity is this Linear user.",
+   "from_node": "Identity",
+   "to_node": "LinearUser",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "identity"
+  },
+  {
+   "name": "IS_GIT_AUTHOR",
+   "label": "IS_GIT_AUTHOR",
+   "description": "Identity is this git author.",
+   "from_node": "Identity",
+   "to_node": "GitAuthor",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "identity"
+  },
+  {
+   "name": "MEMBER_OF_TEAM",
+   "label": "MEMBER_OF_TEAM",
+   "description": "Person belongs to a team.",
+   "from_node": "Person",
+   "to_node": "Team",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "membership"
+  },
+  {
+   "name": "TEAM_IS_LINEAR_TEAM",
+   "label": "TEAM_IS_LINEAR_TEAM",
+   "description": "Team corresponds to a Linear team.",
+   "from_node": "Team",
+   "to_node": "LinearTeam",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "identity"
+  },
+  {
+   "name": "TEAM_IS_SLACK_GROUP",
+   "label": "TEAM_IS_SLACK_GROUP",
+   "description": "Team corresponds to a Slack user group.",
+   "from_node": "Team",
+   "to_node": "SlackUserGroup",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "identity"
+  },
+  {
+   "name": "HOSTED_AS",
+   "label": "HOSTED_AS",
+   "description": "Local code repository is this GitHub repository.",
+   "from_node": "CodeRepository",
+   "to_node": "GithubRepository",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "identity"
+  },
+  {
+   "name": "INCLUDES_COMMIT",
+   "label": "INCLUDES_COMMIT",
+   "description": "Pull request contains a commit (joined by SHA).",
+   "from_node": "GithubPullRequest",
+   "to_node": "GitCommit",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "change"
+  },
+  {
+   "name": "MERGED_AS",
+   "label": "MERGED_AS",
+   "description": "Pull request landed as this merge or squash commit.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GitCommit",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "change"
+  },
+  {
+   "name": "PR_FILE_IS",
+   "label": "PR_FILE_IS",
+   "description": "Changed file in a pull request is this file in the code snapshot (by path).",
+   "from_node": "GithubPullRequestFile",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "identity"
+  },
+  {
+   "name": "PR_TOUCHED",
+   "label": "PR_TOUCHED",
+   "description": "Pull request changed lines inside a function (from its file hunks). Properties: linesChanged.",
+   "from_node": "GithubPullRequest",
+   "to_node": "CodeFunction",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "change"
+  },
+  {
+   "name": "COMMENT_ON_FUNCTION",
+   "label": "COMMENT_ON_FUNCTION",
+   "description": "Review comment is on lines inside a function.",
+   "from_node": "GithubReviewComment",
+   "to_node": "CodeFunction",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "COMMENT_ON_CODE_FILE",
+   "label": "COMMENT_ON_CODE_FILE",
+   "description": "Review comment is on this file in the code snapshot.",
+   "from_node": "GithubReviewComment",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "CHECK_ON_COMMIT",
+   "label": "CHECK_ON_COMMIT",
+   "description": "Check run ran on a commit.",
+   "from_node": "GithubCheckRun",
+   "to_node": "GitCommit",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "validation"
+  },
+  {
+   "name": "GITHUB_BRANCH_AT",
+   "label": "GITHUB_BRANCH_AT",
+   "description": "GitHub branch points at a commit.",
+   "from_node": "GithubBranch",
+   "to_node": "GitCommit",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "RELEASES_COMMIT",
+   "label": "RELEASES_COMMIT",
+   "description": "Release is built from a commit.",
+   "from_node": "GithubRelease",
+   "to_node": "GitCommit",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "CODEOWNER_IS",
+   "label": "CODEOWNER_IS",
+   "description": "CODEOWNERS rule names this person (handle or email resolved through Identity).",
+   "from_node": "CodeOwnerRule",
+   "to_node": "Person",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "ownership"
+  },
+  {
+   "name": "IMPLEMENTED_BY",
+   "label": "IMPLEMENTED_BY",
+   "description": "Linear issue was implemented by a pull request (ticket id in PR title, branch or body, or Linear's GitHub link).",
+   "from_node": "LinearIssue",
+   "to_node": "GithubPullRequest",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "resolution"
+  },
+  {
+   "name": "TRACKS_GITHUB_ISSUE",
+   "label": "TRACKS_GITHUB_ISSUE",
+   "description": "Linear issue and GitHub issue describe the same work.",
+   "from_node": "LinearIssue",
+   "to_node": "GithubIssue",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "identity"
+  },
+  {
+   "name": "THREAD_OF",
+   "label": "THREAD_OF",
+   "description": "Slack thread reply belongs to its parent message.",
+   "from_node": "SlackMessage",
+   "to_node": "SlackMessage",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "thread"
+  },
+  {
+   "name": "POSTED_BY",
+   "label": "POSTED_BY",
+   "description": "Slack message was posted by a Slack user (fabric's Slack ontology has no author link).",
+   "from_node": "SlackMessage",
+   "to_node": "SlackUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "PREVIOUS_VERSION",
+   "label": "PREVIOUS_VERSION",
+   "description": "An edited Slack message points to the node holding its previous text. Properties: version.",
+   "from_node": "SlackMessage",
+   "to_node": "SlackMessage",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "history"
+  },
+  {
+   "name": "ISSUE_CREATED_BY",
+   "label": "ISSUE_CREATED_BY",
+   "description": "Linear issue was created by a Linear user (fabric's Linear ontology has no creator link).",
+   "from_node": "LinearIssue",
+   "to_node": "LinearUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "SUBISSUE_OF",
+   "label": "SUBISSUE_OF",
+   "description": "Linear issue is a sub-issue of another issue.",
+   "from_node": "LinearIssue",
+   "to_node": "LinearIssue",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "MENTIONS",
+   "label": "MENTIONS",
+   "description": "Text refers to a ticket, pull request, issue, commit, code, feature, person or message. Method explicit when an id, path or name is written; inferred when a model judged it.",
+   "from_node": "TextSource",
+   "to_node": "Mentionable",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "label": "CONTAINS_REFERENCE",
+   "description": "Text contains a reference (resolved or pending).",
+   "from_node": "TextSource",
+   "to_node": "Reference",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "label": "RESOLVES_TO",
+   "description": "Reference points at this node. Several targets means ambiguous.",
+   "from_node": "Reference",
+   "to_node": "Mentionable",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "label": "EXTRACTED_FROM",
+   "description": "Decision was stated in this text. Properties include the exact quote and span.",
+   "from_node": "Decision",
+   "to_node": "TextSource",
+   "cardinality": "many_to_many",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "provenance"
+  },
+  {
+   "name": "APPROVED_IN",
+   "label": "APPROVED_IN",
+   "description": "Text that explicitly approves the decision.",
+   "from_node": "Decision",
+   "to_node": "TextSource",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "provenance"
+  },
+  {
+   "name": "DECIDED_BY",
+   "label": "DECIDED_BY",
+   "description": "Person who made or approved the decision.",
+   "from_node": "Decision",
+   "to_node": "Person",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "CONSTRAINS",
+   "label": "CONSTRAINS",
+   "description": "Decision limits how this code or feature may behave.",
+   "from_node": "Decision",
+   "to_node": "Constrainable",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "constraint"
+  },
+  {
+   "name": "SUPERSEDES",
+   "label": "SUPERSEDES",
+   "description": "Decision replaces an earlier decision, fully or for a stated scope. Properties: scope.",
+   "from_node": "Decision",
+   "to_node": "Decision",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "history"
+  },
+  {
+   "name": "IMPLEMENTED_IN",
+   "label": "IMPLEMENTED_IN",
+   "description": "Feature is implemented by this code.",
+   "from_node": "Feature",
+   "to_node": "CodeTarget",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "implementation"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "label": "DISCUSSED_IN",
+   "description": "Feature is discussed in this text.",
+   "from_node": "Feature",
+   "to_node": "TextSource",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "KNOWS_ABOUT",
+   "label": "KNOWS_ABOUT",
+   "description": "Person has knowledge of this code or feature. Properties: score (0 to 1), signals (commits, blame, reviews, tickets, slack).",
+   "from_node": "Person",
+   "to_node": "Knowable",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "expertise"
+  },
+  {
+   "name": "OWNS",
+   "label": "OWNS",
+   "description": "Person is an owner of this code (from CODEOWNERS or dominant blame). Properties: basis.",
+   "from_node": "Person",
+   "to_node": "CodeTarget",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "ownership"
+  },
+  {
+   "name": "APPLIES_TO",
+   "label": "APPLIES_TO",
+   "description": "Procedure applies to this area of code or feature.",
+   "from_node": "Procedure",
+   "to_node": "Constrainable",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "procedure"
+  },
+  {
+   "name": "LEARNED_FROM_PR",
+   "label": "LEARNED_FROM_PR",
+   "description": "Procedure was learned from a merged pull request.",
+   "from_node": "Procedure",
+   "to_node": "GithubPullRequest",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "provenance"
+  },
+  {
+   "name": "LEARNED_FROM_BUILD",
+   "label": "LEARNED_FROM_BUILD",
+   "description": "Procedure was learned or confirmed by a successful build.",
+   "from_node": "Procedure",
+   "to_node": "BuildRun",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "provenance"
+  },
+  {
+   "name": "RAISED_IN",
+   "label": "RAISED_IN",
+   "description": "Request was made in this Slack message.",
+   "from_node": "Request",
+   "to_node": "SlackMessage",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "provenance"
+  },
+  {
+   "name": "REQUESTED_BY",
+   "label": "REQUESTED_BY",
+   "description": "Person who made the request.",
+   "from_node": "Request",
+   "to_node": "Person",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "ABOUT",
+   "label": "ABOUT",
+   "description": "Request concerns this feature or code (the investigation seeds).",
+   "from_node": "Request",
+   "to_node": "Constrainable",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "TRACKED_BY",
+   "label": "TRACKED_BY",
+   "description": "Request is tracked by this Linear issue.",
+   "from_node": "Request",
+   "to_node": "LinearIssue",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "workflow"
+  },
+  {
+   "name": "DELIVERED_BY",
+   "label": "DELIVERED_BY",
+   "description": "Request was delivered by this pull request.",
+   "from_node": "Request",
+   "to_node": "GithubPullRequest",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "workflow"
+  },
+  {
+   "name": "HAS_INVESTIGATION",
+   "label": "HAS_INVESTIGATION",
+   "description": "Request was investigated.",
+   "from_node": "Request",
+   "to_node": "Investigation",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "workflow"
+  },
+  {
+   "name": "FOUND",
+   "label": "FOUND",
+   "description": "Investigation found this evidence. Properties: role (conflict, constraint, impact, similar_work, owner, test), rank, path (node ids from the request to it).",
+   "from_node": "Investigation",
+   "to_node": "Evidence",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "evidence"
+  },
+  {
+   "name": "HANDED_TO",
+   "label": "HANDED_TO",
+   "description": "Investigation's evidence was handed to a build run (agent handoff).",
+   "from_node": "Investigation",
+   "to_node": "BuildRun",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "handoff"
+  },
+  {
+   "name": "USED_PROCEDURE",
+   "label": "USED_PROCEDURE",
+   "description": "Build run followed a procedure.",
+   "from_node": "BuildRun",
+   "to_node": "Procedure",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "procedure"
+  },
+  {
+   "name": "PRODUCED",
+   "label": "PRODUCED",
+   "description": "Build run opened or updated this pull request.",
+   "from_node": "BuildRun",
+   "to_node": "GithubPullRequest",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "workflow"
+  },
+  {
+   "name": "BUILD_TOUCHED",
+   "label": "BUILD_TOUCHED",
+   "description": "Build run changed this function. Properties: linesChanged.",
+   "from_node": "BuildRun",
+   "to_node": "CodeFunction",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "change"
+  },
+  {
+   "name": "ISSUE_PREVIOUS_VERSION",
+   "label": "ISSUE_PREVIOUS_VERSION",
+   "description": "An edited Linear issue points to the node holding its previous title and description. Properties: version.",
+   "from_node": "LinearIssue",
+   "to_node": "LinearIssue",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "history"
+  },
+  {
+   "name": "COMMENT_PREVIOUS_VERSION",
+   "label": "COMMENT_PREVIOUS_VERSION",
+   "description": "An edited Linear comment points to the node holding its previous body. Properties: version.",
+   "from_node": "LinearComment",
+   "to_node": "LinearComment",
+   "cardinality": "one_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "history"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "label": "LEARNED_FROM_TEXT",
+   "description": "Procedure was learned from text that states how changes are made (a Slack message, a PR template or description, a doc section).",
+   "from_node": "Procedure",
+   "to_node": "TextSource",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "provenance"
+  },
+  {
+   "name": "DECISION_IMPLEMENTED_BY",
+   "label": "DECISION_IMPLEMENTED_BY",
+   "description": "Decision was carried out by this commit or pull request (it may precede any text that restates the decision).",
+   "from_node": "Decision",
+   "to_node": "ChangeRecord",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "implementation"
+  }
+ ]
+}

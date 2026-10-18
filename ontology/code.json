@@ -1,0 +1,1770 @@
+{
+ "category": "code",
+ "version": "1.0",
+ "domain": "software_engineering",
+ "summary": "The code of a repository as a graph, built deterministically with tree-sitter from a local clone, plus its git history. Covers components (packages and apps), files, classes, functions, every remaining line as chunks, markdown documentation sections, imports, external packages, calls, test-to-code links, commits, authors, branches, tags, per-file changes and the exact functions each commit touched. Function and class ids come from the qualified name, not the line number, so they stay stable when code moves. Graph metrics (callers, PageRank, criticality) are stored on functions after each ingestion. Fabric's codebase ontology was used as a reference. Links from code to GitHub, Slack, Linear, people and the meaning layer are defined in core.json. Every node also carries the shared metadata defined in core.json.",
+ "core_entities": [
+  "CodeFunction",
+  "CodeClass",
+  "CodeFile",
+  "GitCommit"
+ ],
+ "entry_points": [
+  "CodeRepository"
+ ],
+ "use_cases": [
+  "Which functions call this function, up to three hops, and which tests cover them?",
+  "What is the most depended-on code in this repository?",
+  "Which commits changed this function, when, and by whom?",
+  "Who wrote most of this function according to blame?",
+  "Which files and functions does this package contain, and what does it depend on?",
+  "Where in the docs is this function or file explained?"
+ ],
+ "action_classifications": [
+  {
+   "action_name": "Clone Repository",
+   "tool_name": "clone_repository",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Shallow-clone or fetch the repository into the clone cache.",
+   "requires_params": true,
+   "source_node_types": [
+    "CodeRepository"
+   ]
+  },
+  {
+   "action_name": "Read Manifests",
+   "tool_name": "read_manifests",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Read pyproject.toml, setup.cfg, package.json and workspace files to find components and external packages.",
+   "requires_params": true,
+   "source_node_types": [
+    "CodeComponent",
+    "CodeDependency"
+   ]
+  },
+  {
+   "action_name": "Parse Files",
+   "tool_name": "parse_files",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Walk files and parse supported languages with tree-sitter.",
+   "requires_params": true,
+   "source_node_types": [
+    "CodeFile",
+    "CodeClass",
+    "CodeFunction"
+   ]
+  },
+  {
+   "action_name": "Chunk Remaining Lines",
+   "tool_name": "chunk_files",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Cover lines outside functions and classes with overlapping chunks.",
+   "requires_params": true,
+   "source_node_types": [
+    "CodeChunk"
+   ]
+  },
+  {
+   "action_name": "Split Documents",
+   "tool_name": "split_documents",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Split markdown files into heading sections.",
+   "requires_params": true,
+   "source_node_types": [
+    "CodeDocument"
+   ]
+  },
+  {
+   "action_name": "Resolve Imports And Calls",
+   "tool_name": "resolve_symbols",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Resolve imports and call sites to files, classes and functions; count unresolved calls.",
+   "requires_params": true,
+   "source_node_types": [
+    "CodeFunction",
+    "CodeFile",
+    "CodeDependency"
+   ]
+  },
+  {
+   "action_name": "Link Tests",
+   "tool_name": "link_tests",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Mark tests and link them to the code they exercise.",
+   "requires_params": true,
+   "source_node_types": [
+    "CodeFunction",
+    "CodeFile"
+   ]
+  },
+  {
+   "action_name": "Read Codeowners",
+   "tool_name": "read_codeowners",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Parse CODEOWNERS rules.",
+   "requires_params": true,
+   "source_node_types": [
+    "CodeOwnerRule"
+   ]
+  },
+  {
+   "action_name": "Read Git Log",
+   "tool_name": "git_log",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Commits, authors, parents and per-file changes with diff hunks, incrementally from the last ingested commit.",
+   "requires_params": true,
+   "source_node_types": [
+    "GitCommit",
+    "GitAuthor",
+    "GitFileChange"
+   ]
+  },
+  {
+   "action_name": "Read Git Refs",
+   "tool_name": "git_refs",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Branches and tags.",
+   "requires_params": true,
+   "source_node_types": [
+    "GitBranch",
+    "GitTag"
+   ]
+  },
+  {
+   "action_name": "Map Changes To Functions",
+   "tool_name": "map_hunks",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Map diff hunks to the functions and classes they touched.",
+   "requires_params": true,
+   "source_node_types": [
+    "GitCommit",
+    "CodeFunction"
+   ]
+  },
+  {
+   "action_name": "Read Blame",
+   "tool_name": "git_blame",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Line authorship per file, aggregated per function.",
+   "requires_params": true,
+   "source_node_types": [
+    "GitAuthor",
+    "CodeFunction"
+   ]
+  },
+  {
+   "action_name": "Compute Graph Metrics",
+   "tool_name": "compute_metrics",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Caller counts, PageRank and criticality percentile over CALLS, written back to functions.",
+   "requires_params": false,
+   "source_node_types": [
+    "CodeFunction"
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "name": "CodeRepository",
+   "label": "CodeRepository",
+   "description": "A repository as cloned and parsed locally. Linked in core.json to its GithubRepository.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "code:repo:<owner/name>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "owner/name",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Clone URL",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "defaultBranch",
+     "type": "string",
+     "description": "Branch that was ingested",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "headSha",
+     "type": "string",
+     "description": "Commit of the current snapshot",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "languages",
+     "type": "array",
+     "description": "Languages found, by file count",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "fileCount",
+     "type": "integer",
+     "description": "Files in the snapshot",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "unresolvedCallCount",
+     "type": "integer",
+     "description": "Call sites that could not be resolved",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "syncedAt",
+     "type": "datetime",
+     "description": "Last successful ingestion",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "Clone Repository"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "CodeComponent",
+   "label": "CodeComponent",
+   "description": "A package, app or library inside the repository (a Python package or a monorepo workspace).",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "code:component:<owner/name>:<path>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Package or app name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "path",
+     "type": "string",
+     "description": "Root directory",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "kind",
+     "type": "string",
+     "description": "package, app, library, service or tests",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "language",
+     "type": "string",
+     "description": "Main language",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "manifest",
+     "type": "string",
+     "description": "Manifest file path (pyproject.toml, package.json, ...)",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "Read Manifests"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "CodeDependency",
+   "label": "CodeDependency",
+   "description": "An external package the code depends on (from manifests and imports).",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "code:dep:<ecosystem>:<name>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Package name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "ecosystem",
+     "type": "string",
+     "description": "pypi, npm, ...",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "versionSpec",
+     "type": "string",
+     "description": "Declared version range",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "Read Manifests",
+    "Resolve Imports And Calls"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "CodeFile",
+   "label": "CodeFile",
+   "description": "A file in the snapshot. Text is stored unless the file is binary, generated, a lock file or over the size limit.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "code:file:<owner/name>:<path>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "path",
+     "type": "string",
+     "description": "Path from the repository root",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "language",
+     "type": "string",
+     "description": "Language or file type",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "loc",
+     "type": "integer",
+     "description": "Line count",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "size",
+     "type": "integer",
+     "description": "Size in bytes",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "contentHash",
+     "type": "string",
+     "description": "Hash of the content, used to skip unchanged files on incremental runs",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "text",
+     "type": "string",
+     "description": "Full text when stored",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isTest",
+     "type": "boolean",
+     "description": "Test file by path or naming",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "isSkipped",
+     "type": "boolean",
+     "description": "Text not stored",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "skipReason",
+     "type": "string",
+     "description": "binary, generated, lockfile, minified or too_large",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "lastCommitSha",
+     "type": "string",
+     "description": "Last commit that changed the file",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "path",
+   "source_actions": [
+    "Parse Files"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "CodeClass",
+   "label": "CodeClass",
+   "description": "A class (or interface, struct or type declaration) with its full source.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "code:class:<owner/name>:<path>::<QualifiedName>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Class name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "qualifiedName",
+     "type": "string",
+     "description": "Dotted name inside the file, for nested classes",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "startLine",
+     "type": "integer",
+     "description": "First line",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "endLine",
+     "type": "integer",
+     "description": "Last line",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "body",
+     "type": "string",
+     "description": "Full source (full-text indexed)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "docstring",
+     "type": "string",
+     "description": "Docstring or leading comment",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "bases",
+     "type": "array",
+     "description": "Base class names as written",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "decorators",
+     "type": "array",
+     "description": "Decorators as written",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isTest",
+     "type": "boolean",
+     "description": "Test class",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "contentHash",
+     "type": "string",
+     "description": "Hash of the body",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "qualifiedName",
+   "source_actions": [
+    "Parse Files"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "CodeFunction",
+   "label": "CodeFunction",
+   "description": "A function or method with its full source and graph metrics. The main node the agent reasons over.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "code:fn:<owner/name>:<path>::<QualifiedName>; a ~2, ~3 suffix separates same-named definitions in one file",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Function name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "qualifiedName",
+     "type": "string",
+     "description": "Class.method or outer.inner",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "kind",
+     "type": "string",
+     "description": "function, method, constructor, property or nested",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "signature",
+     "type": "string",
+     "description": "Signature as written",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "parameters",
+     "type": "array",
+     "description": "Parameter names",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "returnType",
+     "type": "string",
+     "description": "Declared return type",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "decorators",
+     "type": "array",
+     "description": "Decorators as written (for example routes)",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isAsync",
+     "type": "boolean",
+     "description": "Async function",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isPublic",
+     "type": "boolean",
+     "description": "Exported or public by naming convention",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isTest",
+     "type": "boolean",
+     "description": "Test function",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "startLine",
+     "type": "integer",
+     "description": "First line",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "endLine",
+     "type": "integer",
+     "description": "Last line",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "loc",
+     "type": "integer",
+     "description": "Line count",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "body",
+     "type": "string",
+     "description": "Full source (full-text indexed)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "docstring",
+     "type": "string",
+     "description": "Docstring or leading comment",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "contentHash",
+     "type": "string",
+     "description": "Hash of the body, to detect real changes",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "unresolvedCalls",
+     "type": "integer",
+     "description": "Call sites in this function that could not be resolved",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "callerCount",
+     "type": "integer",
+     "description": "Direct callers",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "transitiveCallerCount",
+     "type": "integer",
+     "description": "Callers up to three hops",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "pageRank",
+     "type": "float",
+     "description": "PageRank over CALLS",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "criticalityPercentile",
+     "type": "float",
+     "description": "0 to 100, from PageRank and caller counts",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "lastCommitSha",
+     "type": "string",
+     "description": "Last commit that touched it",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "lastChangedAt",
+     "type": "datetime",
+     "description": "Time of that commit",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "qualifiedName",
+   "source_actions": [
+    "Parse Files",
+    "Resolve Imports And Calls",
+    "Compute Graph Metrics",
+    "Map Changes To Functions"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "CodeChunk",
+   "label": "CodeChunk",
+   "description": "Lines outside any function or class (module-level code, configuration, other text), so every line of every stored file is in the graph.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "code:chunk:<owner/name>:<path>#L<start>-L<end>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "startLine",
+     "type": "integer",
+     "description": "First line",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "endLine",
+     "type": "integer",
+     "description": "Last line",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "text",
+     "type": "string",
+     "description": "Text (full-text indexed)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "kind",
+     "type": "string",
+     "description": "module_level, config, data or other",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "id",
+   "source_actions": [
+    "Chunk Remaining Lines"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "CodeDocument",
+   "label": "CodeDocument",
+   "description": "One heading section of a markdown file in the repository (README, docs, ADRs, changelog).",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "code:doc:<owner/name>:<path>#<heading-slug>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "path",
+     "type": "string",
+     "description": "File path",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Heading text",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "level",
+     "type": "integer",
+     "description": "Heading level",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "text",
+     "type": "string",
+     "description": "Section text (full-text indexed)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "startLine",
+     "type": "integer",
+     "description": "First line",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "endLine",
+     "type": "integer",
+     "description": "Last line",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "title",
+   "source_actions": [
+    "Split Documents"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "CodeOwnerRule",
+   "label": "CodeOwnerRule",
+   "description": "One rule from a CODEOWNERS file.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "code:owners:<owner/name>:<line>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "pattern",
+     "type": "string",
+     "description": "Path pattern",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "owners",
+     "type": "array",
+     "description": "Owner handles or emails as written",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "line",
+     "type": "integer",
+     "description": "Line in CODEOWNERS",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "pattern",
+   "source_actions": [
+    "Read Codeowners"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GitCommit",
+   "label": "GitCommit",
+   "description": "A commit from the local clone. GitHub pull requests, checks and releases join to it by SHA in core.json.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "git:commit:<owner/name>:<sha>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "sha",
+     "type": "string",
+     "description": "Full SHA",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "shortSha",
+     "type": "string",
+     "description": "Short SHA",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "subject",
+     "type": "string",
+     "description": "First line of the message",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "message",
+     "type": "string",
+     "description": "Full message (full-text indexed)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "authorName",
+     "type": "string",
+     "description": "Author name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "authorEmail",
+     "type": "string",
+     "description": "Author email",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "authoredAt",
+     "type": "datetime",
+     "description": "Author time",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "committedAt",
+     "type": "datetime",
+     "description": "Commit time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isMerge",
+     "type": "boolean",
+     "description": "Merge commit",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "parentShas",
+     "type": "array",
+     "description": "Parent SHAs",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "additions",
+     "type": "integer",
+     "description": "Lines added",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "deletions",
+     "type": "integer",
+     "description": "Lines deleted",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "filesChanged",
+     "type": "integer",
+     "description": "Files changed",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "inClone",
+     "type": "boolean",
+     "description": "False when the commit was created from the GitHub API (for example a commit of a PR not merged into the working branch) and is not in the local clone; such commits have no file changes or TOUCHED links",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "subject",
+   "source_actions": [
+    "Read Git Log"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "GitAuthor",
+   "label": "GitAuthor",
+   "description": "A commit author identity (name and email). Linked in core.json to one Person through Identity.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "git:author:<lowercased email>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "email",
+     "type": "string",
+     "description": "Email",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Name as written in commits",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "commitCount",
+     "type": "integer",
+     "description": "Commits by this author",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "firstCommitAt",
+     "type": "datetime",
+     "description": "First commit",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "lastCommitAt",
+     "type": "datetime",
+     "description": "Latest commit",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "Read Git Log",
+    "Read Blame"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GitBranch",
+   "label": "GitBranch",
+   "description": "A branch in the local clone.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "git:branch:<owner/name>:<branch>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Branch name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "headSha",
+     "type": "string",
+     "description": "Tip commit",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isDefault",
+     "type": "boolean",
+     "description": "Default branch",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isRemote",
+     "type": "boolean",
+     "description": "Remote-tracking branch",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "Read Git Refs"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GitTag",
+   "label": "GitTag",
+   "description": "A git tag.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "git:tag:<owner/name>:<tag>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Tag name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "sha",
+     "type": "string",
+     "description": "Tagged commit",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "taggedAt",
+     "type": "datetime",
+     "description": "Tag time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "message",
+     "type": "string",
+     "description": "Tag message",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "Read Git Refs"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GitFileChange",
+   "label": "GitFileChange",
+   "description": "How one commit changed one file, with the changed line ranges.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "git:change:<owner/name>:<sha>:<path>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "path",
+     "type": "string",
+     "description": "Path after the change",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "oldPath",
+     "type": "string",
+     "description": "Path before a rename",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "status",
+     "type": "string",
+     "description": "added, modified, deleted or renamed",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "additions",
+     "type": "integer",
+     "description": "Lines added",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "deletions",
+     "type": "integer",
+     "description": "Lines deleted",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isBinary",
+     "type": "boolean",
+     "description": "Binary file",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "hunks",
+     "type": "array",
+     "description": "Changed line ranges in the new file as [start, end] pairs",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "path",
+   "source_actions": [
+    "Read Git Log"
+   ],
+   "is_core": false
+  }
+ ],
+ "relationships": [
+  {
+   "name": "COMPONENT_IN_REPO",
+   "label": "COMPONENT_IN_REPO",
+   "description": "Component belongs to the repository.",
+   "from_node": "CodeComponent",
+   "to_node": "CodeRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "FILE_IN_REPO",
+   "label": "FILE_IN_REPO",
+   "description": "File belongs to the repository.",
+   "from_node": "CodeFile",
+   "to_node": "CodeRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "FILE_IN_COMPONENT",
+   "label": "FILE_IN_COMPONENT",
+   "description": "File belongs to a component.",
+   "from_node": "CodeFile",
+   "to_node": "CodeComponent",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "COMPONENT_DEPENDS_ON",
+   "label": "COMPONENT_DEPENDS_ON",
+   "description": "Component depends on another component in the same repository.",
+   "from_node": "CodeComponent",
+   "to_node": "CodeComponent",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "dependency"
+  },
+  {
+   "name": "USES_PACKAGE",
+   "label": "USES_PACKAGE",
+   "description": "Component declares an external package.",
+   "from_node": "CodeComponent",
+   "to_node": "CodeDependency",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "dependency"
+  },
+  {
+   "name": "CLASS_DEFINED_IN",
+   "label": "CLASS_DEFINED_IN",
+   "description": "Class is defined in a file.",
+   "from_node": "CodeClass",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "definition"
+  },
+  {
+   "name": "FUNCTION_DEFINED_IN",
+   "label": "FUNCTION_DEFINED_IN",
+   "description": "Function is defined in a file.",
+   "from_node": "CodeFunction",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "definition"
+  },
+  {
+   "name": "METHOD_OF",
+   "label": "METHOD_OF",
+   "description": "Function is a method of a class.",
+   "from_node": "CodeFunction",
+   "to_node": "CodeClass",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "definition"
+  },
+  {
+   "name": "NESTED_IN",
+   "label": "NESTED_IN",
+   "description": "Function is defined inside another function.",
+   "from_node": "CodeFunction",
+   "to_node": "CodeFunction",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "definition"
+  },
+  {
+   "name": "INHERITS_FROM",
+   "label": "INHERITS_FROM",
+   "description": "Class extends another class in the repository. Properties: method, confidence.",
+   "from_node": "CodeClass",
+   "to_node": "CodeClass",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "dependency"
+  },
+  {
+   "name": "CHUNK_OF",
+   "label": "CHUNK_OF",
+   "description": "Chunk belongs to a file.",
+   "from_node": "CodeChunk",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "SECTION_OF",
+   "label": "SECTION_OF",
+   "description": "Document section belongs to a markdown file.",
+   "from_node": "CodeDocument",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "SUBSECTION_OF",
+   "label": "SUBSECTION_OF",
+   "description": "Document section sits under a parent heading.",
+   "from_node": "CodeDocument",
+   "to_node": "CodeDocument",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "IMPORTS",
+   "label": "IMPORTS",
+   "description": "File imports another file in the repository. Properties: symbols (array), line.",
+   "from_node": "CodeFile",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "dependency"
+  },
+  {
+   "name": "IMPORTS_PACKAGE",
+   "label": "IMPORTS_PACKAGE",
+   "description": "File imports an external package. Properties: symbols (array).",
+   "from_node": "CodeFile",
+   "to_node": "CodeDependency",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "dependency"
+  },
+  {
+   "name": "CALLS",
+   "label": "CALLS",
+   "description": "Function calls another function. Properties: resolution (local, import, project, name_only), confidence, callSiteLines (array), count. Dynamic calls are not resolved.",
+   "from_node": "CodeFunction",
+   "to_node": "CodeFunction",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "dependency"
+  },
+  {
+   "name": "INSTANTIATES",
+   "label": "INSTANTIATES",
+   "description": "Function constructs an instance of a class. Properties: confidence, callSiteLines.",
+   "from_node": "CodeFunction",
+   "to_node": "CodeClass",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "dependency"
+  },
+  {
+   "name": "TESTS",
+   "label": "TESTS",
+   "description": "Test function exercises a function. Properties: method (calls, imports, naming), confidence.",
+   "from_node": "CodeFunction",
+   "to_node": "CodeFunction",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "validation"
+  },
+  {
+   "name": "TESTS_CLASS",
+   "label": "TESTS_CLASS",
+   "description": "Test function exercises a class. Properties: method, confidence.",
+   "from_node": "CodeFunction",
+   "to_node": "CodeClass",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "validation"
+  },
+  {
+   "name": "TEST_FILE_FOR",
+   "label": "TEST_FILE_FOR",
+   "description": "Test file covers a source file. Properties: method, confidence.",
+   "from_node": "CodeFile",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "validation"
+  },
+  {
+   "name": "DOC_MENTIONS_FILE",
+   "label": "DOC_MENTIONS_FILE",
+   "description": "Document section names a file path. Properties: method (explicit), confidence.",
+   "from_node": "CodeDocument",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "DOC_MENTIONS_FUNCTION",
+   "label": "DOC_MENTIONS_FUNCTION",
+   "description": "Document section names a function. Properties: method, confidence.",
+   "from_node": "CodeDocument",
+   "to_node": "CodeFunction",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "DOC_MENTIONS_CLASS",
+   "label": "DOC_MENTIONS_CLASS",
+   "description": "Document section names a class. Properties: method, confidence.",
+   "from_node": "CodeDocument",
+   "to_node": "CodeClass",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "MATCHES_OWNER_RULE",
+   "label": "MATCHES_OWNER_RULE",
+   "description": "File matches a CODEOWNERS rule (the last matching rule wins).",
+   "from_node": "CodeFile",
+   "to_node": "CodeOwnerRule",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "ownership"
+  },
+  {
+   "name": "HEAD_COMMIT",
+   "label": "HEAD_COMMIT",
+   "description": "The commit the current snapshot was built from.",
+   "from_node": "CodeRepository",
+   "to_node": "GitCommit",
+   "cardinality": "one_to_one",
+   "required": true,
+   "temporal": true,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "COMMIT_IN_REPO",
+   "label": "COMMIT_IN_REPO",
+   "description": "Commit belongs to the repository.",
+   "from_node": "GitCommit",
+   "to_node": "CodeRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "HAS_PARENT",
+   "label": "HAS_PARENT",
+   "description": "Commit's parent commit.",
+   "from_node": "GitCommit",
+   "to_node": "GitCommit",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "history"
+  },
+  {
+   "name": "AUTHORED_BY",
+   "label": "AUTHORED_BY",
+   "description": "Commit was authored by a git author.",
+   "from_node": "GitCommit",
+   "to_node": "GitAuthor",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "HAS_FILE_CHANGE",
+   "label": "HAS_FILE_CHANGE",
+   "description": "Commit changed a file in this way.",
+   "from_node": "GitCommit",
+   "to_node": "GitFileChange",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "change"
+  },
+  {
+   "name": "CHANGE_OF_FILE",
+   "label": "CHANGE_OF_FILE",
+   "description": "File change applies to a file in the snapshot (absent for files deleted since).",
+   "from_node": "GitFileChange",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "change"
+  },
+  {
+   "name": "TOUCHED",
+   "label": "TOUCHED",
+   "description": "Commit changed lines inside a function. Properties: linesChanged, changeType (added, modified, deleted).",
+   "from_node": "GitCommit",
+   "to_node": "CodeFunction",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "change"
+  },
+  {
+   "name": "TOUCHED_CLASS",
+   "label": "TOUCHED_CLASS",
+   "description": "Commit changed lines inside a class but outside its methods. Properties: linesChanged, changeType.",
+   "from_node": "GitCommit",
+   "to_node": "CodeClass",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "change"
+  },
+  {
+   "name": "BLAME_OWNS",
+   "label": "BLAME_OWNS",
+   "description": "Author wrote a share of a function's current lines. Properties: lines, lineShare.",
+   "from_node": "GitAuthor",
+   "to_node": "CodeFunction",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "ownership"
+  },
+  {
+   "name": "BLAME_OWNS_FILE",
+   "label": "BLAME_OWNS_FILE",
+   "description": "Author wrote a share of a file's current lines. Properties: lines, lineShare.",
+   "from_node": "GitAuthor",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "ownership"
+  },
+  {
+   "name": "GIT_BRANCH_IN_REPO",
+   "label": "GIT_BRANCH_IN_REPO",
+   "description": "Branch belongs to the repository.",
+   "from_node": "GitBranch",
+   "to_node": "CodeRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "BRANCH_HEAD",
+   "label": "BRANCH_HEAD",
+   "description": "Branch tip commit.",
+   "from_node": "GitBranch",
+   "to_node": "GitCommit",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "RENAMED_TO",
+   "label": "RENAMED_TO",
+   "description": "Function was renamed or moved to a new function node in a commit (same or near-same body). Properties: commitSha, similarity.",
+   "from_node": "CodeFunction",
+   "to_node": "CodeFunction",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "history"
+  },
+  {
+   "name": "CLASS_RENAMED_TO",
+   "label": "CLASS_RENAMED_TO",
+   "description": "Class was renamed or moved in a commit. Properties: commitSha, similarity.",
+   "from_node": "CodeClass",
+   "to_node": "CodeClass",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "history"
+  },
+  {
+   "name": "FILE_RENAMED_TO",
+   "label": "FILE_RENAMED_TO",
+   "description": "File was renamed or moved in a commit (from git rename detection). Properties: commitSha, similarity.",
+   "from_node": "CodeFile",
+   "to_node": "CodeFile",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "history"
+  },
+  {
+   "name": "TAGS_COMMIT",
+   "label": "TAGS_COMMIT",
+   "description": "Tag points at a commit.",
+   "from_node": "GitTag",
+   "to_node": "GitCommit",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "reference"
+  }
+ ]
+}

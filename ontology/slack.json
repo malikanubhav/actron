@@ -1,0 +1,3469 @@
+{
+ "category": "slack",
+ "action_classifications": [
+  {
+   "action_name": "List conversations",
+   "tool_name": "list_conversations",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "List channels/DMs, or fetch one channel's info when `channel` is provided. Returns a channels[] array for consistent shape.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackChannel",
+    "SlackDirectMessage",
+    "SlackResponse_metadata",
+    "SlackConversation"
+   ]
+  },
+  {
+   "action_name": "Get conversation history",
+   "tool_name": "get_conversation_history",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieve messages from a channel, DM, or MPIM.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackMessage",
+    "SlackResponse_metadata",
+    "SlackHistory"
+   ]
+  },
+  {
+   "action_name": "Get thread replies",
+   "tool_name": "get_conversation_replies",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieve reply messages in a thread.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackMessage",
+    "SlackResponse_metadata",
+    "SlackReply"
+   ]
+  },
+  {
+   "action_name": "List conversation members",
+   "tool_name": "get_conversation_members",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "List the user IDs that are members of a conversation.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackUser",
+    "SlackResponse_metadata",
+    "SlackMember"
+   ]
+  },
+  {
+   "action_name": "Create channel",
+   "tool_name": "create_channel",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Create a new public or private channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackChannel"
+   ]
+  },
+  {
+   "action_name": "Set channel archived",
+   "tool_name": "set_channel_archived",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Archive (archived=true) or unarchive (archived=false) a channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackChannel",
+    "SlackArchived"
+   ]
+  },
+  {
+   "action_name": "Update channel",
+   "tool_name": "update_channel",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Update a channel's name, topic, and/or description in one call.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackChannel",
+    "SlackRename"
+   ]
+  },
+  {
+   "action_name": "Join channel",
+   "tool_name": "join_channel",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Join an existing channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackChannel",
+    "SlackUser"
+   ]
+  },
+  {
+   "action_name": "Leave channel",
+   "tool_name": "leave_channel",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Leave a channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackChannel",
+    "SlackUser"
+   ]
+  },
+  {
+   "action_name": "Invite to channel",
+   "tool_name": "invite_to_channel",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Invite one or more users to a channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackChannel",
+    "SlackUser"
+   ]
+  },
+  {
+   "action_name": "Kick from channel",
+   "tool_name": "kick_from_channel",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Remove a user from a channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackChannel",
+    "SlackUser"
+   ]
+  },
+  {
+   "action_name": "Mark read",
+   "tool_name": "mark_read",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Set the read cursor for a conversation.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackChannel",
+    "SlackMessage",
+    "SlackRead"
+   ]
+  },
+  {
+   "action_name": "Post message",
+   "tool_name": "post_message",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Send a message to a channel, DM, or thread. Posts as the authenticated user by default; pass `as_bot: true` to post as the app.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackMessage"
+   ]
+  },
+  {
+   "action_name": "Update message",
+   "tool_name": "update_message",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Edit an existing message's text or blocks.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackMessage"
+   ]
+  },
+  {
+   "action_name": "Delete message",
+   "tool_name": "delete_message",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Delete a message.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackMessage"
+   ]
+  },
+  {
+   "action_name": "Get permalink",
+   "tool_name": "get_permalink",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Retrieve a permalink URL for a specific message.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackMessage",
+    "SlackPermalink"
+   ]
+  },
+  {
+   "action_name": "List users",
+   "tool_name": "list_users",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "List all members of the workspace.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackUser",
+    "SlackResponse_metadata",
+    "SlackMember"
+   ]
+  },
+  {
+   "action_name": "Get user",
+   "tool_name": "get_user",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Fetch a Slack user by user ID or email.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackUser"
+   ]
+  },
+  {
+   "action_name": "Set user status",
+   "tool_name": "set_user_status",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Update the authenticated user's status text, emoji, or other profile fields.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackUser",
+    "SlackStatu",
+    "SlackProfile"
+   ]
+  },
+  {
+   "action_name": "Add reaction",
+   "tool_name": "add_reaction",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Add an emoji reaction to a message.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackReaction"
+   ]
+  },
+  {
+   "action_name": "Remove reaction",
+   "tool_name": "remove_reaction",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Remove an emoji reaction from a message or file.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackReaction"
+   ]
+  },
+  {
+   "action_name": "List files",
+   "tool_name": "list_files",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "List files uploaded to the workspace.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackFile",
+    "SlackPaging"
+   ]
+  },
+  {
+   "action_name": "Get file info",
+   "tool_name": "get_file_info",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Get info about a file and its comments.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackFile",
+    "SlackInfo"
+   ]
+  },
+  {
+   "action_name": "Delete file",
+   "tool_name": "delete_file",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Delete a file from the workspace.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackFile"
+   ]
+  },
+  {
+   "action_name": "Upload file",
+   "tool_name": "upload_file",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Initiate a file upload and complete registration (returns upload URL).",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackFile",
+    "SlackComplete_response"
+   ]
+  },
+  {
+   "action_name": "Pin message",
+   "tool_name": "pin_message",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Pin a message to a channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackMessage",
+    "SlackPin"
+   ]
+  },
+  {
+   "action_name": "Unpin message",
+   "tool_name": "unpin_message",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Remove a pinned message from a channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackMessage",
+    "SlackPin"
+   ]
+  },
+  {
+   "action_name": "List pins",
+   "tool_name": "list_pins",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "List pinned items in a channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackPin"
+   ]
+  },
+  {
+   "action_name": "Add bookmark",
+   "tool_name": "add_bookmark",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Add a bookmark to a channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackBookmark"
+   ]
+  },
+  {
+   "action_name": "Edit bookmark",
+   "tool_name": "edit_bookmark",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Edit an existing channel bookmark.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackBookmark"
+   ]
+  },
+  {
+   "action_name": "Remove bookmark",
+   "tool_name": "remove_bookmark",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Remove a bookmark from a channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackBookmark"
+   ]
+  },
+  {
+   "action_name": "List bookmarks",
+   "tool_name": "list_bookmarks",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "List bookmarks in a channel.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackBookmark"
+   ]
+  },
+  {
+   "action_name": "Search messages",
+   "tool_name": "search_messages",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Search messages across the workspace (requires user token).",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackMessage"
+   ]
+  },
+  {
+   "action_name": "Search files",
+   "tool_name": "search_files",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Search files across the workspace (requires user token).",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackFile"
+   ]
+  },
+  {
+   "action_name": "Search all",
+   "tool_name": "search_all",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Combined search across messages + files.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackMessage",
+    "SlackFile",
+    "SlackAll",
+    "SlackPost"
+   ]
+  },
+  {
+   "action_name": "List user groups",
+   "tool_name": "list_usergroups",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "List all user groups in the workspace.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackUserGroup",
+    "SlackGroup"
+   ]
+  },
+  {
+   "action_name": "Create user group",
+   "tool_name": "create_usergroup",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Create a new user group.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackUserGroup",
+    "SlackGroup"
+   ]
+  },
+  {
+   "action_name": "Update user group",
+   "tool_name": "update_usergroup",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Update an existing user group.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackUserGroup",
+    "SlackGroup"
+   ]
+  },
+  {
+   "action_name": "List user group users",
+   "tool_name": "list_usergroup_users",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "List the members of a user group.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackUser",
+    "SlackUserGroup"
+   ]
+  },
+  {
+   "action_name": "Update user group users",
+   "tool_name": "update_usergroup_users",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Replace the member list of a user group.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackUser",
+    "SlackUserGroup"
+   ]
+  },
+  {
+   "action_name": "Auth test",
+   "tool_name": "auth_test",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Verify authentication, return workspace + user identity.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackWorkspace",
+    "SlackUser",
+    "SlackTest",
+    "SlackTeam"
+   ]
+  },
+  {
+   "action_name": "Get team info",
+   "tool_name": "get_team_info",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Get workspace (team) info.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackWorkspace",
+    "SlackTeam",
+    "SlackInfo"
+   ]
+  },
+  {
+   "action_name": "List team emojis",
+   "tool_name": "list_team_emojis",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "List all custom emojis in the workspace.",
+   "requires_params": false,
+   "source_node_types": [
+    "SlackEmoji"
+   ]
+  }
+ ],
+ "core_entities": null,
+ "created_at": "2026-06-12 20:41:13.698000",
+ "created_by": "6a2c6e6277772c431bdff1f1",
+ "domain": "",
+ "entry_points": null,
+ "nodes": [
+  {
+   "name": "SlackWorkspace",
+   "label": "SlackWorkspace",
+   "description": "Workspace entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "domain",
+     "type": "string",
+     "description": "Workspace domain",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Auth test",
+    "Get team info"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackChannel",
+   "label": "SlackChannel",
+   "description": "Channel entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isPrivate",
+     "type": "boolean",
+     "description": "Private channel",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "isArchived",
+     "type": "boolean",
+     "description": "Archived channel",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "topic",
+     "type": "string",
+     "description": "Channel topic",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "purpose",
+     "type": "string",
+     "description": "Channel purpose",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "memberCount",
+     "type": "integer",
+     "description": "Number of members",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "aliases",
+     "type": "array",
+     "description": "Other ids this channel has had (for example the original channel id in an imported export), used to resolve old permalinks",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List conversations",
+    "Create channel",
+    "Set channel archived",
+    "Update channel",
+    "Join channel",
+    "Leave channel",
+    "Invite to channel",
+    "Kick from channel",
+    "Mark read"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackDirectMessage",
+   "label": "SlackDirectMessage",
+   "description": "DirectMessage entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List conversations"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackMessage",
+   "label": "SlackMessage",
+   "description": "Message entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "text",
+     "type": "string",
+     "description": "Message text (full-text indexed)",
+     "required": true,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "ts",
+     "type": "string",
+     "description": "Slack message timestamp, unique within the channel",
+     "required": true,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "threadTs",
+     "type": "string",
+     "description": "Timestamp of the thread parent, when this is a reply",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "channelId",
+     "type": "string",
+     "description": "Channel id",
+     "required": true,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "userId",
+     "type": "string",
+     "description": "Author's Slack user id",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "subtype",
+     "type": "string",
+     "description": "Slack subtype (bot_message, thread_broadcast, ...)",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "replyCount",
+     "type": "integer",
+     "description": "Replies in the thread (on parents)",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "permalink",
+     "type": "string",
+     "description": "Permalink to the message",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "edited",
+     "type": "boolean",
+     "description": "Message has been edited",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "editedAt",
+     "type": "datetime",
+     "description": "Last edit time",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "postedAt",
+     "type": "datetime",
+     "description": "Post time derived from ts",
+     "required": true,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "version",
+     "type": "integer",
+     "description": "Edit version, starting at 1",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "botId",
+     "type": "string",
+     "description": "Slack bot id when the message was posted by a bot or app; bot messages never produce decisions",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get conversation history",
+    "Get thread replies",
+    "Mark read",
+    "Post message",
+    "Update message",
+    "Delete message",
+    "Get permalink",
+    "Pin message",
+    "Unpin message",
+    "Search messages",
+    "Search all"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackUser",
+   "label": "SlackUser",
+   "description": "User entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "realName",
+     "type": "string",
+     "description": "Real name",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "displayName",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "email",
+     "type": "string",
+     "description": "Email (needs users:read.email), used for identity matching",
+     "required": false,
+     "indexed": true,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Profile title",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "isBot",
+     "type": "boolean",
+     "description": "Bot user",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "isDeleted",
+     "type": "boolean",
+     "description": "Deactivated user",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    },
+    {
+     "name": "avatarUrl",
+     "type": "string",
+     "description": "Avatar URL",
+     "required": false,
+     "indexed": false,
+     "unique": false,
+     "addedBy": "actron"
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List conversation members",
+    "Join channel",
+    "Leave channel",
+    "Invite to channel",
+    "Kick from channel",
+    "List users",
+    "Get user",
+    "Set user status",
+    "List user group users",
+    "Update user group users",
+    "Auth test"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackBookmark",
+   "label": "SlackBookmark",
+   "description": "Bookmark entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Add bookmark",
+    "Edit bookmark",
+    "Remove bookmark",
+    "List bookmarks"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackEmoji",
+   "label": "SlackEmoji",
+   "description": "Emoji entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List team emojis"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackReaction",
+   "label": "SlackReaction",
+   "description": "Reaction entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Add reaction",
+    "Remove reaction"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackFile",
+   "label": "SlackFile",
+   "description": "File entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List files",
+    "Get file info",
+    "Delete file",
+    "Upload file",
+    "Search files",
+    "Search all"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackPin",
+   "label": "SlackPin",
+   "description": "Pin entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Pin message",
+    "Unpin message",
+    "List pins"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackUserGroup",
+   "label": "SlackUserGroup",
+   "description": "UserGroup entity from slack connector",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "created_at",
+     "type": "datetime",
+     "description": "Creation time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "updated_at",
+     "type": "datetime",
+     "description": "Last update time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List user groups",
+    "Create user group",
+    "Update user group",
+    "List user group users",
+    "Update user group users"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackArchived",
+   "label": "SlackArchived",
+   "description": "Archived entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Slack 'ok' flag — true if the operation succeeded.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Set channel archived"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackTest",
+   "label": "SlackTest",
+   "description": "Test entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Slack 'ok' flag indicating success.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "The URL of the authenticated workspace (e.g. 'https://myteam.slack.com/').",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "team_id",
+     "type": "string",
+     "description": "Encoded ID of the workspace.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "user_id",
+     "type": "string",
+     "description": "Encoded ID of the authenticated user.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "bot_id",
+     "type": "string",
+     "description": "Encoded ID of the bot, present when the token belongs to a bot user.",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "is_enterprise_install",
+     "type": "boolean",
+     "description": "True if the app is installed on an enterprise grid.",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Auth test"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackAll",
+   "label": "SlackAll",
+   "description": "All entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Whether the API call succeeded.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Search all"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackComplete_response",
+   "label": "SlackComplete_response",
+   "description": "Complete_response entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Upload file"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackPost",
+   "label": "SlackPost",
+   "description": "Post entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Search all"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackResponse_metadata",
+   "label": "SlackResponse_metadata",
+   "description": "Response_metadata entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List conversations",
+    "Get conversation history",
+    "Get thread replies",
+    "List conversation members",
+    "List users"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackMember",
+   "label": "SlackMember",
+   "description": "Member entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Slack 'ok' flag.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List conversation members",
+    "List users"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackPaging",
+   "label": "SlackPaging",
+   "description": "Paging entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List files"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackConversation",
+   "label": "SlackConversation",
+   "description": "Conversation entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Slack 'ok' flag.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List conversations"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackStatu",
+   "label": "SlackStatu",
+   "description": "Statu entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Slack 'ok' flag indicating success.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Set user status"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackRename",
+   "label": "SlackRename",
+   "description": "Rename entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Update channel"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackQuip_section",
+   "label": "SlackQuip_section",
+   "description": "Quip_section entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [],
+   "is_core": false
+  },
+  {
+   "name": "SlackReply",
+   "label": "SlackReply",
+   "description": "Reply entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Slack 'ok' flag.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "messages[].reply_count",
+     "type": "number",
+     "description": "Number of replies (only on the parent message).",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "has_more",
+     "type": "boolean",
+     "description": "True if there are more replies beyond this page.",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get thread replies"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackPermalink",
+   "label": "SlackPermalink",
+   "description": "Permalink entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Whether the API call succeeded.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get permalink"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackParent",
+   "label": "SlackParent",
+   "description": "Parent entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [],
+   "is_core": false
+  },
+  {
+   "name": "SlackRead",
+   "label": "SlackRead",
+   "description": "Read entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Slack 'ok' flag. True if the read cursor was successfully updated.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Mark read"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackEntity",
+   "label": "SlackEntity",
+   "description": "Entity entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [],
+   "is_core": false
+  },
+  {
+   "name": "SlackProfile",
+   "label": "SlackProfile",
+   "description": "Profile entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Set user status"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackGroup",
+   "label": "SlackGroup",
+   "description": "Group entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Whether the API call succeeded.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "usergroups[].team_id",
+     "type": "string",
+     "description": "Team that the user group belongs to.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "usergroups[].auto_type",
+     "type": "string",
+     "description": "Indicates if the group is auto-managed (e.g. 'admin', 'owner').",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "usergroups[].user_count",
+     "type": "number",
+     "description": "Number of members (only present when include_count=true).",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "usergroup.team_id",
+     "type": "string",
+     "description": "Team the user group belongs to.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "usergroup.user_count",
+     "type": "number",
+     "description": "Number of members (present when include_count=true).",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "List user groups",
+    "Create user group",
+    "Update user group"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackTeam",
+   "label": "SlackTeam",
+   "description": "Team entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Auth test",
+    "Get team info"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackHistory",
+   "label": "SlackHistory",
+   "description": "History entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Slack 'ok' flag.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "has_more",
+     "type": "boolean",
+     "description": "True if there are more messages beyond this page.",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get conversation history"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "SlackInfo",
+   "label": "SlackInfo",
+   "description": "Info entity",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Unique identifier",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "ok",
+     "type": "boolean",
+     "description": "Whether the API call was successful.",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "team.enterprise_id",
+     "type": "string",
+     "description": "Enterprise Grid ID if applicable.",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "team.enterprise_name",
+     "type": "string",
+     "description": "Enterprise Grid name if applicable.",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "",
+   "source_actions": [
+    "Get file info",
+    "Get team info"
+   ],
+   "is_core": false
+  }
+ ],
+ "relationships": [
+  {
+   "name": "RELATED_TO",
+   "label": "",
+   "description": "Channel is related to Workspace",
+   "from_node": "SlackChannel",
+   "to_node": "SlackWorkspace",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO",
+   "label": "",
+   "description": "DirectMessage is related to Workspace",
+   "from_node": "SlackDirectMessage",
+   "to_node": "SlackWorkspace",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO",
+   "label": "",
+   "description": "Message is related to Workspace",
+   "from_node": "SlackMessage",
+   "to_node": "SlackWorkspace",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO",
+   "label": "",
+   "description": "User is related to Workspace",
+   "from_node": "SlackUser",
+   "to_node": "SlackWorkspace",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO",
+   "label": "",
+   "description": "Bookmark is related to Workspace",
+   "from_node": "SlackBookmark",
+   "to_node": "SlackWorkspace",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO",
+   "label": "",
+   "description": "Emoji is related to Workspace",
+   "from_node": "SlackEmoji",
+   "to_node": "SlackWorkspace",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO",
+   "label": "",
+   "description": "Reaction is related to Workspace",
+   "from_node": "SlackReaction",
+   "to_node": "SlackWorkspace",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO",
+   "label": "",
+   "description": "File is related to Workspace",
+   "from_node": "SlackFile",
+   "to_node": "SlackWorkspace",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO",
+   "label": "",
+   "description": "Pin is related to Workspace",
+   "from_node": "SlackPin",
+   "to_node": "SlackWorkspace",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO",
+   "label": "",
+   "description": "UserGroup is related to Workspace",
+   "from_node": "SlackUserGroup",
+   "to_node": "SlackWorkspace",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "label": "",
+   "description": "Create channel output 'channel' feeds List conversations input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackConversation",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "label": "",
+   "description": "Post message output 'channel' feeds List conversations input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackConversation",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds List conversations input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackConversation",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "label": "",
+   "description": "List users may provide context for List conversations input 'include_num_members' (entity: Member)",
+   "from_node": "SlackUser",
+   "to_node": "SlackConversation",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CHANNEL",
+   "label": "",
+   "description": "Post message output 'channel' feeds Update channel input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackChannel",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CHANNEL",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds Update channel input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackChannel",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CHANNEL",
+   "label": "",
+   "description": "List conversations may provide context for Update channel input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackChannel",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MESSAGE",
+   "label": "",
+   "description": "Create channel output 'channel' feeds Post message input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackMessage",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MESSAGE",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds Post message input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackMessage",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MESSAGE",
+   "label": "",
+   "description": "List conversations may provide context for Post message input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackMessage",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "label": "",
+   "description": "Create channel output 'channel' feeds Get permalink input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackPermalink",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "label": "",
+   "description": "Post message output 'channel' feeds Get permalink input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackPermalink",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "label": "",
+   "description": "List conversations may provide context for Get permalink input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackPermalink",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "label": "",
+   "description": "Search all may provide context for Get permalink input 'message_ts' (entity: Message)",
+   "from_node": "SlackAll",
+   "to_node": "SlackPermalink",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "label": "",
+   "description": "Create channel output 'channel' feeds Add reaction input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackReaction",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "label": "",
+   "description": "Post message output 'channel' feeds Add reaction input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackReaction",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds Add reaction input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackReaction",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "label": "",
+   "description": "List conversations may provide context for Add reaction input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackReaction",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "label": "",
+   "description": "List files may provide context for Remove reaction input 'file' (entity: File)",
+   "from_node": "SlackFile",
+   "to_node": "SlackReaction",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "label": "",
+   "description": "Search all may provide context for Remove reaction input 'file' (entity: File)",
+   "from_node": "SlackAll",
+   "to_node": "SlackReaction",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "label": "",
+   "description": "Create channel output 'channel' feeds List files input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "label": "",
+   "description": "Post message output 'channel' feeds List files input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds List files input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "label": "",
+   "description": "List conversations may provide context for List files input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "label": "",
+   "description": "Get user output 'user' feeds List files input",
+   "from_node": "SlackUser",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "label": "",
+   "description": "Search all may provide context for List files input 'show_files_hidden_by_limit' (entity: File)",
+   "from_node": "SlackAll",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "label": "",
+   "description": "Upload file needs channel_id from List conversations (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "label": "",
+   "description": "Upload file needs channel_id from Create channel (entity: Channel)",
+   "from_node": "SlackChannel",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "label": "",
+   "description": "Upload file needs channel_id from Post message (entity: Channel)",
+   "from_node": "SlackMessage",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "label": "",
+   "description": "Upload file needs channel_id from Get permalink (entity: Channel)",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_FILE",
+   "label": "",
+   "description": "Upload file entity references File (via output field 'file_id')",
+   "from_node": "SlackAll",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PIN",
+   "label": "",
+   "description": "Create channel output 'channel' feeds List pins input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackPin",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PIN",
+   "label": "",
+   "description": "Post message output 'channel' feeds List pins input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackPin",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PIN",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds List pins input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackPin",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PIN",
+   "label": "",
+   "description": "List conversations may provide context for List pins input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackPin",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "label": "",
+   "description": "Add bookmark needs channel_id from List conversations (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackBookmark",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "label": "",
+   "description": "Add bookmark needs channel_id from Create channel (entity: Channel)",
+   "from_node": "SlackChannel",
+   "to_node": "SlackBookmark",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "label": "",
+   "description": "Add bookmark needs channel_id from Post message (entity: Channel)",
+   "from_node": "SlackMessage",
+   "to_node": "SlackBookmark",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "label": "",
+   "description": "Add bookmark needs channel_id from Get permalink (entity: Channel)",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackBookmark",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "label": "",
+   "description": "List users may provide context for List user groups input 'include_users' (entity: User)",
+   "from_node": "SlackUser",
+   "to_node": "SlackUserGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "label": "",
+   "description": "List conversations output 'channels' feeds Create user group input",
+   "from_node": "SlackConversation",
+   "to_node": "SlackUserGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "label": "",
+   "description": "Create channel may provide context for Create user group input 'channels' (entity: Channel)",
+   "from_node": "SlackChannel",
+   "to_node": "SlackUserGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "label": "",
+   "description": "Post message may provide context for Create user group input 'channels' (entity: Channel)",
+   "from_node": "SlackMessage",
+   "to_node": "SlackUserGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "label": "",
+   "description": "Get permalink may provide context for Create user group input 'channels' (entity: Channel)",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackUserGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_CHANNELS",
+   "label": "",
+   "description": "Conversation contains channels",
+   "from_node": "SlackConversation",
+   "to_node": "SlackChannel",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CHANNELS[].LATEST",
+   "label": "",
+   "description": "Conversation has embedded channels[].latest",
+   "from_node": "SlackConversation",
+   "to_node": "Channels[].latest",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_RESPONSE_METADATA",
+   "label": "",
+   "description": "Conversation has embedded response_metadata",
+   "from_node": "SlackConversation",
+   "to_node": "SlackResponse_metadata",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Channel is scoped to Team (requires team_id)",
+   "from_node": "SlackChannel",
+   "to_node": "SlackTeam",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_RENAME",
+   "label": "",
+   "description": "Channel has embedded rename",
+   "from_node": "SlackChannel",
+   "to_node": "SlackRename",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_MEMBERS",
+   "label": "",
+   "description": "User contains members",
+   "from_node": "SlackUser",
+   "to_node": "SlackMember",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MEMBERS[].PROFILE",
+   "label": "",
+   "description": "User has embedded members[].profile",
+   "from_node": "SlackUser",
+   "to_node": "Members[].profile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_RESPONSE_METADATA",
+   "label": "",
+   "description": "User has embedded response_metadata",
+   "from_node": "SlackUser",
+   "to_node": "SlackResponse_metadata",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "User is scoped to Team (requires team_id)",
+   "from_node": "SlackUser",
+   "to_node": "SlackTeam",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_USER.PROFILE",
+   "label": "",
+   "description": "User has embedded user.profile",
+   "from_node": "SlackUser",
+   "to_node": "User.profile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PAGING",
+   "label": "",
+   "description": "File has embedded paging",
+   "from_node": "SlackFile",
+   "to_node": "SlackPaging",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_COMPLETE_RESPONSE",
+   "label": "",
+   "description": "File has embedded complete_response",
+   "from_node": "SlackFile",
+   "to_node": "SlackComplete_response",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_ENTITY",
+   "label": "",
+   "description": "Bookmark is scoped to Entity (requires entity_id)",
+   "from_node": "SlackBookmark",
+   "to_node": "SlackEntity",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_PARENT",
+   "label": "",
+   "description": "Bookmark is scoped to Parent (requires parent_id)",
+   "from_node": "SlackBookmark",
+   "to_node": "SlackParent",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_QUIP_SECTION",
+   "label": "",
+   "description": "Bookmark is scoped to Quip_section (requires quip_section_id)",
+   "from_node": "SlackBookmark",
+   "to_node": "SlackQuip_section",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_MESSAGES.MATCHS",
+   "label": "",
+   "description": "Message contains messages.matches",
+   "from_node": "SlackMessage",
+   "to_node": "Messages.match",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MESSAGES.MATCHES[].CHANNEL",
+   "label": "",
+   "description": "Message has embedded messages.matches[].channel",
+   "from_node": "SlackMessage",
+   "to_node": "Messages.matches[].channel",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MESSAGES.PAGINATION",
+   "label": "",
+   "description": "Message has embedded messages.pagination",
+   "from_node": "SlackMessage",
+   "to_node": "Messages.pagination",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_FILES.MATCHS",
+   "label": "",
+   "description": "File contains files.matches",
+   "from_node": "SlackFile",
+   "to_node": "Files.match",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_FILES.PAGINATION",
+   "label": "",
+   "description": "File has embedded files.pagination",
+   "from_node": "SlackFile",
+   "to_node": "Files.pagination",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_MESSAGES.MATCHS",
+   "label": "",
+   "description": "All contains messages.matches",
+   "from_node": "SlackAll",
+   "to_node": "Messages.match",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MESSAGES.MATCHES[].CHANNEL",
+   "label": "",
+   "description": "All has embedded messages.matches[].channel",
+   "from_node": "SlackAll",
+   "to_node": "Messages.matches[].channel",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_FILES.MATCHS",
+   "label": "",
+   "description": "All contains files.matches",
+   "from_node": "SlackAll",
+   "to_node": "Files.match",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_USERGROUPS",
+   "label": "",
+   "description": "UserGroup contains usergroups",
+   "from_node": "SlackUserGroup",
+   "to_node": "SlackUserGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_USERGROUPS[].USERS",
+   "label": "",
+   "description": "UserGroup contains usergroups[].users",
+   "from_node": "SlackUserGroup",
+   "to_node": "Usergroups[].user",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "UserGroup is scoped to Team (requires team_id)",
+   "from_node": "SlackUserGroup",
+   "to_node": "SlackTeam",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "label": "",
+   "description": "UserGroup has embedded usergroup",
+   "from_node": "SlackUserGroup",
+   "to_node": "SlackUserGroup",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "label": "",
+   "description": "Set channel archived may provide context for List conversations input 'exclude_archived' (entity: Archived)",
+   "from_node": "SlackArchived",
+   "to_node": "SlackConversation",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "label": "",
+   "description": "List conversation members may provide context for List conversations input 'include_num_members' (entity: Member)",
+   "from_node": "SlackMember",
+   "to_node": "SlackConversation",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_HISTORY",
+   "label": "",
+   "description": "Create channel output 'channel' feeds Get conversation history input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackHistory",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_HISTORY",
+   "label": "",
+   "description": "Post message output 'channel' feeds Get conversation history input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackHistory",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_HISTORY",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds Get conversation history input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackHistory",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_HISTORY",
+   "label": "",
+   "description": "List conversations may provide context for Get conversation history input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackHistory",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REPLY",
+   "label": "",
+   "description": "Create channel output 'channel' feeds Get thread replies input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackReply",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REPLY",
+   "label": "",
+   "description": "Post message output 'channel' feeds Get thread replies input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackReply",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REPLY",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds Get thread replies input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackReply",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REPLY",
+   "label": "",
+   "description": "List conversations may provide context for Get thread replies input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackReply",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MEMBER",
+   "label": "",
+   "description": "Create channel output 'channel' feeds List conversation members input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackMember",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MEMBER",
+   "label": "",
+   "description": "Post message output 'channel' feeds List conversation members input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackMember",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MEMBER",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds List conversation members input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackMember",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MEMBER",
+   "label": "",
+   "description": "List conversations may provide context for List conversation members input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackMember",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Create channel needs team_id from Auth test (entity: Team)",
+   "from_node": "SlackTest",
+   "to_node": "SlackChannel",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Create channel needs team_id from Get team info (entity: Team)",
+   "from_node": "SlackInfo",
+   "to_node": "SlackChannel",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ARCHIVED",
+   "label": "",
+   "description": "Create channel output 'channel' feeds Set channel archived input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackArchived",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ARCHIVED",
+   "label": "",
+   "description": "Post message output 'channel' feeds Set channel archived input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackArchived",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ARCHIVED",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds Set channel archived input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackArchived",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_ARCHIVED",
+   "label": "",
+   "description": "List conversations may provide context for Set channel archived input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackArchived",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CHANNEL",
+   "label": "",
+   "description": "List user group users output 'users' feeds Invite to channel input",
+   "from_node": "SlackUser",
+   "to_node": "SlackChannel",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_CHANNEL",
+   "label": "",
+   "description": "Auth test may provide context for Invite to channel input 'users' (entity: User)",
+   "from_node": "SlackTest",
+   "to_node": "SlackChannel",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_READ",
+   "label": "",
+   "description": "Create channel output 'channel' feeds Mark read input",
+   "from_node": "SlackChannel",
+   "to_node": "SlackRead",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_READ",
+   "label": "",
+   "description": "Post message output 'channel' feeds Mark read input",
+   "from_node": "SlackMessage",
+   "to_node": "SlackRead",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_READ",
+   "label": "",
+   "description": "Get permalink output 'channel' feeds Mark read input",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackRead",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_READ",
+   "label": "",
+   "description": "List conversations may provide context for Mark read input 'channel' (entity: Channel)",
+   "from_node": "SlackConversation",
+   "to_node": "SlackRead",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MESSAGE",
+   "label": "",
+   "description": "Get thread replies may provide context for Post message input 'reply_broadcast' (entity: Reply)",
+   "from_node": "SlackReply",
+   "to_node": "SlackMessage",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_MESSAGE",
+   "label": "",
+   "description": "List team emojis may provide context for Post message input 'icon_emoji' (entity: Emoji)",
+   "from_node": "SlackEmoji",
+   "to_node": "SlackMessage",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "label": "",
+   "description": "Get conversation history may provide context for Get permalink input 'message_ts' (entity: Message)",
+   "from_node": "SlackHistory",
+   "to_node": "SlackPermalink",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "label": "",
+   "description": "Get thread replies may provide context for Get permalink input 'message_ts' (entity: Message)",
+   "from_node": "SlackReply",
+   "to_node": "SlackPermalink",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "List users needs team_id from Auth test (entity: Team)",
+   "from_node": "SlackTest",
+   "to_node": "SlackUser",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "List users needs team_id from Get team info (entity: Team)",
+   "from_node": "SlackInfo",
+   "to_node": "SlackUser",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_USER",
+   "label": "",
+   "description": "Auth test output 'user' feeds Get user input",
+   "from_node": "SlackTest",
+   "to_node": "SlackUser",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "label": "",
+   "description": "Get file info output 'file' feeds Remove reaction input",
+   "from_node": "SlackInfo",
+   "to_node": "SlackReaction",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "label": "",
+   "description": "Auth test output 'user' feeds List files input",
+   "from_node": "SlackTest",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "label": "",
+   "description": "Get file info may provide context for List files input 'show_files_hidden_by_limit' (entity: File)",
+   "from_node": "SlackInfo",
+   "to_node": "SlackFile",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_INFO",
+   "label": "",
+   "description": "List files may provide context for Get file info input 'file' (entity: File)",
+   "from_node": "SlackFile",
+   "to_node": "SlackInfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_INFO",
+   "label": "",
+   "description": "Search all may provide context for Get file info input 'file' (entity: File)",
+   "from_node": "SlackAll",
+   "to_node": "SlackInfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_FILE",
+   "label": "",
+   "description": "Upload file entity references File (via output field 'file_id')",
+   "from_node": "SlackFile",
+   "to_node": "SlackInfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_FILE",
+   "label": "",
+   "description": "Upload file entity references File (via output field 'file_id')",
+   "from_node": "SlackFile",
+   "to_node": "SlackAll",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_BOOKMARK",
+   "label": "",
+   "description": "List team emojis output 'emoji' feeds Add bookmark input",
+   "from_node": "SlackEmoji",
+   "to_node": "SlackBookmark",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "label": "",
+   "description": "List users may provide context for List user groups input 'include_users' (entity: User)",
+   "from_node": "SlackUser",
+   "to_node": "SlackGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "label": "",
+   "description": "Auth test may provide context for List user groups input 'include_users' (entity: User)",
+   "from_node": "SlackTest",
+   "to_node": "SlackGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "List user groups needs team_id from Auth test (entity: Team)",
+   "from_node": "SlackTest",
+   "to_node": "SlackGroup",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "List user groups needs team_id from Get team info (entity: Team)",
+   "from_node": "SlackInfo",
+   "to_node": "SlackGroup",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "label": "",
+   "description": "List conversations output 'channels' feeds Create user group input",
+   "from_node": "SlackConversation",
+   "to_node": "SlackGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "label": "",
+   "description": "Create channel may provide context for Create user group input 'channels' (entity: Channel)",
+   "from_node": "SlackChannel",
+   "to_node": "SlackGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "label": "",
+   "description": "Post message may provide context for Create user group input 'channels' (entity: Channel)",
+   "from_node": "SlackMessage",
+   "to_node": "SlackGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "label": "",
+   "description": "Get permalink may provide context for Create user group input 'channels' (entity: Channel)",
+   "from_node": "SlackPermalink",
+   "to_node": "SlackGroup",
+   "cardinality": "one-to-many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_USER",
+   "label": "",
+   "description": "Create user group output 'usergroup' feeds List user group users input",
+   "from_node": "SlackGroup",
+   "to_node": "SlackUser",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_TEAM",
+   "label": "",
+   "description": "Auth test entity references Team (via output field 'team_id')",
+   "from_node": "SlackTest",
+   "to_node": "SlackInfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "HAS_USER",
+   "label": "",
+   "description": "Auth test entity references User (via output field 'user_id')",
+   "from_node": "SlackTest",
+   "to_node": "SlackUser",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  },
+  {
+   "name": "RELATED_TO_INFO",
+   "label": "",
+   "description": "Auth test output 'team' feeds Get team info input",
+   "from_node": "SlackTest",
+   "to_node": "SlackInfo",
+   "cardinality": "many-to-one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": ""
+  }
+ ],
+ "summary": "",
+ "updated_at": "2026-10-03 06:37:15.038000",
+ "usage_count": 2,
+ "use_cases": null,
+ "version": "1.0-fallback"
+}

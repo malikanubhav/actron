@@ -1,98 +1,657 @@
-# Actron product requirements document
+# Actron: product requirements (v2)
 
-**Status:** Draft, 17 October 2026. Project name: Actron, confirmed by the user.
+**Status:** v2, 17 October 2026. Consolidates every decision from the design discussion. Supersedes v1. Items marked **[DEFAULT]** are decisions taken so work can continue; the user may overrule them. Items marked **[VERIFY]** are tool behaviours the build must confirm by running them.
 
-## Product in plain language
+**Deadline:** 18 October 2026, 11:59 PM IST (FalkorDB Graph Hacks, WeMakeDevs). Building stops 6 hours before the deadline; the rest is demo video, README, deployment and submission.
 
-An AI assistant checks the history before changing software. It connects what people discussed, what they approved, what the code does, and what the tests protect. It asks about important conflicts, then implements and validates the approved change.
+**Companion files:** `PLAN.md` (live status and decisions log), `PROMPT.md` (the one-shot build instructions for the coding agent), `ontology/*.json` (the graph model), `DESIGN.md` (written by the build: tokens and visual decisions).
 
-## Problem
+**Rules for anyone working in this repo**
+- Never run `git commit`, `git push`, or add a remote unless the user asks at that moment. Commits go out under the user's personal identity, chosen at commit time.
+- Never put a secret in a tracked file. Secrets live in `.env` (git-ignored). `.env.example` lists names only.
+- Never open a PR against an upstream repository. The product's build step (Actron's orchestrator around Pi) pushes only to the effective push target (the GitHub connection's `fork` field, else `GITHUB_FORK`). The Claude agent that builds Actron never pushes anything.
+- Only public, synthetic or the team's own data goes into the graph (hackathon rule 6). No company data.
+- Do not copy files from the fabric repository. It was read for patterns. Exception: `ontology/slack.json` and `ontology/linear.json` were exported from fabric with the user's permission and are used as described in section 7.
 
-Developers receive feature requests and bug reports without the full history of why the software behaves as it does. Decisions, discussions, tickets, code dependencies, and tests are spread across tools. A change can satisfy the new request while breaking an existing requirement.
+---
 
-## Intended outcome
+## 1. Product
 
-Trace each request through connected evidence, resolve consequential contradictions with the user, and preserve that reasoning through a reviewed PR. The graph must change what the agent does: whether it asks a question, what scope it implements, or which checks it runs.
+### 1.1 One sentence
+**Actron checks what your team already decided and built before an AI writes code, then carries the change from a Slack request to a tested pull request, and shows the exact graph path behind every step.**
 
-## Confirmed direction
+### 1.2 The problem
+A developer receives a request without the history of why the software behaves as it does. The reasons sit in Slack threads, PR reviews and Linear tickets; the dependencies sit in the code. A coding agent can satisfy the new request and break an earlier decision, or change a shared function and break an unrelated feature. Afterwards nobody can see why it did what it did.
 
-- A team of 2–4 is building the hackathon POC.
-- Ingest data from connected sources and create an ontology.
-- Keep source information and explicit relationships in FalkorDB for the POC.
-- Supply synthetic company data for the demo.
-- Treat explicitly approved decisions as current rules. Treat newer unapproved statements as proposals; ask when applicability or authority is unclear.
-- Defer detailed roles and approver permissions.
-- Establish the flow before finalizing implementation details.
-- Save planning files locally; do not create ChatGPT Spaces or Pages.
+### 1.3 Users
+Developers and technical leads in teams that work in Slack, Linear and GitHub. Hackathon scope: one workspace, one repository, one Linear team.
 
-## Users and initial boundaries
+### 1.4 What makes it different
+1. The graph changes the agent's behaviour: whether it asks a question, how wide the scope is, which tests it runs.
+2. Every statement carries its source: a quote and a link.
+3. The user is never stuck waiting. Long work runs in the background; Actron interrupts only when a person must act.
+4. Slack and the web UI are two windows on the same request, always in sync. Approve on either, including Slack on a phone.
+5. Nothing is invented. With no history, Actron says "nothing found" and continues.
 
-Primary users are developers and technical leads who request or review software changes in Slack.
+### 1.5 Empty history
+If the graph has no relevant history, Actron says so plainly and proceeds to the ticket and build. Reliability does not depend on history; usefulness grows with it.
 
-Slack, Linear, and GitHub are the initial named sources. Supporting every connected tool requires an explicit connector inventory; a connection alone does not guarantee ingestion support. One workspace, one repository, and one programming language are proposed POC limits, not confirmed product-wide limits.
+---
 
-## Working end-to-end flow
+## 2. Hackathon rules and track coverage
 
-1. Connect the source systems.
-2. Fetch source content, identities, metadata, and revisions.
-3. Establish the ontology, resolve matching entities across sources, and construct the graph.
-4. Keep graph knowledge current as source data changes.
-5. Receive a `/build` or `/bug` request and start a Slack thread.
-6. Investigate relevant decisions, source evidence, code dependencies, and tests.
-7. Ask focused questions about conflicting decisions or missing product requirements.
-8. Propose a Linear ticket with the agreed scope, acceptance criteria, preserved constraints, affected components, and evidence.
-9. Obtain approval of that exact ticket revision.
-10. Implement and test the change in an executable repository checkout.
-11. Open a PR, show results in Slack, and process review feedback.
-12. Obtain final authorization for the reviewed commit, verify required GitHub checks and reviews, and merge.
-13. Update the graph with the scoped decision, implementation, validation, and outcome.
+**Rules that shape the build** (event rules page, read 17 Oct 2026)
+- FalkorDB is the primary database and must do real work. A visualisation over ordinary storage does not qualify.
+- Only public, synthetic or own data.
+- AI assistance must be disclosed in the README. The team must be able to explain the graph model, queries, architecture and decisions. Projects entirely generated by AI without meaningful participant contribution may be rejected.
+- Required items: public repo; README with setup and graph data model; the Cypher queries or graph algorithms the product depends on; demo video; live deployment or full local setup; every track entered named at submission.
+- Side prize: best blog post. Top 50 projects get T-shirts.
 
-This is the current working proposal. The user has not yet confirmed every step or selected the detailed architecture.
+**Other databases are allowed.** Rule 2 says FalkorDB must be the *primary graph* database, and rule 3 says the graph must do real work. Nothing forbids other stores. PostgreSQL (app and workflow state) and Redis (SSE fan-out, idempotency, sessions, cache) are fine because the product's reasoning runs on FalkorDB: the investigator, the builder's tools, impact, criticality and every evidence path are graph queries.
 
-## Demonstration scenario
+**What each track means for Actron, in plain words**
+- **Track 01 (main goal):** an agent that *acts* because of what the graph shows. A Slack request comes in; the investigator agent walks the graph through MCP tools (who calls this function, which decisions constrain it, which PRs touched it, which tests cover it); what it finds decides whether it asks a question, how the ticket is scoped and which tests the build must run; then it acts (ticket, code change, PR) and shows the path behind each step.
+- **Track 02 (bonus):** the same agents *remember* and *hand over work*. Every request's history is kept (episodic), facts and decisions are kept (semantic), "how changes are done here" is learned from merged PRs and successful builds (procedural), the investigator hands its evidence to the builder through the graph, each workspace has its own graph, and a load test shows the graph handles concurrent agents.
+- **Track 03 (bonus):** Actron *understands how the team works*. Docs, tickets and chats sit in one graph with the code; it can say who owns and who knows each part; every decision traces to its source quote; knowledge stays current through incremental sync; and a Q&A mode answers questions like "why does this work this way?" or "who knows auth?" with sources, without starting a ticket.
 
-Request: **Allow project admins to export reports.**
+**Priority:** Track 01 is the main goal; every Track 01 point is required. Track 02 and 03 points are bonus work, built only after the Track 01 path works end to end. A track is named at submission only if its points are real.
 
-The graph connects an approved Finance-only report-export decision to its source discussion and ticket. It also shows that reports and invoices share a permission helper.
+| Track point | How Actron covers it | Priority |
+|---|---|---|
+| 01 Multi-hop reasoning | Slack message → ticket → PR → file → function, in one query | Required |
+| 01 Graph queries and algorithms as agent tools | BFS for impact, PageRank for criticality, shortest path for "how is this connected", exposed as MCP tools | Required |
+| 01 Tool selection through MCP | The investigator agent and Pi both choose graph tools over MCP; each call is shown on the timeline and canvas | Required |
+| 01 Actions based on the graph | Clarifying questions, Linear ticket, code change, PR | Required |
+| 01 Explainable results | Every finding shows its path and source quote | Required |
+| 02 Episodic memory | Event journal per request | Bonus |
+| 02 Semantic memory | Decision, Feature and fact nodes with sources | Bonus |
+| 02 Procedural memory | `Procedure` nodes learned from merged PRs and successful builds, reused by the next build | Bonus |
+| 02 Persistent history | Slack threads and request events across sessions | Bonus |
+| 02 Shared state and handoffs | Investigation hands evidence to the build through the graph; shown as a timeline step | Bonus |
+| 02 High-concurrency reads and writes | Parallel ingestion workers and concurrent requests; a load test reports throughput and p95 latency | Bonus |
+| 02 Memory per tenant | One FalkorDB graph per workspace | Bonus |
+| 03 Docs, tickets and chats in one graph | `CodeDocument` sections, Linear issues, GitHub issues, Slack messages | Bonus |
+| 03 Who owns and who knows what | CODEOWNERS and blame ownership; `KNOWS_ABOUT` from commits, reviews, tickets and Slack | Bonus |
+| 03 Decisions traced to source | `Decision` → exact quote → message, comment or ticket | Bonus |
+| 03 Knowledge kept current | Incremental sync, versions, tombstones, "last synced" per source | Bonus |
+| 03 Answers with sources | Q&A mode: "why does X work this way?" or "who knows auth?" answered from the graph with quotes, no ticket | Bonus |
 
-The agent asks whether report access should expand while invoice access remains Finance-only. After clarification and ticket approval, it implements that scope, runs both feature and regression checks, and opens a PR explaining the evidence and results.
+---
 
-Project membership, cross-project access, and whether Finance users require project membership are unresolved product details. Do not invent them as accepted requirements.
+## 3. Principles
 
-## Product behavior
+1. **One request, two windows.** A request has one authoritative state and one event log. Slack and the UI render it. Any action from either surface calls the same service function.
+2. **Approval is bound to what was shown.** Ticket approval binds to a ticket revision's content hash. PR approval binds to the PR head commit. A stale approval is refused with a plain reason.
+3. **Evidence or silence.** No evidence means saying so. Uncertain links are labelled "possible".
+4. **Quiet by default.** Interrupt only when a person must act.
+5. **The graph is the product.** Typed nodes, real properties, queries and algorithms that change behaviour.
+6. **No compromise on experience.** If time runs short, cut features, never the quality of what ships.
+7. **Spec first.** Every module has a written spec with acceptance criteria and test ids before code (section 17).
 
-- Cite source records and versions when presenting historical decisions.
-- Distinguish a possible conflict from a confirmed contradiction.
-- Treat code as evidence of current implementation, which can differ from approved policy.
-- Ask only questions that affect scope, policy, or implementation correctness.
-- Bind ticket approval to the exact ticket revision and canonical content hash.
-- Repair implementation failures within approved criteria; return to clarification and ticket approval if criteria must change.
-- Never weaken a preserved-constraint test solely to obtain a passing result.
-- Show actual check failures, repairs, unresolved questions, and validation limits.
-- Bind final merge authorization to the current PR head commit.
-- Preserve historical decisions and scope replacements precisely. A report-export exception must not erase a separate invoice restriction.
+---
 
-## Success criteria
+## 4. Scope
 
-| Outcome | Evidence |
+### 4.1 Must have (Track 01 demo path)
+1. Ontology files loaded into FalkorDB with indexes (section 7).
+2. Connect flow in the UI for GitHub repo, Slack and Linear; each connection starts its ingestion.
+3. Full ingestion of a real public repository (default `BetterThanTomorrow/calva` (MIT; TypeScript and Clojure), the same repository used for the ontology check): code, git history, PRs, reviews, review comments, issues, checks.
+4. Slack ingestion (backfill, live events, edits, deletes) and Linear ingestion.
+5. Incremental sync for every source, plus "Sync now".
+6. Linking: identity, explicit references with pending resolution, meaning links, decisions, link checks.
+7. Slack bot: requests, progress, questions, approvals, notifications.
+8. Investigator agent with MCP graph tools and a deterministic fallback.
+9. Linear ticket with revisions; approval bound to the revision hash.
+10. Build with Pi in a container, ending in a real PR on the fork with real test results.
+11. PR review in Slack or UI; approval bound to the head commit; feedback triggers a revision.
+12. Write-back of the PR, commits and touched functions to the graph.
+13. Web UI (section 13) at production quality.
+14. Test suite (section 18), README, DEMO script, deployment configuration.
+
+### 4.2 Bonus (after 4.1 passes)
+Track 02 and 03 points from section 2. Graph explorer depth.
+
+### 4.3 Cut first if time runs short (in order)
+Merge automation (the demo ends at an approved PR) · crash reconciliation beyond idempotency · Slack App Home tab.
+
+### 4.4 Out of scope
+Multi-tenant SaaS billing, arbitrary-scale repos, complete dynamic call analysis, production SRE hardening, a role and permission system.
+
+---
+
+## 5. Decisions
+
+| Area | Decision |
 |---|---|
-| Connected history changes the agent's action | Source-backed conflict or dependency triggers clarification or changes implementation/validation scope |
-| Ingestion works | Synthetic records are fetched from demonstration sources into the graph |
-| Knowledge is traceable | Findings link to source IDs, versions, supporting text, and repository snapshots |
-| Approved scope survives implementation | Ticket criteria, code diff, tests, and PR remain linked |
-| Validation is real | Exact tested commit, commands, exit codes, and results can be inspected |
-| Approval is current | Ticket revision and final commit match the approvals used |
-| Knowledge persists | A later request can retrieve the resulting scoped decision and outcome |
+| Graph database | FalkorDB v4.22.1 in Docker. All knowledge, links, reasoning paths and the thin request records. One graph per workspace. |
+| Application database | **PostgreSQL 16 (confirmed by the user, 17 Oct 2026).** Users, workspaces, connector connections with encrypted tokens, sync cursors and run history, settings, notifications, form drafts, and authoritative workflow state (requests, ticket revisions, approvals, build runs, event journal). Chosen because connectors are connected through the UI, approvals need transactions, and secrets must not live in the graph the agent queries. SQLAlchemy 2 with Alembic migrations. Plain PostgreSQL 16 in Docker for development and tests. For the live deployment, `DATABASE_URL` may point at a managed Postgres (Supabase or Neon) or the Postgres in the same compose stack; no vendor-specific features are used. Supabase's local stack (about ten containers) and its auth and realtime features are not used, because Slack sign-in and our own SSE already cover them. |
+| Redis | Redis 7 as its own service: SSE fan-out (pub/sub with replay from the journal), idempotency keys for Slack deliveries and API writes, sessions, rate-limit counters, model-result cache. (Queues, schedules, locks and retries are Temporal's job.) |
+| Backend | Python 3.12, FastAPI, Pydantic v2, uv. |
+| Worker | Temporal worker processes (Python SDK `temporalio`) running workflows and activities: ingestion, linking, investigation, builds, write-back (section 9.4). |
+| Workflow engine | **Temporal, self-hosted (confirmed by the user, 17 Oct 2026)** for both ingestion and the request flow. Free (open source), runs in the same Compose stack: `temporalio/auto-setup` using a `temporal` database in the same PostgreSQL container, plus `temporalio/ui`. Reason: the request flow is a long, human-in-the-loop workflow (waits for answers and approvals for hours, runs builds up to 30 minutes, then waits for review). Temporal gives this directly: approvals from Slack and the UI arrive as signals (first valid one wins), waiting is free and survives restarts, builds are activities with timeouts, heartbeats and retries, ingestion is one workflow per source made of small retried activities, and incremental sync runs on Temporal Schedules ("Sync now" triggers the schedule). Without it, the same guarantees must be hand-built with a Postgres state machine, arq jobs, Redis locks and recovery code. Costs: one more service (`temporalio/auto-setup` on its own Postgres database, plus the Temporal UI), and workflow code must be deterministic (no I/O, time or randomness inside workflows; all of that in activities). Testing uses the Python SDK's time-skipping test environment. |
+| Slack | Slack Bolt for Python. Socket Mode when an app-level token is configured (works without a public URL, typical on a laptop); otherwise HTTP events with signature verification. Connect with "Add to Slack" (OAuth) or a token form (spec B B11, B11a). |
+| Code parsing | Python `tree-sitter` with `tree-sitter-language-pack` (verified 17 Oct 2026 to load grammars for Python, TypeScript, TSX, JavaScript, Go, Java, Rust, Kotlin, Ruby, PHP, C, C++, Scala, Swift, Clojure, Elixir, Lua, Bash, Dart, Haskell, OCaml, plus Markdown, TOML, YAML, JSON, HTML, CSS, SQL; C# was not available). **Tier 1** (full extraction with language-specific rules: definitions, methods, imports, calls, tests): Python, TypeScript, TSX, JavaScript, Go, Java, Rust, the same set fabric's code extractor supported. **Tier 2** (generic extraction of functions, classes and call sites through per-language node-type maps, lower confidence): Kotlin, Ruby, PHP, C, C++, Scala, Swift, Clojure. Every other text file is still covered by chunks. No Rust toolchain is needed. |
+| Connectors | Written fresh, following patterns learned from fabric's bulk pullers (section 8). |
+| Models | One model module. Jev (TypeSafe System One) for judgments; LiteLLM for text generation; stubs when no key (section 10). |
+| Coding agent | Pi (`@earendil-works/pi-coding-agent`) in a Docker container with graph tools over MCP (section 12). |
+| Frontend | Next.js App Router, React, TypeScript strict, TanStack Query v5, Zustand for UI-only state, Tailwind over CSS-variable tokens, `motion`, d3-force with a custom Canvas renderer, Phosphor icons, JetBrains Mono for data (section 13). |
+| Auth | Sign in with Slack (OpenID Connect). A dev-only login in `ACTRON_ENV=dev`. |
+| Deployment | Docker Compose on one server with a reverse proxy (Caddy) configured for SSE. |
+| Spec approach | Spec-driven: `specs/` written from this PRD before code; tests map to spec acceptance ids (section 17). |
+| Design skills | Installed in `.claude/skills/` and used by stage (section 13.9). |
 
-## Proposed non-goals for the POC
+---
 
-Arbitrary-codebase understanding, complete dynamic dependency analysis, multi-tenant SaaS onboarding, production deployment of application changes, and unattended changes to product policy.
+## 6. Architecture
 
-## Open product questions
+```
+            Slack (Socket Mode / HTTP events)          Browser (Next.js)
+                        \                                  /   REST + SSE
+                         \                                /
+                        FastAPI API ─────────── Redis (SSE pub/sub, idempotency, sessions, cache)
+                         │     │
+                         │     └── signals / starts ──► Temporal server (schedules, timers, retries)
+                         │                                   │
+                         │                         Temporal workers: ingestion · linking · investigation · build · write-back
+                         │              │
+              PostgreSQL (app + workflow state)     FalkorDB (graph per workspace)
+                                        │
+                     MCP graph server (read-only) ◄── investigator agent, Pi
+                                        │
+                           Pi container (Docker)  ──► fork on GitHub (branch, PR)
+                                                       Linear (tickets)
+```
 
-1. Confirm the complete flow and first connector inventory.
-2. Decide how the ontology is created and extended.
-3. Define how source edits, deletions, missing access, and contradictory evidence affect current knowledge.
-4. Confirm exact acceptance criteria for the demonstration request.
-5. Select approval-invalidation rules without expanding the deferred discussion of roles.
-6. Confirm whether the first complete demonstration includes an actual merge or ends at a reviewed PR.
+**One request, two windows.** Service functions in `flow/service.py` are the only way to change a request. They write the state change and an event to PostgreSQL in one transaction, mirror the thin `Request` node into FalkorDB, then publish the event on Redis. The Slack sender and the SSE endpoint consume the same events. Slack messages are edited in place; the UI updates its query cache.
+
+### 6.1 Production-grade project structure
+
+```
+actron/
+  backend/
+    pyproject.toml
+    actron/
+      config.py              settings (pydantic-settings), env validation at startup
+      logging.py             structured JSON logs with request and job ids
+      db/                    SQLAlchemy models, session, Alembic migrations
+      graph/
+        store.py             FalkorDB access, safe binding, typed upserts, UNWIND batches
+        ontology.py          loads ontology/*.json, expands node groups, validates, creates indexes
+        ids.py               stable id builders per node type
+        queries.py           named Cypher queries (shared query, subgraph, owners, procedures)
+        algos.py             BFS, shortest path, PageRank wrappers with fallbacks
+      models/                model layer: jev.py, llm.py (LiteLLM), stubs.py, cache.py, usage.py
+      connectors/
+        common.py            paging, backoff, run records, error list, progress events
+        github.py  slack.py  linear.py
+        code/                clone.py, walk.py, parse_python.py, parse_typescript.py,
+                             resolve.py, tests_link.py, chunks.py, docs.py, git_log.py,
+                             hunks.py, blame.py, codeowners.py, metrics.py
+      linking/               identity.py, references.py, meaning.py, decisions.py,
+                             checks.py, knowledge.py, procedures.py
+      flow/                  states.py, service.py, events.py, investigate.py,
+                             investigator_agent.py, ticket.py, approvals.py, build.py,
+                             writeback.py, qa.py
+      integrations/          slack_bot.py, slack_blocks.py, linear_client.py, github_client.py
+      mcp_graph/server.py    read-only MCP server with graph tools
+      api/                   app.py, deps.py, auth.py, sse.py, routes/*.py
+      workflows/             Temporal workflows (deterministic): source_sync.py, linking.py,
+                             request.py, build.py, writeback.py, schedules.py
+      activities/            Temporal activities (all I/O): ingest_*.py, link_*.py,
+                             investigate.py, ticket.py, slack.py, build.py, writeback.py
+      worker.py              Temporal worker entry points (task queues: ingest, link, request, build)
+      cli.py                 actron ingest|sync|status|serve|worker|query|seed-dev
+    tests/                   unit/, integration/, e2e/, fixtures/, fakes/ (see section 18)
+  frontend/
+    package.json
+    app/                     App Router routes (section 13.5)
+    components/              ui primitives, domain components, graph canvas
+    lib/                     api client (generated types), query keys, sse, store, format
+    styles/                  tokens.css, globals.css
+    tests/                   unit (Vitest), e2e (Playwright), a11y (axe)
+  ontology/                  slack.json, linear.json, github.json, code.json, core.json
+  specs/                     one spec per module (section 17)
+  infra/
+    docker/                  backend.Dockerfile, frontend.Dockerfile, pi.Dockerfile, test-runner.Dockerfile
+    compose.yaml             dev stack
+    compose.prod.yaml        production-like stack with Caddy
+    Caddyfile
+  scripts/                   check.sh, test_all.sh, live_smoke.sh, load_test.py, gen_types.sh
+  docs/                      architecture.md, graph-model.md, queries.md, runbook.md
+  README.md  DEMO.md  DESIGN.md  DESIGN-DIRECTIONS.md  BUILD-REPORT.md  NEEDS-FROM-USER.md
+  PRD.md  PLAN.md  PROMPT.md
+```
+
+The existing root `compose.yaml` and `pyproject.toml` move into this layout during the build; behaviour must stay the same (FalkorDB settings in section 9.1).
+
+---
+
+## 7. Ontology
+
+### 7.1 Files
+
+```
+ontology/
+  slack.json     fabric's Slack connector ontology (exported 17 Oct 2026), node names prefixed with Slack
+  linear.json    fabric's Linear connector ontology (same export), used as is
+  github.json    ours, built from fabric's 30 GitHub connector actions plus 7 pulls Actron needs
+  code.json      ours, the tree-sitter code graph and git history; fabric's codebase ontology was a reference
+  core.json      ours, the connecting layer
+```
+
+Status: all five written and cross-checked on 17 Oct 2026. 96 node types; the 56 relationships in `core.json` expand to 287 concrete links (counts change as the files grow; code computes them at load time). Awaiting the user's review.
+
+**Shape (shared by all files):** `category`, `version`, `domain`, `summary`, `core_entities`, `entry_points`, `use_cases`, `action_classifications` (`action_name`, `tool_name`, `action_direction`, `action_type`, `description`, `requires_params`, `source_node_types`), `nodes` (`name`, `label`, `description`, `properties` [`name`, `type`, `description`, `required`, `indexed`, `unique`], `primary_key`, `display_name`, `source_actions`, `is_core`), `relationships` (`name`, `label`, `description`, `from_node`, `to_node`, `cardinality`, `required`, `temporal`, `semantic_type`).
+
+`core.json` adds `common_node_properties` (source, sourceUrl, workspaceId, ingestedAt, refreshedAt, ontologyVersion, deleted, deletedAt), `common_relationship_properties` (method, confidence, sourceRef, quote, createdAt, model) and `node_groups` (`TextSource`, `Mentionable`, `CodeTarget`, `Constrainable`, `Knowable`, `Evidence`) that a relationship may use as `from_node` or `to_node`; the loader expands a group into one relationship per member.
+
+### 7.2 Rules
+- The files are the source of truth. The loader validates every upsert against them; an unknown type is an error. Nothing creates or alters types at runtime.
+- Fabric's Slack and Linear files: names and properties are kept. The only allowed change is adding a property linking needs that a node lacks; for `SlackMessage` these are already added in `slack.json` (tagged `addedBy: actron`): `text`, `ts`, `threadTs`, `channelId`, `userId`, `subtype`, `replyCount`, `permalink`, `edited`, `editedAt`, `postedAt`, `version` (plus `deleted` and `deletedAt` from the common metadata). Relationships in those files that point at undefined node types (12 in Slack and 78 in Linear at the time of writing) are never created.
+- Our files use singular PascalCase labels with a source prefix (`Github*`, `Code*`, `Git*`), specific UPPER_SNAKE_CASE verbs, camelCase properties.
+- Stable ids: functions and classes use `code:fn:<repo>:<path>::<QualifiedName>`, never line numbers; a `~2` suffix separates same-named definitions in one file.
+- Every link stores `method` and `confidence`. Explicit and structural links have confidence 1. Model links store the model's probability and the model name.
+- Edits create a new version; deletes set `deleted=true` and `deletedAt`. Nothing is silently dropped.
+- The graph holds the latest snapshot of the working branch: exactly one node per current function, class and file. When a commit changes code, existing nodes are **updated in place** (stable ids keep every link valid); new code gets new nodes; deleted code is tombstoned, not removed; renamed or moved code gets a new node linked from the old one by `RENAMED_TO`, so earlier decisions, PRs and history carry over. History is carried by `GitCommit`, `TOUCHED` (with change type and lines), `PR_TOUCHED` and `GitFileChange`, never by duplicate code nodes; earlier versions of code are read from git on demand through the `history` and `get_code_at` tools.
+- Indexes: unique `id` per type; range indexes on properties marked `indexed`; full-text indexes on text properties marked "full-text indexed" (message text, PR and issue bodies, review comments, function and class bodies, decision statements, document sections, request text).
+
+### 7.3 Required graph algorithms
+- **Impact:** backwards traversal over `CALLS` (and `INSTANTIATES`) from seed functions to depth 3, using a variable-length match (FalkorDB's `algo.BFS` follows outgoing links only, so it is used for callees, not callers).
+- **Criticality:** PageRank over `CALLS`, stored on `CodeFunction.pageRank` with `criticalityPercentile` and caller counts after each ingestion.
+- **Connection:** shortest path between any two nodes (for "how is this connected").
+- **Ownership:** top authors and reviewers per function from `TOUCHED`, `BLAME_OWNS`, review comments.
+FalkorDB v4.22.1 provides `algo.pageRank`, `algo.BFS`, `algo.SPpaths`, `algo.SSpaths`, `algo.WCC`, `algo.betweenness`, `algo.labelPropagation` (verified from the procedure list). Verified live on 17 Oct 2026: `algo.pageRank('Label','REL') YIELD node, score`; `algo.SPpaths({sourceNode, targetNode, relDirection: 'both', maxLen}) YIELD path` for undirected shortest paths; `algo.BFS(node, depth, 'REL') YIELD nodes` (outgoing only); `algo.WCC(null) YIELD node, componentId`. Cypher `shortestPath` works only inside `WITH`/`RETURN` and only directed. Full details and workarounds in `docs/falkordb.md`. **[VERIFY]** call syntax on real data; fall back to Cypher or Python and document it.
+
+---
+
+## 8. Connectors and ingestion
+
+### 8.1 Connect flow
+1. The user opens Connect and fills each source's form (exact fields in spec C, C12): GitHub (access token, repository, working branch, push target, optional upstream, history days, webhook setup), Slack (**"Add to Slack" OAuth install** as the main path: the user approves on Slack's page and returns connected, with the bot token stored encrypted; or **"Connect with tokens"** as an equal second option, a form with two tokens: the bot token (required) and the app-level token (optional, for live events over Socket Mode when Actron has no public URL); then channels to read, requests channel and history days; spec B B11a), Linear (API key, team, optional ticket label, history days), or a Slack export upload. Each form validates with a live call before saving, and dependent fields (branches, channels, teams) load only after their parent validates.
+2. Tokens are encrypted at rest in PostgreSQL (Fernet key from `ACTRON_SECRET_KEY`). The UI never shows a stored token again, only its last four characters.
+3. Saving a connection starts that source's backfill at once. Sources run independently and in any order.
+
+### 8.2 Patterns taken from fabric's bulk pullers (fresh code)
+Message id `channel:ts`; replies point at `channel:thread_ts`; cursor paging until empty; `Retry-After` backoff on 429; incremental `since`/`oldest`/`updatedAt`; per-run error list instead of failing the run; per-channel message caps; oversized items split into linked parts; deleted files produce tombstones.
+
+### 8.3 Per source
+
+**Code and git (from a local clone)**
+- Clone (shallow for large repos, deepen to a configured history limit) into `ACTRON_CLONE_DIR/<workspace>/<repo>`.
+- Walk files; skip binaries, lock files, minified and generated files and files over the size limit (store a `CodeFile` without text with `skipReason`).
+- Parse with tree-sitter, tier 1 and tier 2 languages per section 5 (Calva: TypeScript and Clojure): classes, functions, methods, nested functions, decorators, signatures, docstrings, imports, call sites.
+- Store whole bodies. Cover remaining lines with overlapping `CodeChunk` nodes so every line of every stored file is in the graph.
+- Resolve calls: local scope → imports → project-wide by qualified name → name-only (low confidence). Count unresolved calls per function and per repo.
+- Tests: mark by path and naming; link `TESTS`, `TESTS_CLASS`, `TEST_FILE_FOR` by calls, imports and naming.
+- Manifests → `CodeComponent` and `CodeDependency`. Markdown → `CodeDocument` sections with explicit mentions of files and symbols.
+- `git log` with numstat and hunks → `GitCommit`, `GitAuthor`, `GitFileChange`, `TOUCHED`/`TOUCHED_CLASS` by mapping hunks onto function line ranges at that commit. `git blame` → `BLAME_OWNS`. `CODEOWNERS` → `CodeOwnerRule`.
+- After each run compute caller counts, PageRank and criticality.
+
+**GitHub (REST)** — in fabric's bulk order: repos, orgs, collaborators, PRs (with changed files), issues, milestones, releases, labels; then Actron's additions: PR reviews, review comments (repo-wide with `since`), issue comments (repo-wide with `since`), check runs on PR heads, workflow runs. Conditional requests with ETags. Works without a token at the public limit and reports "limited".
+
+**Slack (Web API + events)** — channels chosen in the Slack connection (`SLACK_CHANNELS` is a development fallback), users, history with `oldest`, thread replies, edits as new versions, deletes as tombstones. Live `message` events through the bot. Scopes (the single list is in spec B, B12a, and the manifest): `channels:history`, `groups:history`, `channels:read`, `groups:read`, `users:read`, `users:read.email`, `chat:write`, `im:write`, `app_mentions:read`, `commands`, `reactions:read`, `team:read`.
+
+**Slack export import** — as an alternative to the live API, Actron imports Slack's official export format (`users.json`, `channels.json`, per-channel day files, optional `events.jsonl`) from a folder or uploaded zip, mapped exactly like live Slack data (spec A, A9a). Used for teams with an export and for public archives converted to that format.
+
+**Linear (GraphQL)** — teams, projects, states, labels, users, issues with comments, paging by `endCursor`, incremental by `updatedAt`. Writes: create and update issues with a deterministic id.
+
+### 8.4 Incremental sync (core requirement)
+- First run: bounded backfill (default 90 days of messages, PRs and issues; full code; git history to a configured depth).
+- Later runs: only what changed since the saved cursor. Code: `git fetch`, diff from the last ingested commit, re-parse changed files only, tombstone deleted files, rebuild affected `CALLS` and metrics.
+- Slack live events plus a periodic catch-up pull. GitHub with ETags (304 does not count against the rate limit). Linear by `updatedAt`.
+- Cursors and run history per workspace and source in PostgreSQL. Each run records start, end, items per type, errors, partial flag.
+- **Working branch.** When the repository is connected, the user chooses the working branch (for example `dev`) from the repository's branches. That branch is what Actron ingests as code, keeps fresh, builds from by default and watches for merges. It can be changed in Settings (re-ingests). PRs merged into other branches are recorded as GitHub data but do not change the code in the graph, and the UI says so.
+- **Merged code reaches the graph immediately.** A GitHub webhook (`push` to the working branch, PR closed and merged into it, review and comment events) triggers the code and GitHub syncs at once; without a public URL, a merge watch polls each Actron PR every 2 minutes until it is merged. The repository Actron ingests (`GITHUB_REPOSITORY`) is the one the team merges into; for the demo that is the fork, so Actron's own merged PRs land in the graph. `GITHUB_UPSTREAM` is optional and read for history only.
+- **Freshness gate.** Before every investigation and every build, Actron compares the graph's commit with the repository's latest commit and syncs first if they differ, so no request reasons over stale code and Pi never rewrites work that was just merged (spec B, B2).
+- Scheduler: a Temporal Schedule per workspace and source (default every 5 minutes for GitHub and Linear, every 15 for code, Slack catch-up every 10) and "Sync now" in the UI.
+
+### 8.5 Linking (incremental and order-independent)
+After every source run, on new and changed items only:
+1. **Identity:** Slack user, GitHub user, Linear user and git author → one `Person` through `Identity`; email first, then `config/identity_map.yaml`; ambiguous stays unresolved and is shown.
+2. **Explicit references:** ticket keys (`ENG-17`), `#123`, `owner/name#123`, URLs, commit SHAs, file paths, qualified symbols. Resolve now or store a pending `Reference`; pending references are resolved when their source arrives.
+3. **Meaning links:** candidates by full-text search and graph neighbourhood; Jev judges each; keep above threshold; store probability.
+4. **Decisions:** messages, PR bodies, review comments, issues and tickets that look like decisions become `Decision` nodes with the exact quote and span. `approved` needs explicit evidence; otherwise `proposed`. Authority is never inferred from titles.
+5. **Link checks:** each model-made link is re-judged against its source text; weak links are flagged or dropped.
+6. **Knowledge and procedures (bonus):** `KNOWS_ABOUT` scores and `Procedure` learning.
+Model steps run in batches with progress counts and a per-run cap.
+
+### 8.6 Ingestion experience
+A live view: graph filling as nodes arrive, counts per node type, per-source rows with state chips (idle, running, partial, failed, done) and reasons, items per minute, last synced, "Sync now", and setup steps for unconnected sources.
+
+---
+
+## 9. Data stores
+
+### 9.1 FalkorDB
+- `compose.yaml` sets `FALKORDB_ARGS="THREAD_COUNT 8 TIMEOUT_MAX 60000 TIMEOUT_DEFAULT 15000 MAX_QUEUED_QUERIES 2000 RESULTSET_SIZE 10000"` and `REDIS_ARGS="--appendonly yes"`. The image's own defaults (`TIMEOUT 1000`, `MAX_QUEUED_QUERIES 25`) break bulk work.
+- One graph per workspace: `actron_<workspace_slug>`. Every query is scoped to the caller's workspace graph.
+- Cypher limits: no regex operator (use `CONTAINS`, `STARTS WITH`, full-text index); one label per node; 10,000 rows per result by default.
+- **Persistence (re-tested on v4.22.1, 17 Oct 2026: not reproduced; normal parameters are used and the test stays as a regression guard; see `docs/falkordb.md`). Original note:** an earlier project on this image found that writes using the `CYPHER name=value` parameter prefix were truncated when the append-only file replayed after restart. The build tests this first and switches to safe single-pass literal binding if it reproduces.
+
+### 9.2 PostgreSQL
+Tables: `users`, `workspaces`, `memberships`, `connections` (provider, encrypted secret, config JSONB, status), `sync_cursors`, `sync_runs`, `requests`, `ticket_revisions`, `approvals`, `build_runs`, `events` (append-only journal), `notifications`, `drafts`, `idempotency_keys` (backup to Redis), `model_calls`. Alembic migrations from the first commit.
+
+### 9.3 Redis
+Pub/sub channel per request and per workspace for SSE; keys for idempotency (`SET NX EX`), sessions, rate counters, model cache.
+
+### 9.4 Temporal (workflows and activities)
+- **Deployment:** `temporalio/auto-setup` (server) with `DB=postgres12`-style configuration pointing at the shared PostgreSQL container, database `temporal` (and `temporal_visibility`), plus `temporalio/ui` on an internal port. Namespace `actron`. **[VERIFY]** exact image tags and environment variables against Temporal's current docs and pin them.
+- **Task queues:** `ingest`, `link`, `request`, `build`. Workers run in the `worker` service; the build queue's worker has Docker access to start Pi containers.
+- **Workflows (deterministic: no I/O, clock, randomness or network inside; only activities, timers, signals, queries):**
+  - `SourceSyncWorkflow(workspace, source, mode=backfill|incremental)`: reads the cursor (activity), pages through the source (one activity per page or batch, each idempotent), writes graph batches (activity), saves the cursor after each batch (activity), then starts `LinkingWorkflow` for the changed ids. Uses `continue-as-new` after a configured number of pages.
+  - `LinkingWorkflow(workspace, changed_ids)`: identity → references (and pending resolution) → meaning links → decisions → link checks → knowledge and procedures, each an activity on batches.
+  - `RequestWorkflow(request_id)`: investigation (activity running the investigator agent), then waits for `answer` signals, ticket drafting and Linear sync (activities), waits for an `approve_ticket` signal carrying the revision hash (validated against the current revision; a stale hash is rejected and the refusal recorded), starts `BuildWorkflow` as a child, waits for `pr_feedback`/`approve_pr` signals (head SHA validated), then write-back. `cancel` signal at any wait. Queries expose the current state for the API.
+  - `BuildWorkflow(request_id, revision_hash)`: prepare checkout (activity), run Pi (long activity with heartbeats and a start-to-close timeout), run tests in the isolated container (activity), repair loop bounded by `ACTRON_MAX_REPAIRS`, scope check (activity using Jev J9), commit and push (activity), open or update the PR (activity).
+  - `WritebackWorkflow(request_id)`: ingest the new PR, commits and touched functions; record handoff and procedures.
+- **Schedules:** one Temporal Schedule per workspace and source for incremental sync (intervals in 8.4); "Sync now" triggers the schedule immediately. Overlap policy: skip if a run is in progress.
+- **Signals from Slack and the UI** go through `flow/service.py`, which validates the actor, writes the action event to PostgreSQL in a transaction, then signals the workflow. The workflow is the authority on transitions and outcomes (approval rows, state mirror); PostgreSQL keeps the journal and the queryable state that the API and UI read (spec B, B1).
+- **All signals on `RequestWorkflow`:** `answer`, `edit_ticket`, `approve_ticket`, `pr_feedback`, `approve_pr`, `close_pr`, `retry`, `cancel`, `budget_raised`. Query: `state()`. Exact payloads in spec B, B.C1; transitions in PROMPT appendix F.
+- **Retries:** per activity policy (exponential backoff, maximum attempts, non-retryable error types for validation and authorisation failures). Provider rate limits raise retryable errors carrying `Retry-After`.
+- **Concurrency:** builds limited by the build task queue's worker slot count (default 1); ingestion parallelism by the ingest worker's slots.
+- **Testing:** `temporalio.testing.WorkflowEnvironment.start_time_skipping()` for workflow tests with mocked activities; activity tests run as plain functions; integration tests against the real Temporal server in compose.
+- **Observability:** the Temporal UI (internal) for workflow history; Actron's own UI never depends on it.
+
+---
+
+## 10. Models
+
+### 10.1 One module, one function per job
+`classify_message`, `rank_candidates`, `judge_conflict`, `judge_link`, `extract_decision`, `investigator_step`, `write_questions`, `write_ticket`, `write_answer`, `summarize_findings`. Each reads its model from settings, logs model, tokens and latency to `model_calls`, and caches deterministic judgments in Redis.
+
+### 10.2 Jev (TypeSafe System One)
+- Use: classification, ranking, conflict probability, link checks.
+- SDK: `typesafe-sdk` (`TypeSafeClient` / `AsyncTypeSafeClient`), key in `TYPESAFE_API_KEY`. HTTP: `POST https://api.typesafe.ai/v1/systemone`, `Authorization: Bearer`, body `{model, state, questions}`.
+- Primitives: `noul` (returns a probability 0 to 1), `choice` (`criteria` map, returns `choice`, `probabilities`, `confidence`), `score` (`criteria` ordered list of 2 to 10 levels, returns `score`, `probabilities`, `confidence`).
+- Pin a version: `JEV_MODEL=jev-1.13.0` (`jev-latest` points to 1.13, `jev-preview` to 1.14). Price $0.042 per million input tokens; output free. Limits 64k tokens per request, 32k per question. Retry 429 and 529 with exponential backoff.
+- Ask independent questions over the same state in one request.
+- Fallback: on error, timeout or no key, the same question goes to the LiteLLM model behind the same function; with no model key at all, a marked stub (`stub: true`, low fixed confidence).
+
+### 10.2a Where Jev is used (every call site)
+Jev answers narrow judgments with probabilities. It never writes text. Every call below has a LiteLLM fallback and a stub (10.2).
+
+| # | Job function | When it runs | Primitive and question | State sent | How the answer is used |
+|---|---|---|---|---|---|
+| J1 | `classify_message` | Ingestion: every new or edited Slack message, PR body, review comment, issue and Linear comment | `choice`: "What is this text mainly doing?" criteria `decision`, `proposal`, `question`, `request`, `bug_report`, `status_update`, `chatter` | the text, author role in thread, thread parent text | Only `decision` and `proposal` go to decision extraction (saves model cost); `request` and `bug_report` raise candidate links to features |
+| J2 | `is_approval` | Ingestion: messages that reply to a `decision`/`proposal` | `noul`: "Does this reply explicitly approve the decision quoted in the state?" | reply text, quoted decision | Sets `approved` only above 0.85 and records the reply as `APPROVED_IN` evidence |
+| J3 | `judge_link` | Linking: each candidate (text → Feature/CodeFunction/CodeFile) found by full-text search and graph neighbourhood | `noul`: "Does this text refer to this piece of code or feature?" | text, candidate name, signature, docstring, path | Keep the `MENTIONS`/`DISCUSSED_IN` link at ≥ 0.6; store probability as `confidence` |
+| J4 | `check_link` | Link checks after extraction | `noul`: "Does the quote support this link exactly as stated?" | quote, link description | Below 0.5: drop; 0.5–0.7: keep and flag "possible" |
+| J5 | `rank_candidates` | Investigation: the top 20 full-text seeds for a request | `score` per candidate (one request, one question each): "How relevant is this to the request?" levels `unrelated`, `same area`, `directly involved`, `exact target` | request text, candidate summary | Seeds are the candidates scored at or above `directly involved` |
+| J6 | `judge_conflict` | Investigation: each decision constraining a seed | `choice`: "How does this decision relate to the request?" criteria `restricts`, `supports`, `unrelated`, `superseded_by_request` | request text, decision statement and quote, decision status | `restricts` probability ≥ 0.8 → conflict, 0.5–0.8 → possible conflict; drives clarifying questions |
+| J7 | `classify_request` | A new request from Slack or UI | `choice`: criteria `feature`, `bug`, `question` | request text | Routes to the build flow or Q&A mode |
+| J8 | `needs_question` | Investigation end | `noul`: "Is product input needed before implementing?" | findings summary, conflicts, criticality of seeds | Decides between "Needs your input" and "Ticket ready" (together with conflict labels and criticality) |
+| J9 | `is_scope_change` | Build: when the coding agent proposes touching files outside the ticket's affected list | `noul`: "Does this change go beyond the approved acceptance criteria?" | ticket JSON, proposed diff summary | ≥ 0.7 stops the build and returns to ticket approval |
+| J10 | `feedback_kind` | PR review feedback from Slack or UI | `choice`: criteria `code_change_within_scope`, `scope_change`, `question`, `approval` | feedback text, ticket JSON | Routes to a new build, back to ticket revision, an answer, or approval |
+
+Questions over the same state go in one Jev request (for example J1 for a batch item set is batched per item; J5 scores 20 candidates in one request). Every call is logged with tokens and latency; results are cached by a hash of the state and question.
+
+### 10.3 LiteLLM
+Library mode. Settings per job: `MODEL_DECISION` (cheap or free model for bulk extraction), `MODEL_WRITING` (questions, ticket, answers), `MODEL_AGENT` (investigator agent tool use), `MODEL_CODING` (Pi). Fallback chains configurable. Free models are checked for rate limits before bulk use. The coding step uses the strongest affordable model.
+
+### 10.4 Thresholds
+Conflict: ≥ 0.8 `conflict`, 0.5–0.8 `possible conflict`, otherwise unrelated. Link keep: ≥ 0.6. All configurable and calibrated on labelled fixtures (section 18).
+
+---
+
+## 11. Request flow
+
+### 11.1 States (same names and colours in Slack and UI)
+`Investigating` → `Needs your input` → `Ticket ready` → `Awaiting approval` → `Building` → `PR ready for review` → `Done`. Also `Needs attention`, `Changes requested`, `Cancelled`. Q&A requests: `Investigating` → `Done` (outcome `answered`). The full transitions table is PROMPT appendix F.
+
+### 11.2 Steps
+1. **Ask.** `/actron <text>`, a mention, or the UI. The bot replies in a thread within 3 seconds with one status message and an "Open in Actron" link; later updates edit that message. `/actron ask <question>` or a question-shaped mention starts Q&A mode (bonus).
+2. **Investigate.** The investigator agent receives the request and the MCP graph tools and chooses which to call within a step budget. Every tool call is an event and is drawn on the canvas. Fallback without a model: the deterministic pipeline (full-text seeds → Jev rerank → shared query → BFS and PageRank → conflict judgments).
+3. **Findings.** Summary, the best 2–3 pieces of evidence with quotes and links, label `conflict` / `possible conflict` / `nothing found` / `clear` ("Nothing here conflicts with this request.").
+4. **Clarify.** 1–3 questions tied to evidence, buttons where possible, answerable in Slack or UI. **Plus the target branch:** unless the request names an existing branch, Actron always asks "Which branch should this change go into?" (the working branch first and preselected, marked "tracked by Actron's memory"; recent other branches with protected ones marked; or a new branch from the working branch) before drafting the ticket. The ticket records `targetBranch`; the build starts from that branch's head and the PR targets it. The graph keeps the working branch's full snapshot; for another target branch, Actron says so and reads the files that differ from the checkout for Pi, so it never works from the wrong version.
+5. **Ticket.** Objective, acceptance criteria, constraints to preserve, affected functions, test plan. Canonical JSON → SHA-256 → `ticket_revisions`; synced to Linear. Any edit creates a new revision and voids earlier approval.
+6. **Approve.** Slack button or UI, bound to the revision hash. First valid approval wins; a repeat is a no-op with the same result.
+7. **Build.** Background Pi run (section 12). Steps stream as plain-language events.
+8. **PR.** Opened on the fork with ticket link, evidence, test results and constraints checklist. User notified.
+9. **Review.** Approve (bound to head SHA), request changes (new build on the same branch), or close.
+10. **Write-back.** PR, commits, touched functions, `DELIVERED_BY`, `HANDED_TO`, procedures updated; "memory updated" event.
+
+### 11.3 The shared query
+From seed `Feature`/`CodeFunction` nodes, one result containing: constraining `Decision`s with status, quote and source; tickets, PRs and issues that touched or mention the seeds; owners and recent authors; callers to depth 3 and covering tests; procedures for the area; and the path from each result back to the request for the canvas. Both halves of the team build to this output shape; it is frozen in spec B, B.C3 (shape in PROMPT appendix D) with fixtures.
+
+### 11.4 Notifications
+Only four interrupt: needs your input, ticket awaiting your approval, build failed or blocked, PR ready. In Slack: the request thread, plus a DM only when the specific person must act. In the UI: the inbox and a toast. Everything else edits the status message quietly.
+
+---
+
+## 12. Build step with Pi
+
+- **Image:** `infra/docker/pi.Dockerfile` with Node 22.19+, git, Python 3.12, a JDK 17+ (ClojureScript builds such as Calva's need Java) and the target repo's test tooling; Pi installed with `npm install -g --ignore-scripts @earendil-works/pi-coding-agent`. Pi has no sandbox or permission system, so it runs only in this container. **[VERIFY]** headless mode (`pi -p`, `--mode json`, RPC), provider configuration (`models.json`) and MCP configuration by running them in the image.
+- **Inputs:** fresh checkout of the fork on a new branch from a recorded base SHA (mounted), the approved ticket, the evidence bundle, procedures for the area, the test command, one model key, the MCP graph server address. **No GitHub, Slack or Linear credentials.**
+- **MCP graph tools (read only):** graph tools `search`, `callers`, `callees`, `impact`, `criticality`, `shortest_path`, `decisions_for`, `related_work`, `tests_for`, `owners`, `procedures_for`, `get_node`; code tools that serve source from the graph so Pi does not walk the file tree: `get_code`, `get_code_range`, `file_outline`, `find_symbol`, `references`, `search_code`; history tools `history`, `get_code_at`. 20 tools in total; exact schemas in spec B, B.C4.
+- **Context pack:** before Pi starts, Actron writes `/context/code.md` from the graph: full source of every affected function and class, their callers and callees with call-site snippets, covering tests, file outlines, constraining decisions and the area's procedure. Pi is told to start there and ask the graph for anything else, instead of exploring the repository.
+- **Making Pi follow instructions:** a numbered 10-step work protocol (read code.md, read notes, write a plan, ask the graph instead of exploring, smallest change, tests, run tests, stop on scope change, update notes, write `REPORT.json`), delivered as Pi's context prompt and as `/context/TASK.md`, **and enforced** by the orchestrator from Pi's event stream: exploration is counted (reminder after 3, stop and retry after 10), the graph must be consulted before changing called functions, and a missing plan, report or final test run fails the attempt. Every reminder and guard result is shown in the Build tab (spec B, B9).
+- **Memory:** within a build, repair attempts continue the same Pi session (or receive Pi's `notes.md` and a summary of the previous attempt); across builds of one request, the next build receives the previous build's notes, diff summary and the reviewer's feedback; across requests, procedural memory (`Procedure` nodes) carries how changes are made in each area.
+- **Rules:** existing tests may not be deleted or weakened (diff check fails the run); at most `ACTRON_MAX_REPAIRS` (default 2) repairs; time limit and token budget; a needed scope change stops the run and returns to ticket approval.
+- **Tests** run in a second container without the model key and without network where the repo allows. Commands, exit codes and output are recorded.
+- **Commit and push** by the orchestrator as `ACTRON_BOT_NAME <ACTRON_BOT_EMAIL>` through a credential helper (token never in a command line or remote URL). PR via the GitHub API.
+- **Concurrency:** the `build` task queue's worker runs one build at a time by default (`ACTRON_MAX_CONCURRENT_BUILDS`); waiting builds show their queue position.
+- **Orchestration:** the build runs as `BuildWorkflow`, a child of `RequestWorkflow` (section 9.4).
+
+---
+
+## 13. Experience and frontend
+
+### 13.1 Design research (17 Oct 2026)
+- **The reference** (winning project of an earlier hackathon, supplied by the user): near-black surface, a huge plain-language headline that states the situation ("Checkout is degrading."), tiny monospace eyebrows above every panel, outlined status chips, live sparklines, a numbered step pipeline with health per step, a streaming event log with timestamps, a toast reporting delivery to Slack, a footer status bar. Understood in two seconds.
+- **Linear** is the reference for dark-first restraint and keyboard-first density; **Vercel** for a monochrome system where colour only signals meaning ([adminlte roundup](https://adminlte.io/blog/dark-dashboard-templates/)).
+- **Agent trace views:** Graph of Trace (ACL 2026 demo) found that a live, structured directed-graph trace improved experts' understanding of agent workflows ([paper](https://aclanthology.org/2026.acl-demo.29/)). Langfuse offers aggregated and expanded graph modes for agent runs ([changelog](https://langfuse.com/changelog/2026-07-13-graph-view-modes.md)). Lesson: show the agent's path as a live graph, with an aggregated view by default and an expanded view on demand.
+- **Demo storytelling:** a hook about the problem, one sentence on what was built, most of the time on the live core action and its result, no explaining internals before showing the outcome ([guide](https://blogs.reskilll.com/hackathon-demo-presentation-tips-pitch-3-minutes-win-2026/)).
+
+### 13.2 Design debate and decision
+| Direction | Strength | Risk |
+|---|---|---|
+| A. Mission-control console (like the reference) | Proven to win; makes a live agent feel live | Looks like a copy; reads as ops, not as engineering judgement |
+| B. Editorial evidence dossier (case-file typography, quotes set like print) | Distinctive; fits "decisions and evidence"; strong storytelling | Can feel static and slow |
+| C. Linear-grade restraint (monochrome, dense, keyboard-first) | Instant credibility with developers | Can feel generic; low first-impression impact |
+
+**Decision: "Evidence console"**, a synthesis. The system and density of C (monochrome surfaces, colour reserved for meaning, keyboard-first), the live grammar of A (eyebrows, state chips, streaming timeline, numbered pipeline, footer status bar, delivery toasts), and the typographic voice of B for the two things that carry the story: headlines and evidence quotes. The signature element is the **evidence path**: on the canvas, the path from the request to the exact function traces hop by hop, and each hop shows its quote as a typeset card with its source. This is what judges should remember. The build writes the final tokens to `DESIGN.md` and two alternative token sets to `DESIGN-DIRECTIONS.md`.
+
+### 13.3 Visual system
+- **Theme:** dark only (user decision, 17 Oct 2026). There is no light theme.
+- **Surfaces:** one flat neutral black, `#0A0A0A`, for the page and all chrome (matching the user's VS Code setup, where every background is `#0A0A0A`). Regions are separated by hairline borders, not lighter boxes; only overlays and cards step up slightly (`#0F0F0F`, `#141414`, `#1A1A1A`). Neutral greys, no blue tint, no glass blur, no gradients.
+- **Colour:** monochrome UI; one signature accent used only for the evidence path and the primary action; semantic colours for state (ok, conflict, possible conflict, running, needs you) consistent with Slack. No purple-blue gradients. Contrast passes WCAG AA.
+- **Type:** three roles. Display (headlines, evidence quotes): a distinctive serif or grotesk chosen through the Impeccable font guidance. UI text: a clear sans. Data, labels, ids, code, timestamps, metrics, eyebrows: **JetBrains Mono**. Not an all-monospace interface. Banned as primary faces: Inter, Roboto, Arial, system defaults, Space Grotesk.
+- **Spacing and grid:** a stated 4-pt scale and a 12-column grid at 1440; tight inside groups, generous between groups.
+- **Icons:** Phosphor, one weight, plus custom SVG for the evidence-path glyphs.
+- **Motion:** purposeful only (13.7).
+
+### 13.4 Voice and story language
+- Calm, precise, evidence-first. State facts with their source. Short sentences, plain verbs.
+- Headlines say the situation as a sentence: "Two earlier decisions affect this request." "Building. 3 of 14 tests passed." "Nothing in your history touches this. Safe to continue." "Your memory is 62% built."
+- No hype words (supercharge, unleash, seamless, AI-powered), no exclamation marks, no emoji.
+- Errors say what happened and what to do: "Linear did not answer in 30 seconds. Your ticket is saved. Retry."
+- Empty states teach the next step.
+
+### 13.5 Screens
+Every screen has: a monospace **eyebrow** (section), a large plain-language **headline** (the situation), and a one-line **purpose** (what this screen does and the main action). Every panel has a monospace **label** and a display-face **title**.
+
+1. **Sign in** (`/app/signin`): "Sign in to see what your team already decided." Slack OIDC; dev login badge in dev.
+2. **Connect and memory** (`/app/connect`): live graph filling, counts per type, per-source rows with chips and reasons, items per minute, last synced, Sync now, setup steps for unconnected sources.
+3. **Home** (`/app`): headline summary ("2 requests need you. 1 is building."), groups Needs you / Running / Done, new request box (and Q&A box, bonus).
+4. **Request** (`/app/requests/[id]`), the hero screen: left timeline (plain-language events with timestamps, tool calls, handoff step); centre graph canvas (aggregated by default, expanded on demand); right tabs Evidence, Questions (when present), Ticket, Build, PR. Evidence cards with quote, source chip, link, confidence tier, "show path". Ticket with revisions, editable form, revision diff, approval card with hash and stale state. Build with steps, files and streaming test results. PR with diff, tests, constraints checklist, actions.
+5. **Graph explorer** (`/app/graph`): search any node, expand neighbours, filter by type, inspect properties and sources; always a focused subgraph with a node budget.
+6. **Inbox** (`/app/inbox`): needs you, failed or blocked, PR ready.
+7. **Settings** (`/app/settings`): connections, sync schedule, models per job, thresholds, bot identity.
+8. **Footer status bar** everywhere: ingestion state, last sync, connected sources, model status, environment, DEV badges.
+9. **Command palette** (Cmd+K) and keyboard shortcuts shown in tooltips.
+
+### 13.6 States and components
+Skeletons matching layout; ingestion loader with per-source counts; streaming text; designed empty, error, partial and offline states; toasts with delivery status; optimistic mutations with rollback and the server's reason; stale approval cards; cancel with confirmation naming what stops; diff viewer; test list with failing output; constraints checklist; state chip; timeline step; evidence card; approval card; tool-call card; numbered pipeline.
+
+### 13.7 Motion
+Evidence-path tracing, node entrance as data arrives, chip transitions, timeline entrance, number tickers, toasts, tab and panel transitions, skeleton-to-content cross-fade. Durations and easings are tokens. `prefers-reduced-motion` swaps movement for instant or fade. Canvas at 60 fps for a few hundred nodes.
+
+### 13.8 Engineering rules
+TypeScript strict; Vercel React best practices (no waterfalls, dynamic import of the canvas, small client bundles, Suspense boundaries, server components where they help); generated API types from OpenAPI; one `EventSource` per open request writing into the query cache with `Last-Event-ID` resume; optimistic updates surfacing 409 reasons; no secrets in the browser; first-load JS under 250 KB gzipped on non-graph routes; no layout shift on streaming updates; keyboard access, visible focus, `aria-live` for streams, a list alternative to the canvas.
+
+### 13.9 How the skills are used (by stage, for a reason)
+| Stage | Skill | Why this one |
+|---|---|---|
+| Direction and system | `impeccable` (shape, init), `interface-design` | Product-UI craft: purpose, hierarchy, tokens, recorded in `DESIGN.md` |
+| Building screens | `frontend-design`, `frontend-ui-engineering`, `vercel-react-best-practices` | Distinctive visuals with sound React and Next.js structure and performance |
+| States and interaction | `interaction-design` | Feedback, loading, toasts, modals, focus |
+| Motion | `12-principles-of-animation` | Timing, easing and choreography with intent |
+| Polish | `better-ui` | Radius, optical alignment, shadows, icon states |
+| Guardrails | `ui-skills-root` | Constraints that stop generic output |
+| Review | `impeccable` (critique, audit, polish, detector) | Catch "AI slop" patterns and fix them before shipping |
+Impeccable's automatic hooks stay off unless the user enables them.
+
+### 13.9a Winning intent
+Judges see the frontend, not the backend. The frontend must tell the whole story, start to end, so clearly that a judge remembers it afterwards. Every screen must say what it is for at a glance. Everything that happens behind the scenes (graph queries, MCP tool calls, Jev judgments, Pi coding, Slack and Linear actions) must be **shown**, as it happens, with recognisable icons and plain words.
+
+**Live system map ("what is happening now").** A compact, always-available illustration of the actors and the work moving between them:
+- Actors, each with its real logo where one exists: Slack, Actron (our mark), FalkorDB (the graph), Jev (TypeSafe), the LLM, Pi (in its container), GitHub, Linear.
+- When an event happens, a pulse travels along the edge between the actors involved, and the active actor shows what it is doing in one line ("FalkorDB · callers(activate) · 12 results", "Jev · judging 3 decisions", "Pi · editing src/evaluate.ts", "GitHub · opening PR #18").
+- It sits on the Request page (collapsible strip above the canvas) and in a full-screen "System view". It is driven by the same event stream as the timeline, so it is always true.
+
+**Icons.**
+- Brand marks are real: Slack, GitHub, Linear, FalkorDB, TypeSafe/Jev, Pi, Python, TypeScript, Docker. Use official brand assets or Simple Icons SVGs, unmodified apart from allowed monochrome or colour variants, following each brand's guidelines. Store them in `frontend/public/brands/` with a `LICENSES.md` noting the source and trademark owner. If an official mark cannot be found, use a clean text wordmark, never a look-alike.
+- Concept icons are a custom Actron glyph set drawn as SVG for this product, consistent stroke and grid, each with an animated state: request, investigation, MCP tool call, each graph tool (callers, callees, impact, criticality, shortest path, decisions, tests, owners, procedures, search), evidence, decision, conflict, possible conflict, question, ticket, approval, handoff, build, test pass, test fail, repair, PR, memory updated. Phosphor is used only for generic interface controls (close, search, settings, chevrons).
+- No generic "AI sparkle", robot, magic-wand or brain icons.
+
+**Landing and story (`/`, public).** A landing page that tells the story in one scroll, with real product visuals (screens captured from the running app, never mockups): the problem in one sentence, what Actron does in one sentence, the five-step journey (ask in Slack → evidence from the graph → decide → build → review) each shown with the actual UI, the graph model, the tech (FalkorDB, Jev, Pi, MCP) with real logos, and "Open the app". The app moves to `/app/*`.
+
+**Hero visual.** A 3D rendering of the workspace's real memory graph (React Three Fiber), slowly orbiting, with a subtle shader glow on the evidence path. Loaded lazily after first paint, paused off-screen, disabled under `prefers-reduced-motion` and on low-power devices (static image fallback), and excluded from the Lighthouse-critical path.
+
+**Replay mode (for judges).** Any finished request can be replayed: its real event log plays back in sequence at an adjustable speed, with the timeline, the system map and the evidence path animating together and short captions explaining each step. A "Watch a replay" entry on the landing page and Home. It replays real recorded events, never invented ones.
+
+**Performance and quality targets (tested).** Lighthouse on `/`, `/app`, `/app/requests/[id]` and `/app/connect`: Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 90 (landing). Core Web Vitals: LCP < 2.5 s, CLS < 0.05, INP < 200 ms on a mid-range laptop profile. Fonts self-hosted through `next/font` with `display: swap` and subsetting; images through `next/image`; 3D, shaders and the canvas code-split and lazy.
+
+### 13.9b Production SaaS completeness (final review, 17 Oct 2026)
+The frontend must feel like a shipped SaaS product, never like a generated demo. Required, in addition to everything above:
+- **In-app setup guides:** every source card has a "Set up step by step" guide (Slack: create the app from Actron's manifest, install, Socket Mode and app-level token on laptops, check permissions against the required scopes, invite the bot, try `/actron`; GitHub: fine-grained token with each permission explained, repository, working branch, webhook; Linear: API key, team). Each step has exact clicks, copy buttons, deep links, a live check that turns green, and troubleshooting mapped from provider error codes (spec C, C13).
+- **Onboarding:** a first-run checklist on Home and Connect ("Connect your repository → Choose the working branch → Connect Slack → Connect Linear → Ask your first request"), each step ticking itself when done, dismissible after completion.
+- **Workspaces:** the first Slack sign-in from a Slack team creates the workspace (named after the team; the signer is its owner); later sign-ins from the same team join it as members. The dev login creates a `dev` workspace.
+- **Brand:** an Actron logo mark and wordmark (SVG, designed for this product, derived from the evidence-path glyph), favicon set, app icon, and an Open Graph image for the landing page and replays (generated with `next/og`, showing the headline and a real graph snapshot).
+- **Every route** has a page title (`<Request title> · Actron`), meta description, designed 404 and 500 pages in the product's voice ("This page isn't in Actron's memory."), and a global error boundary that keeps the shell.
+- **Formatting rules:** sentence case for all UI text; relative times ("4 min ago") with the exact local time in a tooltip; thousands separators and tabular figures; long ids and paths truncated in the middle with a copy button and full text on hover; durations as "2m 14s".
+- **Forms:** inline validation with plain messages, disabled submit until valid, loading state on the submit button, unsaved-changes guard on the ticket editor and settings.
+- **Navigation details:** scroll restoration, preserved tab and panel state per request, deep links to tabs (`?tab=build`), back and forward behave correctly.
+- **Responsive:** the landing page and public replay work from 375 px wide (Lighthouse mobile run); the app is designed for 1,024 px and wider and shows a calm message below that ("Actron works best on a larger screen. Approvals also work in Slack.").
+- **Cost visibility:** the Build tab and request summary show model tokens and an estimated cost per build and per investigation.
+- **Replay fallback:** "Watch a replay" appears only when at least one finished request exists; otherwise the landing page shows the five-step journey with real screenshots and an "Open the app" button.
+
+### 13.10 Slack experience
+Block Kit status message per request: header (request title), context line (state chip as emoji-free text label, request id, elapsed), sections for evidence (quote, source link), actions (Approve with revision hash, Answer, Open in Actron). Edited in place. Buttons carry the request id and hash or SHA in `action_id`. Same state names as the UI.
+
+---
+
+## 14. API (between backend and frontend, and the contract between team halves)
+
+REST JSON plus SSE. All writes take an `Idempotency-Key` header.
+- Auth: `GET /api/auth/slack/start`, `GET /api/auth/slack/callback`, `POST /api/auth/dev-login` (dev only), `GET /api/me`.
+- Connectors (form definitions): `GET /api/connectors` (fields per source, in fabric's `ui_form` shape plus `dependsOn` and `optionsFrom`; spec C, C12), `POST /api/connectors/{provider}/validate` (live test call, returns what it found), `GET /api/connectors/{provider}/options?field=` (branches, channels, teams, labels).
+- Connections: `GET/POST /api/connections`, `DELETE /api/connections/{id}`, `POST /api/connections/{id}/sync`.
+- Ingestion: `GET /api/ingestion/status`, `GET /api/ingestion/runs`.
+- Requests: `POST /api/requests`, `GET /api/requests`, `GET /api/requests/{id}`, `GET /api/requests/{id}/events` (SSE), `POST /api/requests/{id}/answers`, `POST /api/requests/{id}/ticket/revisions`, `POST /api/requests/{id}/approvals` (`kind`, `revisionHash` or `headSha`; 409 on mismatch), `POST /api/requests/{id}/feedback`, `POST /api/requests/{id}/cancel`.
+- Graph: `GET /api/graph/subgraph?requestId=&mode=aggregated|expanded`, `GET /api/graph/nodes/{id}`, `GET /api/graph/search?q=`, `GET /api/graph/path?from=&to=`, `GET /api/graph/sample?limit=` (3D hero), `GET /api/graph/stats` (counts per node type).
+- Streams: `GET /api/stream` (workspace SSE for Home, inbox, ingestion, footer, system view).
+- Replays: `GET /api/requests/{id}/replay` (all events of a finished request), `GET /api/public/replays/{id}` (only when the workspace allows public replays; redacted).
+- Q&A (bonus): `POST /api/ask` is an alias that creates a request with `kind_hint = question` (same as `POST /api/requests`).
+- Slack OAuth: `GET /api/slack/install`, `GET /api/slack/oauth/callback` (spec B, B11a). GitHub webhook: `POST /webhooks/github` (spec A, A11).
+- Connections (more): `PATCH /api/connections/{id}` (change working branch, channels, team, history days), `POST /api/connections/{id}/reset-cursor`; `POST /api/connections` accepts `multipart/form-data` for the Slack export upload. Setup-guide checks: `GET /api/connectors/{provider}/checks` (scopes, Socket Mode, webhook ping received, `/actron` received).
+- Request actions (more): `POST /api/requests/{id}/retry`, `POST /api/requests/{id}/close-pr`; `GET /api/requests/{id}/ticket/revisions` (all revisions with diffs), `GET /api/requests/{id}/pr/diff`, `GET /api/requests/{id}/builds/{buildId}/log` (raw logs). `GET /api/requests/{id}` returns `{…, revisions[], builds[{…, tokens, costUsd}], investigation {…, tokens, costUsd}}`.
+- Graph (more): `GET /api/graph/nodes/{id}/neighbours?types=&limit=` (explorer expand), quick queries through the same tool functions as MCP (`callers`, `owners`, `decisions_for`, `shortest_path`).
+- Settings (more): `POST /api/settings/budget` (raise the daily cap; signals waiting builds); settings keys include `approvers`, `model_prices`, `allowPublicReplays`, thresholds, models per job.
+- Notifications: `GET /api/notifications`, `POST /api/notifications/{id}/read`.
+- Settings: `GET/PUT /api/settings`.
+- Health: `GET /api/health` (FalkorDB, PostgreSQL, Redis, Temporal, Slack, GitHub, Linear, models).
+- Slack: `POST /slack/events`, `/slack/commands`, `/slack/interactions` (HTTP mode, signature verified).
+
+---
+
+## 15. Security and safety
+Encrypted connector secrets; session cookies (HttpOnly, SameSite=Lax, Secure in prod); CSRF protection on state-changing routes; Slack signature verification; dev login impossible in prod; Pi isolated with no repo-write or chat credentials; PRs only to the fork; existing tests cannot be weakened; secrets redacted from logs; per-workspace graph isolation tested.
+
+---
+
+## 16. Operations
+- **Local:** `make up` (compose: FalkorDB, PostgreSQL, Redis, Temporal server and UI, backend, worker, frontend, backup; builds the Pi and test-runner images), `make test`, `make check`.
+- **Unattended work:** the build runs in `tmux` so the user can attach from a phone over SSH (`tmux attach -t actron`). Product approvals can also be done from Slack's mobile app.
+- **Production-like:** `compose.prod.yaml` with Caddy (SSE: no buffering, long timeouts), health checks, restart policies, volumes, no secrets in files.
+- **Deployment target (least hassle):** one server running the whole stack in one Docker Compose file: FalkorDB, PostgreSQL, Redis, Temporal (server and UI, using a `temporal` database in the same PostgreSQL container), backend, worker, frontend and Caddy with automatic HTTPS. One command: `make deploy` (copies `.env`, pulls or builds images, runs migrations, starts, checks health). No external managed services are required. Managed Postgres (Supabase or Neon) is optional, only for managed backups, by changing `DATABASE_URL`. Temporal Cloud is not used; self-hosted Temporal is free (open source). The build measures real memory and CPU use of the full stack and records the recommended server size in `docs/runbook.md`.
+- **Observability:** structured logs, `/api/health`, per-run ingestion records, model usage table.
+- **Backups:** a nightly `pg_dump` of the `actron` database (and the `temporal` database) to a volume, keeping 7 days; FalkorDB's append-only file on its own volume; a documented restore procedure in `docs/runbook.md`.
+- **Model spending cap:** `ACTRON_DAILY_MODEL_BUDGET_USD` (default 20). When today's estimated spend (from `model_calls` and build token counts with a price table per model in settings) reaches the cap, new investigations use the deterministic pipeline and stubs, new builds wait with the reason "daily model budget reached", and the footer shows it. Raising the cap in Settings resumes work.
+- **Slack app manifest:** `infra/slack/manifest.yaml` (and `manifest.dev.yaml` for Socket Mode) with every scope, the `/actron` command, events, interactivity, OIDC redirect URL and Socket Mode flag, so the Slack app is created in one paste; setup steps in `docs/runbook.md`.
+- **Who may approve:** Settings holds an approvers list (Slack users); a ticket or PR can be approved by the requester or anyone on the list; others get a refusal with the reason. Empty list means only the requester (and the workspace owner).
+
+### 16a. Submission extras
+- `docs/blog-post.md`: a draft for the blog side prize (problem, how the graph drives the agent, the evidence path, what we learned), written from the real build, with real screenshots and numbers.
+
+---
+
+## 17. Spec-driven development (three major specs, tests first)
+- The work is specified in **three major specs**, not dozens of small ones:
+  - `specs/A-graph-and-ingestion.md`: platform, stores, ontology loader, graph store, ids, code and git ingestion, GitHub, Slack and Linear connectors, connect flow, incremental sync, linking, models (Jev and LiteLLM).
+  - `specs/B-agents-and-workflow.md`: request flow and states, events, shared query, MCP graph server, investigator agent and fallback, questions, tickets, approvals, Pi build, write-back, Slack bot, API, auth, worker, bonus tracks.
+  - `specs/C-experience.md`: design system, every screen and state, motion, data flow, accessibility, performance.
+- Each spec has numbered acceptance criteria (`A-AC-n`, `B-AC-n`, `C-AC-n`), edge cases, interfaces and the test files that prove each criterion.
+- **Tests are written first for each spec**, then the code, then the spec's tests run as a gate. The whole suite runs at the end (and three times in a row before done).
+- Every test names the acceptance id it covers. `scripts/spec_coverage.py` fails if any acceptance id has no test.
+
+## 17a. Living documentation
+Docs are written as the code is written, not at the end. Each phase updates them. They explain where and how each thing is used, for judges and for the team:
+- `docs/architecture.md`: components, data flow, why each store exists.
+- `docs/graph-model.md`: generated from the ontology files; every node and link with an example.
+- `docs/queries.md`: every named Cypher query and algorithm, what it answers, where it is called, example output.
+- `docs/ingestion.md`: per source, what is pulled, how it maps to the ontology, incremental cursors, failure handling.
+- `docs/linking.md`: identity, references, meaning links, decisions, link checks; thresholds and measured quality.
+- `docs/models-and-jev.md`: every model call site (table 10.2a), the exact Jev questions, fallbacks, costs and measured accuracy.
+- `docs/agents.md`: the investigator agent's tools and loop, the handoff, the Pi build and its rules.
+- `docs/workflow.md`: states, events, approvals and how Slack and the UI stay in sync.
+- `docs/frontend.md`: design decisions, components, data flow, how each skill was applied.
+- `docs/runbook.md`: setup, environment variables, operations, what was verified live (Pi flags, Jev calls).
+- `docs/testing.md`: test levels, how to run them, counts and coverage.
+- `docs/falkordb.md`: what Actron uses in FalkorDB and why, every limitation found (error text, what the docs say), the workaround chosen, and the test that proves it. Started on 17 Oct 2026; kept current throughout the build. Useful for judges and for the blog post.
+
+---
+
+## 18. Testing (as many tests as reasonable, at every level)
+
+Targets: backend line coverage ≥ 85%, frontend component coverage ≥ 80%, every acceptance id covered, zero flaky tests (each e2e test run three times in CI-style before counting).
+
+- **Unit:** id builders, ontology validation and group expansion, safe binding, parsers per language feature (functions, methods, nested, decorators, async, classes, inheritance, imports in all forms), call resolution tiers, chunk coverage, hunk-to-function mapping, blame aggregation, reference regexes (every format, false positives), identity matching, thresholds, canonical JSON and hashing, state machine transitions (every pair, valid and invalid), Slack block builders, Jev request building and response parsing, stub behaviour.
+- **Property-based (Hypothesis):** every line covered by exactly one function, class or chunk boundary set; canonical JSON hash stable under key order; state machine never reaches an invalid state from any action sequence; ids stable when lines shift.
+- **Integration (real FalkorDB, PostgreSQL, Redis from compose):** store and indexes, persistence across restart, ingestion of synthetic repos built during tests, idempotent re-runs, incremental runs after commits (add, change, rename, delete), shared query and algorithms on a fixture graph, per-workspace isolation, linking with pending references resolved later.
+- **Contract tests with fakes:** local fake servers for Slack, GitHub, Linear, Jev and the LiteLLM provider covering paging, 429 and 529, ETag 304, timeouts, partial runs, edits, deletes, external Linear edits.
+- **Flow tests:** every transition, stale ticket and PR approvals, concurrent approvals from Slack and UI, duplicate deliveries, cancel at every state, nothing-found path, conflict thresholds on labelled data, Q&A (bonus).
+- **Build tests:** labelled fake Pi (applies a known patch) for success, failing then repaired, weakened-test rejection, timeout, scope-change stop, missing identity, missing fork; credential isolation check on the container command and environment.
+- **Security tests:** signature verification, unsigned rejection, CSRF, dev login blocked in prod, secret redaction, token never returned by the API.
+- **Frontend unit (Vitest + Testing Library):** every component in 13.6, reducers, query-key logic, SSE handling and reconnect, optimistic rollback, stale approval logic.
+- **End-to-end (Playwright + backend fakes):** sign in; connect sources; watch ingestion; signed Slack command → investigation with path → answer in UI updates Slack → ticket → approve in Slack and UI (one counts) → build → PR → approve → write-back visible; failure paths; keyboard-only run; reduced-motion run; screenshots at 1440 and 1920.
+- **Accessibility:** axe on every screen, zero serious violations.
+- **Performance:** Ingestion time for Calva, shared query p95, canvas frame time, bundle sizes; load test for concurrency (bonus).
+- **Live smoke (opt-in, `@pytest.mark.live`):** real Calva ingestion, real GitHub PRs, Slack auth, Linear auth, Jev call, Pi trivial prompt.
+- **Labelled fixtures:** `tests/fixtures/link_labels.yaml` and `conflict_labels.yaml`; precision and recall reported (and marked as stub results when no key).
+- **Ontology hardening (before the build):** a realistic sample dataset (prepared by a separate agent from `prompts/ONTOLOGY-SAMPLE-DATA-PROMPT.md`: real public Calva code and GitHub data, the real public `#calva` Slack archive (pseudonymised), and a small synthetic Linear workspace grounded in them, with ground-truth labels) is mapped onto the ontology and checked with competency questions: every expected node and link can be represented, every competency query returns the labelled answer, nothing needs a type the ontology lacks. Gaps found here change the ontology before the build starts. The dataset is temporary: it is deleted after the hardening checks so that the build agent never sees it, and the build uses its own fixtures.
+
+---
+
+## 19. Demo and submission
+- **3-minute story:** hook (an AI changes a shared helper and breaks a decision nobody remembered, 15 s) → what Actron is (one sentence) → live: a Slack request, the evidence path lighting up, the clarifying question answered from a phone, the ticket approved, the build streaming, the PR with the constraints checklist (most of the time) → the graph model and two queries (20 s) → close.
+- **README:** what it is, tracks entered, architecture diagram, graph model generated from the ontology, key Cypher queries and algorithms with explanations, setup, environment variables, limits, AI-use disclosure, screenshots.
+- **Blog post** (bonus side prize) from the same material.
+
+---
+
+## 20. Open items for the user
+Recorded in `NEEDS-FROM-USER.md` by the build. Known now: ontology review; Slack app, tokens and channels; GitHub token and fork; bot identity for commits; Linear key and team; model keys per job; Jev key; demo repo confirmation; deployment target; visual direction confirmation.
+
+---
+
+## 21. Risks
+| Risk | Response |
+|---|---|
+| Too much for the time | Build order in `PROMPT.md`; cut list in 4.3; never cut UX quality |
+| Provider setup is slow | Everything works with fakes and stubs; live steps listed for the user |
+| Model links are wrong | Labelled fixtures, thresholds, link checks, visible confidence |
+| Jev unavailable | Fallback to LiteLLM, then stubs |
+| Pi flags differ from docs | Verify in the image; record what works |
+| Canvas performance | Focused subgraphs, aggregated mode, Canvas rendering |
+| Persistence bug in FalkorDB image | Tested first; literal binding fallback |
+| Thin history in the demo repo | Pick for real PR history; Slack and Linear used live |

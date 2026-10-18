@@ -1,0 +1,13 @@
+# Identity map (spec A, A12.1): accounts that belong to the same person when their emails do not match.
+# Used after exact email matching. Display names alone never join accounts.
+#
+# Account references:
+#   slack:<Slack user id>       e.g. slack:U0123ABCD
+#   github:<login>              e.g. github:octocat   (or github:<numeric user id>)
+#   linear:<Linear user uuid>   e.g. linear:5f0c7c0e-...
+#   git:<commit author email>   e.g. git:ana@example.com
+#
+# Example:
+# - person: Ana Lopez
+#   accounts: [slack:U0123ABCD, github:analopez, git:ana.lopez@users.example.org]
+[]

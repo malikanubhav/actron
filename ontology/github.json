@@ -1,0 +1,2114 @@
+{
+ "category": "github",
+ "version": "1.0",
+ "domain": "software_engineering",
+ "summary": "GitHub collaboration data for one or more repositories: pull requests with their changed files, reviews and review comments, issues and comments, labels, milestones, releases, branches, workflow and check runs, users and organisations. Built from the actions of the fabric GitHub connector plus the extra pulls Actron needs for review history and CI results. Commits are not modelled here: they come from the local git clone (code.json) and are joined by SHA. Links from GitHub nodes to code nodes (Commit, File, Function) and to people are defined in core.json. Every node also carries the shared metadata defined in core.json (source, sourceUrl, ingestedAt, ontologyVersion, deleted).",
+ "core_entities": [
+  "GithubPullRequest",
+  "GithubReview",
+  "GithubReviewComment",
+  "GithubIssue"
+ ],
+ "entry_points": [
+  "GithubRepository"
+ ],
+ "use_cases": [
+  "Which pull requests changed this file or function, and why?",
+  "What did reviewers argue about in this pull request, line by line?",
+  "Which issue or ticket did this pull request close?",
+  "Which CI checks passed or failed on the head commit of this pull request?",
+  "Who reviews changes to this area of the code most often?",
+  "What shipped in this release?"
+ ],
+ "action_classifications": [
+  {
+   "action_name": "Get Viewer",
+   "tool_name": "get_user",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Profile of the authenticated GitHub user.",
+   "requires_params": false,
+   "source_node_types": [
+    "GithubUser"
+   ]
+  },
+  {
+   "action_name": "List Repositories",
+   "tool_name": "list_repos",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Repositories of the authenticated user or an org.",
+   "requires_params": false,
+   "source_node_types": [
+    "GithubRepository"
+   ]
+  },
+  {
+   "action_name": "Get Repository",
+   "tool_name": "get_repo",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "One repository with default branch, topics and languages.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubRepository"
+   ]
+  },
+  {
+   "action_name": "Create Repository",
+   "tool_name": "create_repo",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Creates a repository.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubRepository"
+   ]
+  },
+  {
+   "action_name": "List Organizations",
+   "tool_name": "list_orgs",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Organisations the user belongs to.",
+   "requires_params": false,
+   "source_node_types": [
+    "GithubOrganization"
+   ]
+  },
+  {
+   "action_name": "List Users",
+   "tool_name": "list_users",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Org members or repository collaborators.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubUser"
+   ]
+  },
+  {
+   "action_name": "Get Issues",
+   "tool_name": "get_issues",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Issues of a repository with filters.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubIssue",
+    "GithubLabel",
+    "GithubMilestone",
+    "GithubUser"
+   ]
+  },
+  {
+   "action_name": "Get Issue",
+   "tool_name": "get_issue",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "One issue with body, labels, assignees and comments.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubIssue",
+    "GithubIssueComment"
+   ]
+  },
+  {
+   "action_name": "Create Issue",
+   "tool_name": "create_issue",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Creates an issue.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubIssue"
+   ]
+  },
+  {
+   "action_name": "Update Issue",
+   "tool_name": "update_issue",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Updates an issue.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubIssue"
+   ]
+  },
+  {
+   "action_name": "Create Issue Comment",
+   "tool_name": "create_issue_comment",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Comments on an issue or pull request.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubIssueComment"
+   ]
+  },
+  {
+   "action_name": "Get Pull Requests",
+   "tool_name": "get_pull_requests",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Pull requests with review status and check rollup.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubPullRequest",
+    "GithubUser",
+    "GithubLabel"
+   ]
+  },
+  {
+   "action_name": "Get Pull Request",
+   "tool_name": "get_pull_request",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "One pull request with files, commits, reviews and comments.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubPullRequest",
+    "GithubPullRequestFile",
+    "GithubReview",
+    "GithubReviewComment",
+    "GithubIssueComment"
+   ]
+  },
+  {
+   "action_name": "Create PR Review",
+   "tool_name": "create_pr_review",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Submits a review on a pull request.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubReview"
+   ]
+  },
+  {
+   "action_name": "Merge Pull Request",
+   "tool_name": "merge_pull_request",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Merges a pull request.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubPullRequest"
+   ]
+  },
+  {
+   "action_name": "Create Branch",
+   "tool_name": "create_branch",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Creates a branch.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubBranch"
+   ]
+  },
+  {
+   "action_name": "Search",
+   "tool_name": "search",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Search across repositories, issues, pull requests and users.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubRepository",
+    "GithubIssue",
+    "GithubPullRequest",
+    "GithubUser"
+   ]
+  },
+  {
+   "action_name": "List Workflow Runs",
+   "tool_name": "list_workflow_runs",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "GitHub Actions runs with status and conclusion.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubWorkflowRun"
+   ]
+  },
+  {
+   "action_name": "Get Workflow Run",
+   "tool_name": "get_workflow_run",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "One workflow run with jobs and steps.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubWorkflowRun"
+   ]
+  },
+  {
+   "action_name": "List Releases",
+   "tool_name": "list_releases",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Releases with tag, name and body.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubRelease"
+   ]
+  },
+  {
+   "action_name": "Create Release",
+   "tool_name": "create_release",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Creates a release.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubRelease"
+   ]
+  },
+  {
+   "action_name": "Get Notifications",
+   "tool_name": "get_notifications",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Notification inbox of the authenticated user. Not ingested.",
+   "requires_params": false,
+   "source_node_types": []
+  },
+  {
+   "action_name": "List Branches",
+   "tool_name": "list_branches",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Branches with head commit and protection.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubBranch"
+   ]
+  },
+  {
+   "action_name": "Get Branch",
+   "tool_name": "get_branch",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "One branch with head commit and checks.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubBranch"
+   ]
+  },
+  {
+   "action_name": "Delete Branch",
+   "tool_name": "delete_branch",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Deletes a branch.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubBranch"
+   ]
+  },
+  {
+   "action_name": "Get File Tree",
+   "tool_name": "get_file_tree",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Folder contents. Code itself is ingested from the local clone (code.json).",
+   "requires_params": true,
+   "source_node_types": []
+  },
+  {
+   "action_name": "Get File Content",
+   "tool_name": "get_file_content",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "One file's content. Code itself is ingested from the local clone (code.json).",
+   "requires_params": true,
+   "source_node_types": []
+  },
+  {
+   "action_name": "Compare Branches",
+   "tool_name": "compare_branches",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "Commits and files changed between two branches.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubBranch"
+   ]
+  },
+  {
+   "action_name": "Create Pull Request",
+   "tool_name": "create_pull_request",
+   "action_direction": "push",
+   "action_type": "action",
+   "description": "Opens a pull request. Used by the Actron build step on the fork only.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubPullRequest"
+   ]
+  },
+  {
+   "action_name": "Get Commit",
+   "tool_name": "get_commit",
+   "action_direction": "pull",
+   "action_type": "action",
+   "description": "One commit by SHA. Commits are ingested from the local clone; this is used only for status rollup.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubCheckRun"
+   ]
+  },
+  {
+   "action_name": "List Milestones",
+   "tool_name": "list_milestones",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Milestones of a repository (bulk ingestion only).",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubMilestone"
+   ]
+  },
+  {
+   "action_name": "List Labels",
+   "tool_name": "list_labels",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Labels of a repository (bulk ingestion only).",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubLabel"
+   ]
+  },
+  {
+   "action_name": "List Pull Request Files",
+   "tool_name": "list_pull_request_files",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Files changed by a pull request with line counts. Added by Actron.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubPullRequestFile"
+   ]
+  },
+  {
+   "action_name": "List Pull Request Reviews",
+   "tool_name": "list_pull_request_reviews",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Reviews of a pull request. Added by Actron.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubReview"
+   ]
+  },
+  {
+   "action_name": "List Review Comments",
+   "tool_name": "list_review_comments",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Line-level review comments, repository-wide with since. Added by Actron.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubReviewComment"
+   ]
+  },
+  {
+   "action_name": "List Issue Comments",
+   "tool_name": "list_issue_comments",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Conversation comments on issues and pull requests, repository-wide with since. Added by Actron.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubIssueComment"
+   ]
+  },
+  {
+   "action_name": "List Check Runs",
+   "tool_name": "list_check_runs",
+   "action_direction": "pull",
+   "action_type": "ingestion",
+   "description": "Check runs for a commit (pull request head). Added by Actron.",
+   "requires_params": true,
+   "source_node_types": [
+    "GithubCheckRun"
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "name": "GithubOrganization",
+   "label": "GithubOrganization",
+   "description": "A GitHub organisation that owns repositories.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:org:<numeric id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "login",
+     "type": "string",
+     "description": "Organisation login",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Organisation description",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "login",
+   "source_actions": [
+    "List Organizations"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GithubRepository",
+   "label": "GithubRepository",
+   "description": "A repository on GitHub. Linked in core.json to the code Repository built from the local clone.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:repo:<numeric id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "fullName",
+     "type": "string",
+     "description": "owner/name",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Repository name",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "owner",
+     "type": "string",
+     "description": "Owner login",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Repository description",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "defaultBranch",
+     "type": "string",
+     "description": "Default branch name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isPrivate",
+     "type": "boolean",
+     "description": "Private repository",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isFork",
+     "type": "boolean",
+     "description": "This repository is a fork",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "language",
+     "type": "string",
+     "description": "Primary language",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "topics",
+     "type": "array",
+     "description": "Topics",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "stars",
+     "type": "integer",
+     "description": "Stargazer count",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Created time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "pushedAt",
+     "type": "datetime",
+     "description": "Last push time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "fullName",
+   "source_actions": [
+    "List Repositories",
+    "Get Repository"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GithubUser",
+   "label": "GithubUser",
+   "description": "A GitHub account (person or bot). Linked in core.json to one Person through Identity.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:user:<numeric id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "login",
+     "type": "string",
+     "description": "Login",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Display name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "email",
+     "type": "string",
+     "description": "Public email, used for identity matching when present",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "type",
+     "type": "string",
+     "description": "User or Bot",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "avatarUrl",
+     "type": "string",
+     "description": "Avatar URL",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Profile URL",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "login",
+   "source_actions": [
+    "Get Viewer",
+    "List Users",
+    "Get Pull Requests",
+    "Get Issues"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GithubPullRequest",
+   "label": "GithubPullRequest",
+   "description": "A pull request: the unit that ties a change to its discussion, review, checks and the code it touched.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:pr:<owner/name>#<number>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "number",
+     "type": "integer",
+     "description": "Pull request number",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Title",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "body",
+     "type": "string",
+     "description": "Description in markdown (full-text indexed)",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "state",
+     "type": "string",
+     "description": "open or closed",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "isDraft",
+     "type": "boolean",
+     "description": "Draft pull request",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "merged",
+     "type": "boolean",
+     "description": "Was merged",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "mergedAt",
+     "type": "datetime",
+     "description": "Merge time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "closedAt",
+     "type": "datetime",
+     "description": "Close time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Open time",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "updatedAt",
+     "type": "datetime",
+     "description": "Last update, used as the incremental cursor",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "headRef",
+     "type": "string",
+     "description": "Head branch name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "headSha",
+     "type": "string",
+     "description": "Head commit SHA",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "baseRef",
+     "type": "string",
+     "description": "Base branch name",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "baseSha",
+     "type": "string",
+     "description": "Base commit SHA",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "mergeCommitSha",
+     "type": "string",
+     "description": "Merge commit SHA",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "additions",
+     "type": "integer",
+     "description": "Lines added",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "deletions",
+     "type": "integer",
+     "description": "Lines deleted",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "changedFiles",
+     "type": "integer",
+     "description": "Number of files changed",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "openedByActron",
+     "type": "boolean",
+     "description": "Opened by the Actron build step",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "title",
+   "source_actions": [
+    "Get Pull Requests",
+    "Get Pull Request",
+    "Create Pull Request"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "GithubPullRequestFile",
+   "label": "GithubPullRequestFile",
+   "description": "One file changed by a pull request. Linked in core.json to the code File and, through its diff hunks, to the Functions it touched.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:prfile:<owner/name>#<number>:<path>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "path",
+     "type": "string",
+     "description": "File path after the change",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "previousPath",
+     "type": "string",
+     "description": "Path before a rename",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "status",
+     "type": "string",
+     "description": "added, modified, removed or renamed",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "additions",
+     "type": "integer",
+     "description": "Lines added",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "deletions",
+     "type": "integer",
+     "description": "Lines deleted",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "hunks",
+     "type": "array",
+     "description": "Changed line ranges in the new file as [start, end] pairs, parsed from the patch",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "path",
+   "source_actions": [
+    "List Pull Request Files",
+    "Get Pull Request"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GithubReview",
+   "label": "GithubReview",
+   "description": "A review submitted on a pull request.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:review:<numeric id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "state",
+     "type": "string",
+     "description": "APPROVED, CHANGES_REQUESTED, COMMENTED or DISMISSED",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "body",
+     "type": "string",
+     "description": "Review summary text (full-text indexed)",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "commitSha",
+     "type": "string",
+     "description": "Commit the review was made on",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "submittedAt",
+     "type": "datetime",
+     "description": "Submit time",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "state",
+   "source_actions": [
+    "List Pull Request Reviews",
+    "Get Pull Request",
+    "Create PR Review"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "GithubReviewComment",
+   "label": "GithubReviewComment",
+   "description": "A comment on a specific line of a pull request diff. The main source of line-level reasoning.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:reviewcomment:<numeric id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "body",
+     "type": "string",
+     "description": "Comment text (full-text indexed)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "path",
+     "type": "string",
+     "description": "File path the comment is on",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "line",
+     "type": "integer",
+     "description": "Line in the new file",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "startLine",
+     "type": "integer",
+     "description": "First line of a multi-line comment",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "side",
+     "type": "string",
+     "description": "LEFT or RIGHT side of the diff",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "diffHunk",
+     "type": "string",
+     "description": "Diff context shown with the comment",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "commitSha",
+     "type": "string",
+     "description": "Commit the comment refers to",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Created time",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "updatedAt",
+     "type": "datetime",
+     "description": "Last edit, used as the incremental cursor",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "path",
+   "source_actions": [
+    "List Review Comments",
+    "Get Pull Request"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "GithubIssue",
+   "label": "GithubIssue",
+   "description": "An issue (bug report, feature request or discussion) in a repository.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:issue:<owner/name>#<number>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "number",
+     "type": "integer",
+     "description": "Issue number",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Title",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "body",
+     "type": "string",
+     "description": "Body in markdown (full-text indexed)",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "state",
+     "type": "string",
+     "description": "open or closed",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "stateReason",
+     "type": "string",
+     "description": "completed, not_planned or reopened",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Created time",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "updatedAt",
+     "type": "datetime",
+     "description": "Last update, used as the incremental cursor",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "closedAt",
+     "type": "datetime",
+     "description": "Close time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "title",
+   "source_actions": [
+    "Get Issues",
+    "Get Issue",
+    "Create Issue",
+    "Update Issue"
+   ],
+   "is_core": true
+  },
+  {
+   "name": "GithubIssueComment",
+   "label": "GithubIssueComment",
+   "description": "A conversation comment on an issue or on a pull request (not tied to a diff line).",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:issuecomment:<numeric id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "body",
+     "type": "string",
+     "description": "Comment text (full-text indexed)",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Created time",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "updatedAt",
+     "type": "datetime",
+     "description": "Last edit, used as the incremental cursor",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "id",
+   "source_actions": [
+    "List Issue Comments",
+    "Get Issue",
+    "Get Pull Request",
+    "Create Issue Comment"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GithubLabel",
+   "label": "GithubLabel",
+   "description": "A label used on issues and pull requests.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:label:<owner/name>:<name>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Label name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "color",
+     "type": "string",
+     "description": "Hex colour",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Label description",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "List Labels",
+    "Get Issues",
+    "Get Pull Requests"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GithubMilestone",
+   "label": "GithubMilestone",
+   "description": "A milestone grouping issues and pull requests.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:milestone:<owner/name>#<number>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "number",
+     "type": "integer",
+     "description": "Milestone number",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Title",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Description",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "state",
+     "type": "string",
+     "description": "open or closed",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "dueOn",
+     "type": "datetime",
+     "description": "Due date",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "title",
+   "source_actions": [
+    "List Milestones"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GithubRelease",
+   "label": "GithubRelease",
+   "description": "A published release of the repository.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:release:<numeric id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "tagName",
+     "type": "string",
+     "description": "Git tag",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Release title",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "body",
+     "type": "string",
+     "description": "Release notes (full-text indexed)",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "isDraft",
+     "type": "boolean",
+     "description": "Draft",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isPrerelease",
+     "type": "boolean",
+     "description": "Pre-release",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "targetCommitish",
+     "type": "string",
+     "description": "Branch or commit the tag points at",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "publishedAt",
+     "type": "datetime",
+     "description": "Publish time",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "tagName",
+   "source_actions": [
+    "List Releases",
+    "Create Release"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GithubBranch",
+   "label": "GithubBranch",
+   "description": "A branch on GitHub, including branches opened by the Actron build step on the fork.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:branch:<owner/name>:<branch>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Branch name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "headSha",
+     "type": "string",
+     "description": "Head commit SHA",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "isProtected",
+     "type": "boolean",
+     "description": "Branch protection enabled",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "isDefault",
+     "type": "boolean",
+     "description": "Default branch",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "List Branches",
+    "Get Branch",
+    "Create Branch"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GithubWorkflowRun",
+   "label": "GithubWorkflowRun",
+   "description": "A GitHub Actions workflow run.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:run:<numeric id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Workflow name",
+     "required": true,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "event",
+     "type": "string",
+     "description": "Trigger event (push, pull_request, ...)",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "status",
+     "type": "string",
+     "description": "queued, in_progress or completed",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "conclusion",
+     "type": "string",
+     "description": "success, failure, cancelled, ...",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "headSha",
+     "type": "string",
+     "description": "Commit the run tested",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "headBranch",
+     "type": "string",
+     "description": "Branch the run tested",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "runNumber",
+     "type": "integer",
+     "description": "Run number",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "createdAt",
+     "type": "datetime",
+     "description": "Start time",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "List Workflow Runs",
+    "Get Workflow Run"
+   ],
+   "is_core": false
+  },
+  {
+   "name": "GithubCheckRun",
+   "label": "GithubCheckRun",
+   "description": "One check (for example a test job) reported on a commit. Tells which checks protect a pull request head.",
+   "properties": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "github:check:<numeric id>",
+     "required": true,
+     "indexed": true,
+     "unique": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Check name",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "status",
+     "type": "string",
+     "description": "queued, in_progress or completed",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "conclusion",
+     "type": "string",
+     "description": "success, failure, neutral, skipped, ...",
+     "required": false,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "headSha",
+     "type": "string",
+     "description": "Commit the check ran on",
+     "required": true,
+     "indexed": true,
+     "unique": false
+    },
+    {
+     "name": "startedAt",
+     "type": "datetime",
+     "description": "Start time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "completedAt",
+     "type": "datetime",
+     "description": "End time",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    },
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Web URL",
+     "required": false,
+     "indexed": false,
+     "unique": false
+    }
+   ],
+   "primary_key": "id",
+   "display_name": "name",
+   "source_actions": [
+    "List Check Runs",
+    "Get Commit"
+   ],
+   "is_core": false
+  }
+ ],
+ "relationships": [
+  {
+   "name": "BELONGS_TO_ORG",
+   "label": "BELONGS_TO_ORG",
+   "description": "Repository is owned by an organisation.",
+   "from_node": "GithubRepository",
+   "to_node": "GithubOrganization",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "MEMBER_OF_ORG",
+   "label": "MEMBER_OF_ORG",
+   "description": "User is a member of an organisation.",
+   "from_node": "GithubUser",
+   "to_node": "GithubOrganization",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "membership"
+  },
+  {
+   "name": "COLLABORATES_ON",
+   "label": "COLLABORATES_ON",
+   "description": "User is a collaborator on a repository.",
+   "from_node": "GithubUser",
+   "to_node": "GithubRepository",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "membership"
+  },
+  {
+   "name": "PR_IN_REPO",
+   "label": "PR_IN_REPO",
+   "description": "Pull request belongs to a repository.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "OPENED_BY",
+   "label": "OPENED_BY",
+   "description": "Pull request was opened by a user.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "MERGED_BY",
+   "label": "MERGED_BY",
+   "description": "Pull request was merged by a user.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "action"
+  },
+  {
+   "name": "PR_ASSIGNED_TO",
+   "label": "PR_ASSIGNED_TO",
+   "description": "Pull request is assigned to a user.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubUser",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "assignment"
+  },
+  {
+   "name": "REVIEW_REQUESTED_FROM",
+   "label": "REVIEW_REQUESTED_FROM",
+   "description": "A review was requested from a user.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubUser",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "assignment"
+  },
+  {
+   "name": "PR_HAS_LABEL",
+   "label": "PR_HAS_LABEL",
+   "description": "Pull request carries a label.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubLabel",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "classification"
+  },
+  {
+   "name": "PR_IN_MILESTONE",
+   "label": "PR_IN_MILESTONE",
+   "description": "Pull request is in a milestone.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubMilestone",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "grouping"
+  },
+  {
+   "name": "FROM_BRANCH",
+   "label": "FROM_BRANCH",
+   "description": "Pull request head branch.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubBranch",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "INTO_BRANCH",
+   "label": "INTO_BRANCH",
+   "description": "Pull request base branch.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubBranch",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "CHANGES_FILE",
+   "label": "CHANGES_FILE",
+   "description": "Pull request changes a file.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubPullRequestFile",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "change"
+  },
+  {
+   "name": "HAS_REVIEW",
+   "label": "HAS_REVIEW",
+   "description": "Pull request received a review.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubReview",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "review"
+  },
+  {
+   "name": "REVIEWED_BY",
+   "label": "REVIEWED_BY",
+   "description": "Review was submitted by a user.",
+   "from_node": "GithubReview",
+   "to_node": "GithubUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "PART_OF_REVIEW",
+   "label": "PART_OF_REVIEW",
+   "description": "Line comment was submitted as part of a review.",
+   "from_node": "GithubReviewComment",
+   "to_node": "GithubReview",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "COMMENTS_ON_PR",
+   "label": "COMMENTS_ON_PR",
+   "description": "Line comment belongs to a pull request.",
+   "from_node": "GithubReviewComment",
+   "to_node": "GithubPullRequest",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "COMMENTS_ON_FILE",
+   "label": "COMMENTS_ON_FILE",
+   "description": "Line comment is on a file changed by the pull request.",
+   "from_node": "GithubReviewComment",
+   "to_node": "GithubPullRequestFile",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "reference"
+  },
+  {
+   "name": "REPLIES_TO",
+   "label": "REPLIES_TO",
+   "description": "Line comment replies to another line comment.",
+   "from_node": "GithubReviewComment",
+   "to_node": "GithubReviewComment",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "thread"
+  },
+  {
+   "name": "REVIEW_COMMENT_BY",
+   "label": "REVIEW_COMMENT_BY",
+   "description": "Line comment was written by a user.",
+   "from_node": "GithubReviewComment",
+   "to_node": "GithubUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "PR_DISCUSSED_IN",
+   "label": "PR_DISCUSSED_IN",
+   "description": "Pull request has a conversation comment.",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubIssueComment",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "discussion"
+  },
+  {
+   "name": "ISSUE_IN_REPO",
+   "label": "ISSUE_IN_REPO",
+   "description": "Issue belongs to a repository.",
+   "from_node": "GithubIssue",
+   "to_node": "GithubRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "ISSUE_OPENED_BY",
+   "label": "ISSUE_OPENED_BY",
+   "description": "Issue was opened by a user.",
+   "from_node": "GithubIssue",
+   "to_node": "GithubUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "ISSUE_ASSIGNED_TO",
+   "label": "ISSUE_ASSIGNED_TO",
+   "description": "Issue is assigned to a user.",
+   "from_node": "GithubIssue",
+   "to_node": "GithubUser",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "assignment"
+  },
+  {
+   "name": "ISSUE_HAS_LABEL",
+   "label": "ISSUE_HAS_LABEL",
+   "description": "Issue carries a label.",
+   "from_node": "GithubIssue",
+   "to_node": "GithubLabel",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "classification"
+  },
+  {
+   "name": "ISSUE_IN_MILESTONE",
+   "label": "ISSUE_IN_MILESTONE",
+   "description": "Issue is in a milestone.",
+   "from_node": "GithubIssue",
+   "to_node": "GithubMilestone",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "grouping"
+  },
+  {
+   "name": "ISSUE_DISCUSSED_IN",
+   "label": "ISSUE_DISCUSSED_IN",
+   "description": "Issue has a conversation comment.",
+   "from_node": "GithubIssue",
+   "to_node": "GithubIssueComment",
+   "cardinality": "one_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "discussion"
+  },
+  {
+   "name": "COMMENT_BY",
+   "label": "COMMENT_BY",
+   "description": "Conversation comment was written by a user.",
+   "from_node": "GithubIssueComment",
+   "to_node": "GithubUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "CLOSES_ISSUE",
+   "label": "CLOSES_ISSUE",
+   "description": "Pull request closes an issue (closing keyword or GitHub's link).",
+   "from_node": "GithubPullRequest",
+   "to_node": "GithubIssue",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "resolution"
+  },
+  {
+   "name": "BRANCH_IN_REPO",
+   "label": "BRANCH_IN_REPO",
+   "description": "Branch belongs to a repository.",
+   "from_node": "GithubBranch",
+   "to_node": "GithubRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "LABEL_IN_REPO",
+   "label": "LABEL_IN_REPO",
+   "description": "Label belongs to a repository.",
+   "from_node": "GithubLabel",
+   "to_node": "GithubRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "MILESTONE_IN_REPO",
+   "label": "MILESTONE_IN_REPO",
+   "description": "Milestone belongs to a repository.",
+   "from_node": "GithubMilestone",
+   "to_node": "GithubRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "RELEASE_IN_REPO",
+   "label": "RELEASE_IN_REPO",
+   "description": "Release belongs to a repository.",
+   "from_node": "GithubRelease",
+   "to_node": "GithubRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "RELEASED_BY",
+   "label": "RELEASED_BY",
+   "description": "Release was published by a user.",
+   "from_node": "GithubRelease",
+   "to_node": "GithubUser",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "authorship"
+  },
+  {
+   "name": "RUN_IN_REPO",
+   "label": "RUN_IN_REPO",
+   "description": "Workflow run belongs to a repository.",
+   "from_node": "GithubWorkflowRun",
+   "to_node": "GithubRepository",
+   "cardinality": "many_to_one",
+   "required": true,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "RUN_FOR_PR",
+   "label": "RUN_FOR_PR",
+   "description": "Workflow run tested a pull request head.",
+   "from_node": "GithubWorkflowRun",
+   "to_node": "GithubPullRequest",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "validation"
+  },
+  {
+   "name": "CHECK_FOR_PR",
+   "label": "CHECK_FOR_PR",
+   "description": "Check run reported on a pull request head.",
+   "from_node": "GithubCheckRun",
+   "to_node": "GithubPullRequest",
+   "cardinality": "many_to_many",
+   "required": false,
+   "temporal": true,
+   "semantic_type": "validation"
+  },
+  {
+   "name": "CHECK_PART_OF_RUN",
+   "label": "CHECK_PART_OF_RUN",
+   "description": "Check run belongs to a workflow run.",
+   "from_node": "GithubCheckRun",
+   "to_node": "GithubWorkflowRun",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "containment"
+  },
+  {
+   "name": "FORK_OF",
+   "label": "FORK_OF",
+   "description": "Repository is a fork of another repository (from the repo's parent field).",
+   "from_node": "GithubRepository",
+   "to_node": "GithubRepository",
+   "cardinality": "many_to_one",
+   "required": false,
+   "temporal": false,
+   "semantic_type": "lineage"
+  }
+ ]
+}
