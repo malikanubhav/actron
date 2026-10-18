@@ -2,15 +2,96 @@
 
 **Actron checks what your team already decided and built before an AI writes code, then carries the change from a Slack request to a tested pull request, and shows the exact graph path behind every step.**
 
-A developer gets a request in Slack. The reasons the software behaves as it does sit in Slack threads, PR reviews and Linear tickets; the dependencies sit in the code. A coding agent can satisfy the new request and break an earlier decision, or change a shared function and break something unrelated. Actron reads the code, git history, GitHub, Slack and Linear into one FalkorDB graph, walks that graph with an agent before anything is written, asks a person only when the graph says it must, and hands the evidence to the coding agent (Pi) in a sandboxed container. Every finding shows its source quote and the path through the graph that led to it.
+Built for the FalkorDB Graph Hacks hackathon (WeMakeDevs, October 2026), Track 01: agents that act because of the graph.
 
-Built for the FalkorDB Graph Hacks hackathon (WeMakeDevs, October 2026).
+**The problem in short.** A coding agent can change one function and never see the Slack thread that said "keep this strict", the review comment that explains a retry, or the five functions and hundreds of tests that depend on it. It satisfies the new request and quietly breaks an old decision. Actron reads your code, git history, GitHub, Slack and Linear into one FalkorDB graph and walks that graph before anything is written. It asks a person only when the graph says it must. Every finding shows its source quote and the path through the graph that led to it.
+
+**How it works:** Ask in Slack or the web app, then Investigate the graph, Answer questions, Approve a versioned ticket, Pi builds in Docker, Review and approve the pull request.
+
+![An Actron request: timeline of graph tool calls, the evidence path through the graph, and a Slack decision that conflicts with the request](docs/images/07-request-evidence.png)
+*One request on real data. Left: every graph tool call. Middle: the path from the request to the function. Right: the earlier team decision that conflicts, with its exact quote.*
+
+**Run it on your own computer** with the step-by-step guide: [`docs/LOCAL-SETUP.md`](docs/LOCAL-SETUP.md). No deployment is needed to try it.
+
+## See it in action
+
+Every screenshot is from the running app on real data: the Calva repository (BetterThanTomorrow/calva, forked), a real Slack workspace and a real GitHub pull request that Actron opened. Nothing is a mock-up.
+
+### 1. The landing page
+
+![Actron landing page: "Your AI doesn't know what your team already decided. Actron does."](docs/images/01-landing.png)
+*What Actron is, in one screen, with a live graph of the evidence path from a request to a function.*
+
+### 2. Connect your sources, with a guided setup
+
+![The Connect screen with source cards and the memory graph](docs/images/02-connect.png)
+*Connect shows each source (code, GitHub, Slack, Linear), what has been read so far and one memory graph. Everything is connected from the app.*
+
+![The "Connect your slack step by step" guide, with steps that check themselves](docs/images/03-connect-setup-guide.png)
+*Each source card has "Set up step by step". The guide shows the exact clicks and marks each step Done or Not yet as Actron confirms it.*
+
+### 3. The request starts in Slack
+
+![The real #engineering Slack channel: a short team conversation, then an @actron request](docs/images/04-slack-engineering-chat.png)
+*A real Slack conversation. The team says the text tests must stay LF-only, then asks `@actron` to make `docFromTextNotation` accept Windows line endings.*
+
+![Actron's reply in the Slack thread: three questions with answer buttons, then "Ticket v1 is ready for your approval"](docs/images/05-slack-actron-thread.png)
+*Actron answers in the thread. It asks three questions with buttons (does the earlier decision still hold, which functions, which branch), then says the ticket is ready for approval.*
+
+### 4. Home: everything that waits on you
+
+![Home with the request box and the requests that need a decision](docs/images/06-home.png)
+*Home has the request box and a list of requests grouped by who must act next.*
+
+### 5. The request page: timeline, graph path and evidence
+
+See the hero image above. The request page shows the timeline of graph tool calls on the left (`search`, `find_symbol`, `get_node` and more, with milliseconds and result counts), the agent's path through the graph in the middle, and the Evidence tab on the right. The Evidence tab shows the conflict, the decision quote ("We decided docFromTextNotation must stay LF-only; do not add CRLF handling."), where it was said, the callers and the tests that reach the function. "Show path" draws the hop-by-hop path.
+
+### 6. Questions
+
+![The Questions tab: the team's earlier decision and the question Actron asks about it](docs/images/08-request-questions.png)
+*Questions are tied to the evidence. Each says why it is asked. Answer here or in Slack; the two stay in sync.*
+
+### 7. The ticket
+
+![The Ticket tab: revision v1 with a SHA-256 and the Approve ticket v1 button](docs/images/09-request-ticket.png)
+*The ticket is versioned and carries a SHA-256. Approval is bound to that exact revision, so a stale approval is refused.*
+
+### 8. The build
+
+![The Build tab: tests passed 1,701, failed 0, with the steps Pi took](docs/images/10-request-build.png)
+*Pi builds in a sandboxed container with the ticket and a context pack from the graph. The Build tab lists each step, the tests that passed and failed and the repair attempts.*
+
+### 9. The pull request
+
+![The PR tab: pull request #1, approved, with the constraints that still hold](docs/images/11-request-pr.png)
+*The PR tab lists the constraints the change had to keep, each with its proof. Approval is bound to the head commit.*
+
+![The real GitHub pull request Actron opened, with the evidence, tests and graph impact in its description](docs/images/12-github-pull-request.png)
+*The real pull request on GitHub. The description carries the team decision with a link to the Slack message, the test result and the graph impact.*
+
+![Slack message: PR #1 is ready for review, with Approve PR, Request changes, Review in Actron and Open PR](docs/images/13-slack-pr-message.png)
+*The same moment in Slack: "PR #1 is ready for review. 1701 of 1701 tests passed." with the buttons to approve, request changes, review in Actron or open the PR.*
+
+### 10. Inbox, graph, system and settings
+
+![Inbox: notices grouped into waiting for a decision and stopped](docs/images/14-inbox.png)
+*Inbox lists everything Actron needs from you, with a reason when a build stopped.*
+
+![Graph explorer: search results by node type and the most connected files](docs/images/15-graph-explorer.png)
+*Graph explorer: search the memory, expand neighbours and see where every link came from.*
+
+![System view: Actron, FalkorDB, Slack, GitHub, Linear, Jev, Pi and the models, with recent activity](docs/images/16-system.png)
+*System shows which part is working right now and what happened recently.*
+
+![Settings: sync schedules, which model runs each job, thresholds, approvers and the bot identity](docs/images/17-settings.png)
+*Settings: sync schedules, the model for each job, conflict thresholds, approvers and the bot identity for commits.*
 
 ## The problem
 
 Ask a coding agent to change one function and it will. What it cannot see is everything around that function:
 
-- **Who depends on it.** On our demo repository, the request "make `docFromTextNotation` accept Windows line endings" touches a helper that 5 functions call and 964 tests exercise.
+- **Who depends on it.** On our demo repository, the request "make `docFromTextNotation` accept Windows line endings" touches a helper that is called by 5 to 6 functions and reached by hundreds of tests. An early run counted 5 callers and 964 tests; the latest request page shows 6 callers and 200+ tests (its lists stop at 200 items).
 - **What the team decided.** The reason a helper must stay strict is in a Slack thread. The reason a function retries twice is in a review comment. The scope of a feature is in a ticket.
 - **Who knows the code.** That lives in git history and blame, not in the file.
 
@@ -232,35 +313,24 @@ RETURN path
 
 Every FalkorDB limitation we hit, with the error text and the workaround, is in [`docs/falkordb.md`](docs/falkordb.md) (17 entries).
 
-## Setup
+## Run it locally
 
-Requirements: Docker with compose, [uv](https://docs.astral.sh/uv/), Node 22.19+.
+No deployment is needed. You need Docker (with compose), git and make. You do not need Node or uv to run the app.
 
 ```bash
-cp .env.example .env            # every value may stay empty: features run as labelled stubs
-uv run --project backend python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-                                # paste into ACTRON_SECRET_KEY; set SESSION_SECRET to any long random string
-make up                         # FalkorDB, PostgreSQL, Redis, Temporal + UI, backend, worker, frontend, backup;
-                                # also builds the actron-pi and actron-test-runner images
-open http://localhost:3000      # Dev login (ACTRON_ENV=dev), then Connect → Repository
+git clone https://github.com/malikanubhav/actron.git && cd actron && git checkout prod
+bash scripts/setup-local.sh    # creates .env and fills the two secret values
+make up                        # first start builds images: allow 15 to 40 minutes (estimate)
+open http://localhost:3000     # click "Dev login" (the local sign-in), then open Connect
 ```
 
-Ingest a repository from the command line instead: `uv run --project backend actron ingest code --repo BetterThanTomorrow/calva --ws dev`.
+All connecting (GitHub, Slack, Linear) is done in the app, on the Connect screen, with a step-by-step guide on each source. The one step outside the app is the model and Jev keys, which go in `.env` (`DEEPSEEK_API_KEY`, `TYPESAFE_API_KEY` and others). Without them everything still runs, with labelled `stub` badges and the deterministic investigation.
 
-What each key unlocks (all optional; missing keys show "not connected" or a `stub` badge, never a crash):
-
-| Variable | Unlocks |
-|---|---|
-| `GITHUB_TOKEN`, `GITHUB_REPOSITORY`, `GITHUB_FORK` | full PR and review history (the public limit is 60 calls an hour), pushing build branches, opening PRs |
-| `SLACK_*` | Slack ingestion, the bot, Sign in with Slack, "Add to Slack" (manifests in `infra/slack/`) |
-| `LINEAR_API_KEY`, `LINEAR_TEAM_ID` | Linear ingestion and ticket sync |
-| `TYPESAFE_API_KEY` | Jev judgments (classification, link checks, conflict probability, ranking) |
-| `ANTHROPIC_API_KEY` (or OpenRouter, Gemini, Groq) and `MODEL_*` | the investigator agent, question and ticket writing, Pi |
-| `ACTRON_BOT_NAME`, `ACTRON_BOT_EMAIL` | commits by the build |
-
-Full list and operations: [`docs/runbook.md`](docs/runbook.md). Production: `make deploy` with `infra/compose.prod.yaml` (Caddy with automatic HTTPS, SSE-safe proxying, nightly `pg_dump` backups).
+Full instructions for non-developers, with troubleshooting: [`docs/LOCAL-SETUP.md`](docs/LOCAL-SETUP.md). Operations and every variable: [`docs/runbook.md`](docs/runbook.md). Production: `make deploy` with `infra/compose.prod.yaml` (Caddy with automatic HTTPS, SSE-safe proxying, nightly `pg_dump` backups); it has not been run for this submission.
 
 ## Tests
+
+Running the tests needs Node 22.19+ and [uv](https://docs.astral.sh/uv/) on your machine (running the app does not).
 
 ```bash
 make up-deps && make test      # backend and frontend suites
@@ -271,19 +341,9 @@ Backend: 1,400+ tests (unit, property-based, integration against real FalkorDB/P
 
 Load test on the Calva graph (`scripts/load_test.py`, 60 s, 8 reader and 2 writer processes, the 50 most-called functions as seeds): 0 errors; shared query p95 1.7 s, impact p95 0.7 s, callers p95 0.4 s; 4,609 node writes a second.
 
-## Screenshots
-
-From the running app on real Calva data (no fixtures), captured with `frontend/scripts/capture-real.ts` at 1440 and 1920 px in [`frontend/tests/screenshots/real/`](frontend/tests/screenshots/real/):
-
-![A request on real Calva data: tool calls on the timeline, the agent's path on the canvas, impact evidence](frontend/tests/screenshots/real/request-1-evidence-1440.png)
-![Connect and memory with the real Calva graph](frontend/tests/screenshots/real/connect-1440.png)
-![Home](frontend/tests/screenshots/real/home-1440.png)
-
-Every screen and state (including the full request lifecycle, which needs provider keys to run live) is also captured from the development-fixture build in [`frontend/tests/screenshots/`](frontend/tests/screenshots/); those show a DEV FIXTURES badge.
-
 ## Limits
 
-- Live integrations need keys. Everything is tested against fakes as well. What ran live: the real Calva clone and ingestion, GitHub's API, Slack (Socket Mode, the `/actron` command, mentions, buttons), Linear (queries), Jev, the investigator and writing models (DeepSeek), FalkorDB, PostgreSQL, Redis and Temporal. A request on real data ran through investigation, questions, ticket and approval. A full Pi build through to a pull request is the part still being verified live; see [`NEEDS-FROM-USER.md`](NEEDS-FROM-USER.md).
+- Live integrations need keys. Everything is tested against fakes as well. What ran live: the real Calva clone and ingestion, GitHub's API, Slack (Socket Mode, the `/actron` command, mentions, buttons), Linear (queries), Jev, the investigator and writing models (DeepSeek), FalkorDB, PostgreSQL, Redis and Temporal. A request on real data ran through investigation, questions, ticket, approval, a Pi build (1,701 of 1,701 tests passed) and a real pull request on a fork, shown in the tour above. That pull request only adds tests; it is not merged. Open items that need a person are in [`NEEDS-FROM-USER.md`](NEEDS-FROM-USER.md).
 - Without model keys, judgments are conservative stubs: approved decisions touching a request show as "possible conflict", never "conflict", and the investigator uses the deterministic pipeline.
 - 1,575 of Calva's TypeScript calls stay unresolved (method names shared by several classes need type information).
 - The app is designed for screens 1,024 px and wider; approvals also work in Slack.
