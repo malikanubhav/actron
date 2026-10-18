@@ -19,7 +19,7 @@ dist/
 
 # Local data and run artifacts
 .actron/
-data/
+/data/
 *.rdb
 *.aof
 clones/
