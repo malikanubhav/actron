@@ -1,0 +1,121 @@
+{
+  "$comment": "Request state names, chip colour tokens and Slack labels (spec C, C-AC-10). Generated from actron/flow/states.py; a test compares it with frontend/lib/states.json.",
+  "tones": {
+    "running": {
+      "token": "--state-running",
+      "hex": "#5BC0EB"
+    },
+    "ok": {
+      "token": "--state-ok",
+      "hex": "#4CC38A"
+    },
+    "conflict": {
+      "token": "--state-conflict",
+      "hex": "#F2555A"
+    },
+    "possible": {
+      "token": "--state-possible",
+      "hex": "#F0A44B"
+    },
+    "idle": {
+      "token": "--state-idle",
+      "hex": "#8C8C8C"
+    },
+    "needs_you": {
+      "token": "--accent",
+      "hex": "#E4F24C"
+    }
+  },
+  "requestStates": {
+    "Investigating": {
+      "tone": "running",
+      "token": "--state-running",
+      "hex": "#5BC0EB",
+      "slackLabel": "INVESTIGATING",
+      "needsYou": false,
+      "final": false,
+      "pipelineStep": 1
+    },
+    "Needs your input": {
+      "tone": "needs_you",
+      "token": "--accent",
+      "hex": "#E4F24C",
+      "slackLabel": "NEEDS YOUR INPUT",
+      "needsYou": true,
+      "final": false,
+      "pipelineStep": 2
+    },
+    "Ticket ready": {
+      "tone": "running",
+      "token": "--state-running",
+      "hex": "#5BC0EB",
+      "slackLabel": "TICKET READY",
+      "needsYou": false,
+      "final": false,
+      "pipelineStep": 3
+    },
+    "Awaiting approval": {
+      "tone": "needs_you",
+      "token": "--accent",
+      "hex": "#E4F24C",
+      "slackLabel": "AWAITING APPROVAL",
+      "needsYou": true,
+      "final": false,
+      "pipelineStep": 4
+    },
+    "Building": {
+      "tone": "running",
+      "token": "--state-running",
+      "hex": "#5BC0EB",
+      "slackLabel": "BUILDING",
+      "needsYou": false,
+      "final": false,
+      "pipelineStep": 5
+    },
+    "Needs attention": {
+      "tone": "conflict",
+      "token": "--state-conflict",
+      "hex": "#F2555A",
+      "slackLabel": "NEEDS ATTENTION",
+      "needsYou": true,
+      "final": false,
+      "pipelineStep": 1
+    },
+    "PR ready for review": {
+      "tone": "needs_you",
+      "token": "--accent",
+      "hex": "#E4F24C",
+      "slackLabel": "PR READY FOR REVIEW",
+      "needsYou": true,
+      "final": false,
+      "pipelineStep": 6
+    },
+    "Changes requested": {
+      "tone": "running",
+      "token": "--state-running",
+      "hex": "#5BC0EB",
+      "slackLabel": "CHANGES REQUESTED",
+      "needsYou": false,
+      "final": false,
+      "pipelineStep": 5
+    },
+    "Done": {
+      "tone": "ok",
+      "token": "--state-ok",
+      "hex": "#4CC38A",
+      "slackLabel": "DONE",
+      "needsYou": false,
+      "final": true,
+      "pipelineStep": 6
+    },
+    "Cancelled": {
+      "tone": "idle",
+      "token": "--state-idle",
+      "hex": "#8C8C8C",
+      "slackLabel": "CANCELLED",
+      "needsYou": false,
+      "final": true,
+      "pipelineStep": 1
+    }
+  }
+}
