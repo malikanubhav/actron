@@ -1,0 +1,306 @@
+{
+  "version": 1,
+  "providers": [
+    {
+      "provider": "github",
+      "title": "GitHub",
+      "summary": "Repository: code, history and GitHub data",
+      "description": "Connects one repository. Actron reads its code, commits, pull requests, reviews, issues and checks. Saving this form creates the code and GitHub connections together.",
+      "creates": ["code", "github"],
+      "guide": [
+        {"id": "token", "title": "Create a fine-grained access token", "checkId": "token"},
+        {"id": "repository", "title": "Paste the token and the repository", "checkId": "push_access"},
+        {"id": "branch", "title": "Choose the working branch", "checkId": "working_branch"},
+        {"id": "webhook", "title": "Add the webhook for instant updates", "checkId": "webhook_ping"}
+      ],
+      "fields": [
+        {
+          "field_id": "access_token",
+          "type": "string",
+          "ui_component": "password",
+          "required": true,
+          "is_secret": true,
+          "label": "Access token",
+          "description": "A fine-grained personal access token. Actron stores it encrypted and shows only its last four characters afterwards.",
+          "placeholder": "github_pat_...",
+          "info": "GitHub, Settings, Developer settings, Fine-grained tokens. Repository access: the repository below and the fork you push to. Permissions: Contents read and write, Pull requests read and write, Issues read, Metadata read, Actions read, Checks read."
+        },
+        {
+          "field_id": "repository",
+          "type": "string",
+          "ui_component": "text",
+          "required": true,
+          "label": "Repository",
+          "description": "The repository your team merges into. Actron reads its code and history. Checked live when you press Check connection.",
+          "placeholder": "owner/name",
+          "info": "Open the repository on GitHub. The name in the address bar after github.com/ is what goes here, for example BetterThanTomorrow/calva."
+        },
+        {
+          "field_id": "working_branch",
+          "type": "select",
+          "ui_component": "select",
+          "required": true,
+          "label": "Working branch",
+          "description": "Actron reads and keeps this branch in memory. Choose the branch your team builds on.",
+          "dependsOn": "repository",
+          "optionsFrom": "branches",
+          "info": "The default branch is listed first, then the others by most recent commit. Protected branches are marked. Pull requests merged into other branches are still recorded, but they do not change the code Actron keeps."
+        },
+        {
+          "field_id": "fork",
+          "type": "string",
+          "ui_component": "text",
+          "required": false,
+          "label": "Push to",
+          "description": "Where Actron pushes branches and opens pull requests. Checked for write access. Leave empty to use the repository above.",
+          "placeholder": "owner/name",
+          "default": "same as repository",
+          "default_from": "repository",
+          "info": "Use your own fork when you do not have write access to the repository. Actron never opens pull requests against an upstream repository."
+        },
+        {
+          "field_id": "upstream",
+          "type": "string",
+          "ui_component": "text",
+          "required": false,
+          "label": "Upstream (history only)",
+          "description": "Optional original repository whose pull requests and issues are read for history. Actron never writes to it.",
+          "placeholder": "owner/name",
+          "info": "Fill this in when the repository above is a fork and the useful discussion happened in the original project."
+        },
+        {
+          "field_id": "history_days",
+          "type": "number",
+          "ui_component": "stepper",
+          "required": false,
+          "label": "History to read",
+          "description": "Days of pull requests, issues and reviews to read in the first backfill.",
+          "default": 90,
+          "min": 1,
+          "max": 3650,
+          "info": "More days take longer on the first run. Later runs read only what changed."
+        },
+        {
+          "field_id": "webhook",
+          "type": "info",
+          "ui_component": "webhookPanel",
+          "required": false,
+          "label": "Instant updates",
+          "description": "Without a webhook Actron still checks GitHub every five minutes. With one, merged code reaches the graph at once.",
+          "dependsOn": "repository",
+          "payload_path": "/webhooks/github",
+          "content_type": "application/json",
+          "events": [
+            {"id": "push", "label": "Pushes"},
+            {"id": "pull_request", "label": "Pull requests"},
+            {"id": "pull_request_review", "label": "Pull request reviews"},
+            {"id": "pull_request_review_comment", "label": "Pull request review comments"},
+            {"id": "issues", "label": "Issues"},
+            {"id": "issue_comment", "label": "Issue comments"}
+          ],
+          "info": "Repository, Settings, Webhooks, Add webhook. Paste the payload URL and the secret, choose application/json, then tick the events listed here. GitHub sends a ping when you save; the setup guide confirms it arrived."
+        }
+      ]
+    },
+    {
+      "provider": "slack",
+      "title": "Slack",
+      "summary": "Messages from the channels you choose",
+      "description": "Connects a Slack workspace. Actron reads the channels you pick and posts only where it is asked.",
+      "creates": ["slack"],
+      "guide": [
+        {"id": "create", "title": "Create the app from Actron's manifest", "checkId": "app_created"},
+        {"id": "install", "title": "Install the app to your workspace", "checkId": "auth_test"},
+        {"id": "socket", "title": "Turn on Socket Mode and create the app-level token", "checkId": "socket_mode"},
+        {"id": "scopes", "title": "Check the permissions", "checkId": "scopes"},
+        {"id": "invite", "title": "Invite Actron to your channels", "checkId": "channels"},
+        {"id": "try", "title": "Try it", "checkId": "command_received"}
+      ],
+      "paths": [
+        {"id": "oauth", "label": "Add to Slack", "requires": "slack_oauth"},
+        {"id": "tokens", "label": "Connect with tokens", "always": true}
+      ],
+      "fields": [
+        {
+          "field_id": "slack_oauth",
+          "type": "action",
+          "ui_component": "oauthButton",
+          "required": false,
+          "label": "Add to Slack",
+          "description": "Opens Slack's consent page. After you approve, you return here connected and the channel picker appears.",
+          "path": "oauth",
+          "available_when": "slack_oauth",
+          "start_path": "/api/slack/install",
+          "errors": {
+            "access_denied": "You cancelled the Slack approval. Try again when you're ready.",
+            "expired": "Slack says the request expired. Start again."
+          },
+          "info": "Shown only when this Actron has its own Slack app configured (SLACK_CLIENT_ID and SLACK_CLIENT_SECRET)."
+        },
+        {
+          "field_id": "manifest",
+          "type": "info",
+          "ui_component": "manifestPanel",
+          "required": false,
+          "label": "Create the Slack app",
+          "description": "Create a Slack app from this manifest, then paste its tokens below.",
+          "path": "tokens",
+          "link": "https://api.slack.com/apps?new_app=1",
+          "info": "api.slack.com/apps, Create New App, From an app manifest, choose your workspace, paste the manifest, Create."
+        },
+        {
+          "field_id": "bot_token",
+          "type": "string",
+          "ui_component": "password",
+          "required": true,
+          "is_secret": true,
+          "label": "Bot token",
+          "description": "Lets Actron read the chosen channels and post messages. Checked with Slack when you press Check connection.",
+          "path": "tokens",
+          "placeholder": "xoxb-...",
+          "info": "Your app, OAuth & Permissions, Install to Workspace, then copy the Bot User OAuth Token."
+        },
+        {
+          "field_id": "app_token",
+          "type": "string",
+          "ui_component": "password",
+          "required": false,
+          "is_secret": true,
+          "label": "App-level token (for live events without a public URL)",
+          "description": "Needed when Actron runs without a public HTTPS address, for example on a laptop. Slack then sends live messages, /actron commands and button clicks over Socket Mode.",
+          "path": "tokens",
+          "placeholder": "xapp-...",
+          "info": "Your app, Basic Information, App-Level Tokens, Generate Token, scope connections:write. Also turn on Socket Mode in the app settings. Checked by opening a Socket Mode connection. If you leave it empty, Actron uses HTTP events at its public address."
+        },
+        {
+          "field_id": "channels",
+          "type": "multiselect",
+          "ui_component": "multiselect",
+          "required": true,
+          "label": "Channels to read",
+          "description": "Actron reads only these channels. It can read a channel only after it has been invited.",
+          "dependsOn": "bot_token",
+          "dependsOnAny": ["bot_token", "slack_oauth"],
+          "optionsFrom": "channels",
+          "info": "Invite Actron to a channel with /invite @Actron and it appears here."
+        },
+        {
+          "field_id": "requests_channel",
+          "type": "select",
+          "ui_component": "select",
+          "required": false,
+          "label": "Where people ask Actron",
+          "description": "The channel where Actron posts request updates. The first selected channel is the default. /actron works in any channel Actron has joined.",
+          "dependsOn": "channels",
+          "optionsFrom": "channels",
+          "options_limited_to": "channels",
+          "default_from": "channels",
+          "info": "Pick one of the channels you chose above. People can also use /actron in any other channel Actron has been invited to."
+        },
+        {
+          "field_id": "history_days",
+          "type": "number",
+          "ui_component": "stepper",
+          "required": false,
+          "label": "History to read",
+          "description": "Days of messages to read in the first backfill.",
+          "default": 90,
+          "min": 1,
+          "max": 3650,
+          "info": "More days take longer on the first run. Later runs read only new and edited messages."
+        }
+      ]
+    },
+    {
+      "provider": "linear",
+      "title": "Linear",
+      "summary": "Issues, comments and the place Actron files tickets",
+      "description": "Connects one Linear team. Actron reads its issues and comments and creates tickets there.",
+      "creates": ["linear"],
+      "guide": [
+        {"id": "key", "title": "Create a personal API key", "checkId": "key_created"},
+        {"id": "paste", "title": "Paste the key", "checkId": "viewer"},
+        {"id": "team", "title": "Choose the team", "checkId": "team"}
+      ],
+      "fields": [
+        {
+          "field_id": "api_key",
+          "type": "string",
+          "ui_component": "password",
+          "required": true,
+          "is_secret": true,
+          "label": "API key",
+          "description": "A personal API key. Actron stores it encrypted and shows only its last four characters afterwards.",
+          "placeholder": "lin_api_...",
+          "info": "Linear, Settings, Security & access, Personal API keys, New key. Name it Actron."
+        },
+        {
+          "field_id": "team",
+          "type": "select",
+          "ui_component": "select",
+          "required": true,
+          "label": "Team",
+          "description": "The team whose issues Actron reads and where it creates tickets.",
+          "dependsOn": "api_key",
+          "optionsFrom": "teams",
+          "info": "Pick the team that owns the work Actron will plan."
+        },
+        {
+          "field_id": "ticket_label",
+          "type": "select",
+          "ui_component": "select",
+          "required": false,
+          "label": "Label for Actron's tickets",
+          "description": "Added to every ticket Actron creates, so you can filter them in Linear.",
+          "dependsOn": "team",
+          "optionsFrom": "labels",
+          "allow_create": "actron",
+          "info": "Choose an existing label, or create one called actron."
+        },
+        {
+          "field_id": "history_days",
+          "type": "number",
+          "ui_component": "stepper",
+          "required": false,
+          "label": "History to read",
+          "description": "Days of issues and comments to read in the first backfill.",
+          "default": 90,
+          "min": 1,
+          "max": 3650,
+          "info": "More days take longer on the first run. Later runs read only what changed."
+        }
+      ]
+    },
+    {
+      "provider": "slack_export",
+      "title": "Slack export",
+      "summary": "History from a Slack export instead of the live API",
+      "description": "Imports Slack's own workspace export. Use it when you have an export, or as a way to bring in history without a Slack app.",
+      "creates": ["slack_export"],
+      "guide": [],
+      "fields": [
+        {
+          "field_id": "archive",
+          "type": "file",
+          "ui_component": "fileUpload",
+          "required": true,
+          "label": "Slack export",
+          "description": "The export as a .zip file, up to 200 MB. Checked for structure before anything is imported.",
+          "accept": [".zip"],
+          "max_bytes": 209715200,
+          "info": "Slack, Workspace settings, Import/Export data, Export. Download the zip when Slack says it is ready."
+        },
+        {
+          "field_id": "events",
+          "type": "file",
+          "ui_component": "fileUpload",
+          "required": false,
+          "label": "Later changes",
+          "description": "Optional events.jsonl file with edits and deletions to apply after the import, in order.",
+          "accept": [".jsonl"],
+          "info": "One Slack event per line, in the same shape the Events API sends: message, message_changed or message_deleted."
+        }
+      ]
+    }
+  ]
+}
