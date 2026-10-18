@@ -37,8 +37,6 @@ frontend/tests/screenshots/diff/
 # Kept out of the public repo (remove a line to publish it)
 .claude/
 skills-lock.json
-prompts/
-docs/blog-research.md
 video/
 
 # Editors and OS
