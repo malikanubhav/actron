@@ -1,0 +1,215 @@
+# Actron development stack. Start with `make up` from the repository root.
+# Project name stays "actron" so the FalkorDB volume created before the move is kept.
+name: actron
+
+x-backend-env: &backend-env
+  env_file:
+    - path: ../.env
+      required: false
+  environment:
+    DATABASE_URL: postgresql+psycopg://actron:actron@postgres:5432/actron
+    REDIS_URL: redis://redis:6379/0
+    FALKORDB_URL: redis://falkordb:6379
+    TEMPORAL_ADDRESS: temporal:7233
+    ACTRON_ONTOLOGY_DIR: /app/ontology
+    ACTRON_CLONE_DIR: /var/lib/actron/clones
+    ACTRON_BUILD_HOST_DIR: ${ACTRON_BUILD_HOST_DIR:-/var/lib/actron/builds}
+
+services:
+  falkordb:
+    image: falkordb/falkordb:v4.22.1
+    ports:
+      - "127.0.0.1:${FALKORDB_PORT:-6389}:6379"
+    volumes:
+      # New volume after the old one could no longer be replayed (docs/falkordb.md limitation 12).
+      # The old volume `actron_falkor-data` is kept untouched until the user decides (NEEDS-FROM-USER.md).
+      - falkor-data-v2:/var/lib/falkordb/data
+    environment:
+      # This image ignores extra command arguments, so persistence is set here.
+      REDIS_ARGS: "--appendonly yes"
+      # The image default is TIMEOUT 1000 and MAX_QUEUED_QUERIES 25, which breaks bulk ingestion.
+      FALKORDB_ARGS: "THREAD_COUNT 8 TIMEOUT_MAX 60000 TIMEOUT_DEFAULT 15000 MAX_QUEUED_QUERIES 2000 RESULTSET_SIZE 10000"
+      BROWSER: "0"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16.15
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    environment:
+      POSTGRES_USER: actron
+      POSTGRES_PASSWORD: actron
+      POSTGRES_DB: actron
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U actron -d actron"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4.11
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6380}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+    restart: unless-stopped
+
+  temporal:
+    image: temporalio/auto-setup:1.29.7
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB: postgres12
+      DB_PORT: "5432"
+      POSTGRES_SEEDS: postgres
+      POSTGRES_USER: actron
+      POSTGRES_PWD: actron
+      DBNAME: temporal
+      VISIBILITY_DBNAME: temporal_visibility
+      SKIP_DB_CREATE: "true"
+      DEFAULT_NAMESPACE: actron
+      DEFAULT_NAMESPACE_RETENTION: 168h
+      # Each Temporal service keeps its own SQL pool (default 20 per store); left alone they grew to 61 idle
+      # connections and, with PostgreSQL's limit of 100, starved the backend, the worker and the test suite.
+      SQL_MAX_CONNS: "10"
+      SQL_MAX_IDLE_CONNS: "4"
+    ports:
+      - "127.0.0.1:${TEMPORAL_PORT:-7233}:7233"
+    healthcheck:
+      test: ["CMD-SHELL", "temporal operator namespace describe -n actron --address $(hostname -i):7233 >/dev/null 2>&1 || tctl --ns actron --address $(hostname -i):7233 namespace describe >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 20s
+    restart: unless-stopped
+
+  temporal-ui:
+    image: temporalio/ui:2.56.0
+    depends_on:
+      - temporal
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_DEFAULT_NAMESPACE: actron
+      TEMPORAL_CORS_ORIGINS: http://localhost:3000
+    ports:
+      - "127.0.0.1:${TEMPORAL_UI_PORT:-8233}:8080"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ..
+      dockerfile: infra/docker/backend.Dockerfile
+    image: actron-backend:dev
+    <<: *backend-env
+    command: ["sh", "-c", "alembic -c actron/db/alembic.ini upgrade head && uvicorn actron.api.app:app --host 0.0.0.0 --port 8080 --proxy-headers"]
+    depends_on:
+      falkordb: {condition: service_healthy}
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      temporal: {condition: service_healthy}
+    ports:
+      - "127.0.0.1:${ACTRON_PORT:-8080}:8080"
+    volumes:
+      - actron-data:/var/lib/actron
+      # The worker writes each build's Pi output here; the API serves it as the build log (read only).
+      - ${ACTRON_BUILD_HOST_DIR:-/var/lib/actron/builds}:${ACTRON_BUILD_HOST_DIR:-/var/lib/actron/builds}:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 30
+      start_period: 20s
+    restart: unless-stopped
+
+  worker:
+    image: actron-backend:dev
+    <<: *backend-env
+    command: ["python", "-m", "actron.worker"]
+    depends_on:
+      backend: {condition: service_started}
+      temporal: {condition: service_healthy}
+    volumes:
+      - actron-data:/var/lib/actron
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${ACTRON_BUILD_HOST_DIR:-/var/lib/actron/builds}:${ACTRON_BUILD_HOST_DIR:-/var/lib/actron/builds}
+    networks:
+      default: {}
+      actron-build:
+        aliases: [worker]
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: infra/docker/frontend.Dockerfile
+    image: actron-frontend:dev
+    environment:
+      API_INTERNAL_URL: http://backend:8080
+      NEXT_PUBLIC_ACTRON_DEV_FIXTURES: ${NEXT_PUBLIC_ACTRON_DEV_FIXTURES:-0}
+    depends_on:
+      - backend
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
+    restart: unless-stopped
+
+  backup:
+    image: postgres:16.15
+    depends_on:
+      postgres: {condition: service_healthy}
+    environment:
+      PGHOST: postgres
+      PGUSER: actron
+      PGPASSWORD: actron
+      BACKUP_KEEP_DAYS: "7"
+      BACKUP_INTERVAL_SECONDS: "86400"
+    volumes:
+      - pg-backups:/backups
+      - ./postgres/backup.sh:/usr/local/bin/actron-backup.sh:ro
+    entrypoint: ["sh", "/usr/local/bin/actron-backup.sh"]
+    restart: unless-stopped
+
+  # Built by `make up` (profile "images") so builds can start Pi and test containers.
+  pi-image:
+    profiles: ["images"]
+    build:
+      context: ..
+      dockerfile: infra/docker/pi.Dockerfile
+    image: actron-pi:latest
+    command: ["true"]
+
+  test-runner-image:
+    profiles: ["images"]
+    build:
+      context: ..
+      dockerfile: infra/docker/test-runner.Dockerfile
+    image: actron-test-runner:latest
+    command: ["true"]
+
+networks:
+  default: {}
+  actron-build:
+    name: actron-build
+    internal: false
+
+volumes:
+  falkor-data-v2:
+  pg-data:
+  redis-data:
+  pg-backups:
+  actron-data:

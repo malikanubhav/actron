@@ -1,0 +1,13 @@
+# Lighthouse CI front (scripts/test_all.sh): the compose frontend on :3000 behind Caddy with the same compression as
+# production (infra/Caddyfile, `encode zstd gzip`), because Next itself serves uncompressed (compress: false keeps
+# server-sent events unbuffered). Listens on 127.0.0.1:3400 only.
+{
+	auto_https off
+	admin off
+}
+
+:3400 {
+	bind 127.0.0.1
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}

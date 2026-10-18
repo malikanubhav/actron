@@ -1,0 +1,27 @@
+# Keep the build context small and free of secrets. Both Dockerfiles use the repository root as context.
+.git
+.env
+.env.*
+!.env.example
+.claude
+.actron
+data
+**/.venv
+**/node_modules
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/.hypothesis
+**/.coverage
+**/htmlcov
+frontend/.next
+frontend/test-results
+frontend/playwright-report
+frontend/screenshots
+docs
+specs
+PRD.md
+PROMPT.md
+PLAN.md

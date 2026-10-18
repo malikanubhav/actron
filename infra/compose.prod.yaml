@@ -1,0 +1,168 @@
+# Production-like stack: one server, one compose file, Caddy with automatic HTTPS in front.
+# Start with `make deploy` (scripts/deploy.sh). Secrets come from ../.env only.
+# Set ACTRON_DOMAIN (e.g. actron.example.com) in .env; Caddy obtains the certificate.
+name: actron-prod
+
+x-backend-env: &backend-env
+  env_file:
+    - path: ../.env
+      required: true
+  environment:
+    ACTRON_ENV: prod
+    DATABASE_URL: postgresql+psycopg://actron:${POSTGRES_PASSWORD:-actron}@postgres:5432/actron
+    REDIS_URL: redis://redis:6379/0
+    FALKORDB_URL: redis://falkordb:6379
+    TEMPORAL_ADDRESS: temporal:7233
+    ACTRON_ONTOLOGY_DIR: /app/ontology
+    ACTRON_CLONE_DIR: /var/lib/actron/clones
+    ACTRON_BUILD_HOST_DIR: ${ACTRON_BUILD_HOST_DIR:-/var/lib/actron/builds}
+
+x-restart: &restart
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options: {max-size: "20m", max-file: "5"}
+
+services:
+  caddy:
+    image: caddy:2.10.2
+    <<: *restart
+    ports: ["80:80", "443:443"]
+    environment:
+      ACTRON_DOMAIN: ${ACTRON_DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on: [frontend, backend]
+
+  falkordb:
+    image: falkordb/falkordb:v4.22.1
+    <<: *restart
+    volumes: [falkor-data:/var/lib/falkordb/data]
+    environment:
+      REDIS_ARGS: "--appendonly yes"
+      FALKORDB_ARGS: "THREAD_COUNT 8 TIMEOUT_MAX 60000 TIMEOUT_DEFAULT 15000 MAX_QUEUED_QUERIES 2000 RESULTSET_SIZE 10000"
+      BROWSER: "0"
+    healthcheck: {test: ["CMD", "redis-cli", "ping"], interval: 5s, timeout: 3s, retries: 20}
+
+  postgres:
+    image: postgres:16.15
+    <<: *restart
+    environment:
+      POSTGRES_USER: actron
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-actron}
+      POSTGRES_DB: actron
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U actron -d actron"], interval: 5s, timeout: 3s, retries: 30}
+
+  redis:
+    image: redis:7.4.11
+    <<: *restart
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: [redis-data:/data]
+    healthcheck: {test: ["CMD", "redis-cli", "ping"], interval: 5s, timeout: 3s, retries: 20}
+
+  temporal:
+    image: temporalio/auto-setup:1.29.7
+    <<: *restart
+    depends_on: {postgres: {condition: service_healthy}}
+    environment:
+      DB: postgres12
+      DB_PORT: "5432"
+      POSTGRES_SEEDS: postgres
+      POSTGRES_USER: actron
+      POSTGRES_PWD: ${POSTGRES_PASSWORD:-actron}
+      DBNAME: temporal
+      VISIBILITY_DBNAME: temporal_visibility
+      SKIP_DB_CREATE: "true"
+      DEFAULT_NAMESPACE: actron
+      DEFAULT_NAMESPACE_RETENTION: 168h
+    healthcheck:
+      test: ["CMD-SHELL", "temporal operator namespace describe -n actron --address $(hostname -i):7233 >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 20s
+
+  temporal-ui:
+    image: temporalio/ui:2.56.0
+    <<: *restart
+    depends_on: [temporal]
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_DEFAULT_NAMESPACE: actron
+    # Internal only: reach it through an SSH tunnel (127.0.0.1:8233).
+    ports: ["127.0.0.1:8233:8080"]
+
+  backend:
+    build: {context: .., dockerfile: infra/docker/backend.Dockerfile}
+    image: actron-backend:prod
+    <<: [*backend-env, *restart]
+    command: ["sh", "-c", "alembic -c actron/db/alembic.ini upgrade head && uvicorn actron.api.app:app --host 0.0.0.0 --port 8080 --proxy-headers --forwarded-allow-ips='*'"]
+    depends_on:
+      falkordb: {condition: service_healthy}
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      temporal: {condition: service_healthy}
+    volumes: [actron-data:/var/lib/actron]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=5)"]
+      interval: 15s
+      timeout: 6s
+      retries: 20
+      start_period: 30s
+
+  worker:
+    image: actron-backend:prod
+    <<: [*backend-env, *restart]
+    command: ["python", "-m", "actron.worker"]
+    depends_on:
+      backend: {condition: service_healthy}
+    volumes:
+      - actron-data:/var/lib/actron
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${ACTRON_BUILD_HOST_DIR:-/var/lib/actron/builds}:${ACTRON_BUILD_HOST_DIR:-/var/lib/actron/builds}
+    networks:
+      default: {}
+      actron-build: {aliases: [worker]}
+
+  frontend:
+    build: {context: .., dockerfile: infra/docker/frontend.Dockerfile}
+    image: actron-frontend:prod
+    <<: *restart
+    environment:
+      API_INTERNAL_URL: http://backend:8080
+      NEXT_PUBLIC_ACTRON_DEV_FIXTURES: "0"
+    depends_on: [backend]
+
+  backup:
+    image: postgres:16.15
+    <<: *restart
+    depends_on: {postgres: {condition: service_healthy}}
+    environment:
+      PGHOST: postgres
+      PGUSER: actron
+      PGPASSWORD: ${POSTGRES_PASSWORD:-actron}
+      BACKUP_KEEP_DAYS: "7"
+      BACKUP_INTERVAL_SECONDS: "86400"
+    volumes:
+      - pg-backups:/backups
+      - ./postgres/backup.sh:/usr/local/bin/actron-backup.sh:ro
+    entrypoint: ["sh", "/usr/local/bin/actron-backup.sh"]
+
+networks:
+  default: {}
+  actron-build:
+    name: actron-build-prod
+
+volumes:
+  falkor-data:
+  pg-data:
+  redis-data:
+  pg-backups:
+  actron-data:
+  caddy-data:
+  caddy-config:

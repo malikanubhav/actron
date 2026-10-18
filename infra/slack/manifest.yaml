@@ -1,0 +1,70 @@
+# Slack app manifest for Actron, HTTP mode (production and any deployment with a public HTTPS URL).
+#
+# Before you paste this into Slack (api.slack.com/apps > Create New App > From a manifest > YAML):
+# replace every https://actron.example.com below with your real ACTRON_PUBLIC_URL (HTTPS, no trailing slash).
+# Request URLs must be HTTPS. For a laptop with no public URL use manifest.dev.yaml (Socket Mode) instead.
+#
+# Checked against Slack's app manifest reference (docs.slack.dev/reference/app-manifest): key names,
+# required fields and length limits. See docs/slack.md for the steps and what each scope is for.
+# The scope and event lists here must equal BOT_SCOPES, USER_SCOPES and BOT_EVENTS in
+# backend/actron/integrations/slack_common.py; backend/tests/unit/test_slack_manifest.py checks that.
+display_information:
+  name: Actron
+  description: Checks what your team decided and built before an AI writes code, from request to pull request.
+  background_color: "#0B0B0C"
+features:
+  app_home:
+    home_tab_enabled: false
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+  bot_user:
+    display_name: actron
+    always_online: true
+  slash_commands:
+    - command: /actron
+      url: https://actron.example.com/slack/commands
+      description: Ask Actron to check a request against your history, or ask a question.
+      usage_hint: "[ask] what you need"
+      should_escape: false
+oauth_config:
+  redirect_urls:
+    # "Add to Slack" (spec B11a)
+    - https://actron.example.com/api/slack/oauth/callback
+    # Sign in with Slack (OpenID Connect)
+    - https://actron.example.com/api/auth/slack/callback
+  scopes:
+    bot:
+      - app_mentions:read
+      - channels:history
+      - channels:read
+      - chat:write
+      - commands
+      - groups:history
+      - groups:read
+      - im:write
+      - reactions:read
+      - team:read
+      - users:read
+      - users:read.email
+    user:
+      # Sign in with Slack only. The install itself asks for no user scopes.
+      - openid
+      - profile
+      - email
+settings:
+  event_subscriptions:
+    request_url: https://actron.example.com/slack/events
+    bot_events:
+      - app_mention
+      - message.channels
+      - message.groups
+      - member_joined_channel
+      - channel_rename
+      - app_uninstalled
+      - tokens_revoked
+  interactivity:
+    is_enabled: true
+    request_url: https://actron.example.com/slack/interactions
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false

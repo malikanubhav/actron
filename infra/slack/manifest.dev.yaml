@@ -1,0 +1,63 @@
+# Slack app manifest for Actron, Socket Mode (a laptop or any machine with no public URL).
+#
+# Paste into api.slack.com/apps > Create New App > From a manifest > YAML. No host to replace:
+# Socket Mode needs no request URLs. After installing the app, create an app-level token
+# (Basic Information > App-Level Tokens > scope connections:write) and give it to Actron
+# (the Slack form on the Connect screen, or SLACK_APP_TOKEN in .env).
+#
+# "Add to Slack" and Sign in with Slack need HTTPS redirect URLs, so this manifest registers none;
+# on a laptop connect Slack with the bot token form. Use manifest.yaml for a deployed Actron.
+#
+# The scope and event lists must equal BOT_SCOPES, USER_SCOPES and BOT_EVENTS in
+# backend/actron/integrations/slack_common.py; backend/tests/unit/test_slack_manifest.py checks that.
+display_information:
+  name: Actron (dev)
+  description: Checks what your team decided and built before an AI writes code. Development copy using Socket Mode.
+  background_color: "#0B0B0C"
+features:
+  app_home:
+    home_tab_enabled: false
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+  bot_user:
+    display_name: actron-dev
+    always_online: true
+  slash_commands:
+    - command: /actron
+      description: Ask Actron to check a request against your history, or ask a question.
+      usage_hint: "[ask] what you need"
+      should_escape: false
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read
+      - channels:history
+      - channels:read
+      - chat:write
+      - commands
+      - groups:history
+      - groups:read
+      - im:write
+      - reactions:read
+      - team:read
+      - users:read
+      - users:read.email
+    user:
+      - openid
+      - profile
+      - email
+settings:
+  event_subscriptions:
+    bot_events:
+      - app_mention
+      - message.channels
+      - message.groups
+      - member_joined_channel
+      - channel_rename
+      - app_uninstalled
+      - tokens_revoked
+  interactivity:
+    is_enabled: true
+  org_deploy_enabled: false
+  socket_mode_enabled: true
+  token_rotation_enabled: false
