@@ -1,0 +1,137 @@
+/*
+ * Actron design tokens (spec C, C1). The single source of truth for colour, type, space, shape and motion.
+ * tailwind.config.ts mirrors these names; components use the Tailwind names or var(--token), never raw values.
+ * Dark only: there is no light theme. To try an alternative direction, swap the values in this block with a
+ * set from DESIGN-DIRECTIONS.md.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces: one flat neutral black for the page and all chrome. */
+  --ink-0: #0a0a0a;
+  --ink-1: #0f0f0f;
+  --ink-2: #141414;
+  --ink-3: #1a1a1a;
+
+  /* Hairlines */
+  --line-1: #1f1f1f;
+  --line-2: #2a2a2a;
+
+  /* Text */
+  --text-1: #ededed;
+  --text-2: #b4b4b4; /* raised from #a8a8a8: secondary sentences at 13–14 px read thin on black (UI-REVIEW.md) */
+  --text-3: #858585; /* spec default #808080 is 4.41:1 on --ink-3; raised for AA (DESIGN.md) */
+  --text-disabled: #5c5c5c;
+
+  /* The highlighter: the evidence path, the primary action, "needs you". */
+  --accent: #e4f24c;
+  --accent-ink: #0a0a0a;
+  --accent-wash: rgb(228 242 76 / 0.14);
+
+  /* State colours (shared with Slack through lib/states.json) */
+  --state-ok: #4cc38a;
+  --state-conflict: #f2555a;
+  --state-possible: #f0a44b;
+  --state-running: #5bc0eb;
+  --state-idle: #8c8c8c;
+
+  /* Node colours by source (graph only). Distinct muted hues, none equal to the accent or a state colour (UI-REVIEW.md). */
+  --node-code: #97a8c0; /* steel blue-grey */
+  --node-github: #c8b08e; /* warm sand */
+  --node-slack: #c77ddb; /* orchid */
+  --node-linear: #6f8df5; /* cornflower blue */
+  --node-core: #e58fa8; /* rose: request, investigation, decision, person */
+
+  /* Graph links */
+  --graph-link: #6e6e6e; /* explicit and inferred links at rest */
+  --graph-link-focus: #c4c4c4; /* links touching the focused or selected node */
+
+  /* Type families (set by next/font in app/layout.tsx) */
+  --font-display: var(--font-newsreader), 'Newsreader', serif;
+  --font-ui: var(--font-public-sans), 'Public Sans', sans-serif;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', monospace;
+
+  /* Type scale: size / line-height */
+  --fs-eyebrow: 12px;
+  --lh-eyebrow: 16px;
+  --fs-caption: 13px;
+  --lh-caption: 18px;
+  --fs-small: 14px;
+  --lh-small: 20px;
+  --fs-body: 16px;
+  --lh-body: 24px;
+  --fs-lead: 18px;
+  --lh-lead: 26px;
+  --fs-title-sm: 22px;
+  --lh-title-sm: 28px;
+  --fs-title: 28px;
+  --lh-title: 34px;
+  --fs-title-lg: 36px;
+  --lh-title-lg: 42px;
+  --fs-headline-sm: 48px;
+  --lh-headline-sm: 52px;
+  --fs-headline: 64px;
+  --lh-headline: 68px;
+  --fs-hero: 80px;
+  --lh-hero: 84px;
+  --tracking-eyebrow: 0.04em; /* mono data labels only (ids, hashes, counts); was 0.08em */
+  --tracking-display: -0.02em;
+
+  /* Space (4-point scale) */
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* Layout */
+  --content-max: 1600px;
+  --gutter: 24px;
+  --page-pad: 32px;
+  --rail-w: 64px;
+  --status-h: 32px;
+  --panel-guide-w: 720px;
+
+  /* Shape */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --border-hair: 1px;
+  --focus-ring: 2px;
+  --focus-offset: 2px;
+
+  /* Elevation: only overlays lift */
+  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.45);
+
+  /* Motion */
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --dur-4: 520ms;
+  --dur-5: 900ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --page-pad: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-3: 120ms;
+    --dur-4: 0ms;
+    --dur-5: 120ms;
+  }
+}

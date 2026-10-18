@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+coverage/
+test-results/
+playwright-report/
+blob-report/
+.lighthouseci/
+next-env.d.ts
+*.tsbuildinfo
+public/mockServiceWorker.js
+.env*.local
+.next-fixtures/
+.next-e2e/

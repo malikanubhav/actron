@@ -1,0 +1,3531 @@
+{
+ "generatedFrom": "ontology/*.json",
+ "typeCount": 96,
+ "relationshipCount": 507,
+ "types": [
+  {
+   "type": "CodeRepository",
+   "group": "code",
+   "description": "A repository as cloned and parsed locally"
+  },
+  {
+   "type": "CodeComponent",
+   "group": "code",
+   "description": "A package, app or library inside the repository (a Python package or a monorepo workspace)."
+  },
+  {
+   "type": "CodeDependency",
+   "group": "code",
+   "description": "An external package the code depends on (from manifests and imports)."
+  },
+  {
+   "type": "CodeFile",
+   "group": "code",
+   "description": "A file in the snapshot"
+  },
+  {
+   "type": "CodeClass",
+   "group": "code",
+   "description": "A class (or interface, struct or type declaration) with its full source."
+  },
+  {
+   "type": "CodeFunction",
+   "group": "code",
+   "description": "A function or method with its full source and graph metrics"
+  },
+  {
+   "type": "CodeChunk",
+   "group": "code",
+   "description": "Lines outside any function or class (module-level code, configuration, other text), so every line of every stored file is in the graph."
+  },
+  {
+   "type": "CodeDocument",
+   "group": "code",
+   "description": "One heading section of a markdown file in the repository (README, docs, ADRs, changelog)."
+  },
+  {
+   "type": "CodeOwnerRule",
+   "group": "code",
+   "description": "One rule from a CODEOWNERS file."
+  },
+  {
+   "type": "GitCommit",
+   "group": "code",
+   "description": "A commit from the local clone"
+  },
+  {
+   "type": "GitAuthor",
+   "group": "code",
+   "description": "A commit author identity (name and email)"
+  },
+  {
+   "type": "GitBranch",
+   "group": "code",
+   "description": "A branch in the local clone."
+  },
+  {
+   "type": "GitTag",
+   "group": "code",
+   "description": "A git tag."
+  },
+  {
+   "type": "GitFileChange",
+   "group": "code",
+   "description": "How one commit changed one file, with the changed line ranges."
+  },
+  {
+   "type": "GithubOrganization",
+   "group": "github",
+   "description": "A GitHub organisation that owns repositories."
+  },
+  {
+   "type": "GithubRepository",
+   "group": "github",
+   "description": "A repository on GitHub"
+  },
+  {
+   "type": "GithubUser",
+   "group": "github",
+   "description": "A GitHub account (person or bot)"
+  },
+  {
+   "type": "GithubPullRequest",
+   "group": "github",
+   "description": "A pull request: the unit that ties a change to its discussion, review, checks and the code it touched."
+  },
+  {
+   "type": "GithubPullRequestFile",
+   "group": "github",
+   "description": "One file changed by a pull request"
+  },
+  {
+   "type": "GithubReview",
+   "group": "github",
+   "description": "A review submitted on a pull request."
+  },
+  {
+   "type": "GithubReviewComment",
+   "group": "github",
+   "description": "A comment on a specific line of a pull request diff"
+  },
+  {
+   "type": "GithubIssue",
+   "group": "github",
+   "description": "An issue (bug report, feature request or discussion) in a repository."
+  },
+  {
+   "type": "GithubIssueComment",
+   "group": "github",
+   "description": "A conversation comment on an issue or on a pull request (not tied to a diff line)."
+  },
+  {
+   "type": "GithubLabel",
+   "group": "github",
+   "description": "A label used on issues and pull requests."
+  },
+  {
+   "type": "GithubMilestone",
+   "group": "github",
+   "description": "A milestone grouping issues and pull requests."
+  },
+  {
+   "type": "GithubRelease",
+   "group": "github",
+   "description": "A published release of the repository."
+  },
+  {
+   "type": "GithubBranch",
+   "group": "github",
+   "description": "A branch on GitHub, including branches opened by the Actron build step on the fork."
+  },
+  {
+   "type": "GithubWorkflowRun",
+   "group": "github",
+   "description": "A GitHub Actions workflow run."
+  },
+  {
+   "type": "GithubCheckRun",
+   "group": "github",
+   "description": "One check (for example a test job) reported on a commit"
+  },
+  {
+   "type": "SlackWorkspace",
+   "group": "slack",
+   "description": "Workspace entity from slack connector"
+  },
+  {
+   "type": "SlackChannel",
+   "group": "slack",
+   "description": "Channel entity from slack connector"
+  },
+  {
+   "type": "SlackDirectMessage",
+   "group": "slack",
+   "description": "DirectMessage entity from slack connector"
+  },
+  {
+   "type": "SlackMessage",
+   "group": "slack",
+   "description": "Message entity from slack connector"
+  },
+  {
+   "type": "SlackUser",
+   "group": "slack",
+   "description": "User entity from slack connector"
+  },
+  {
+   "type": "SlackBookmark",
+   "group": "slack",
+   "description": "Bookmark entity from slack connector"
+  },
+  {
+   "type": "SlackEmoji",
+   "group": "slack",
+   "description": "Emoji entity from slack connector"
+  },
+  {
+   "type": "SlackReaction",
+   "group": "slack",
+   "description": "Reaction entity from slack connector"
+  },
+  {
+   "type": "SlackFile",
+   "group": "slack",
+   "description": "File entity from slack connector"
+  },
+  {
+   "type": "SlackPin",
+   "group": "slack",
+   "description": "Pin entity from slack connector"
+  },
+  {
+   "type": "SlackUserGroup",
+   "group": "slack",
+   "description": "UserGroup entity from slack connector"
+  },
+  {
+   "type": "SlackArchived",
+   "group": "slack",
+   "description": "Archived entity"
+  },
+  {
+   "type": "SlackTest",
+   "group": "slack",
+   "description": "Test entity"
+  },
+  {
+   "type": "SlackAll",
+   "group": "slack",
+   "description": "All entity"
+  },
+  {
+   "type": "SlackComplete_response",
+   "group": "slack",
+   "description": "Complete_response entity"
+  },
+  {
+   "type": "SlackPost",
+   "group": "slack",
+   "description": "Post entity"
+  },
+  {
+   "type": "SlackResponse_metadata",
+   "group": "slack",
+   "description": "Response_metadata entity"
+  },
+  {
+   "type": "SlackMember",
+   "group": "slack",
+   "description": "Member entity"
+  },
+  {
+   "type": "SlackPaging",
+   "group": "slack",
+   "description": "Paging entity"
+  },
+  {
+   "type": "SlackConversation",
+   "group": "slack",
+   "description": "Conversation entity"
+  },
+  {
+   "type": "SlackStatu",
+   "group": "slack",
+   "description": "Statu entity"
+  },
+  {
+   "type": "SlackRename",
+   "group": "slack",
+   "description": "Rename entity"
+  },
+  {
+   "type": "SlackQuip_section",
+   "group": "slack",
+   "description": "Quip_section entity"
+  },
+  {
+   "type": "SlackReply",
+   "group": "slack",
+   "description": "Reply entity"
+  },
+  {
+   "type": "SlackPermalink",
+   "group": "slack",
+   "description": "Permalink entity"
+  },
+  {
+   "type": "SlackParent",
+   "group": "slack",
+   "description": "Parent entity"
+  },
+  {
+   "type": "SlackRead",
+   "group": "slack",
+   "description": "Read entity"
+  },
+  {
+   "type": "SlackEntity",
+   "group": "slack",
+   "description": "Entity entity"
+  },
+  {
+   "type": "SlackProfile",
+   "group": "slack",
+   "description": "Profile entity"
+  },
+  {
+   "type": "SlackGroup",
+   "group": "slack",
+   "description": "Group entity"
+  },
+  {
+   "type": "SlackTeam",
+   "group": "slack",
+   "description": "Team entity"
+  },
+  {
+   "type": "SlackHistory",
+   "group": "slack",
+   "description": "History entity"
+  },
+  {
+   "type": "SlackInfo",
+   "group": "slack",
+   "description": "Info entity"
+  },
+  {
+   "type": "LinearUser",
+   "group": "linear",
+   "description": "Represents a user in the Linear workspace, including personal details, role, and activity status."
+  },
+  {
+   "type": "LinearTeam",
+   "group": "linear",
+   "description": "Represents a team within the Linear workspace used for organizing issues and workflows."
+  },
+  {
+   "type": "LinearIssue",
+   "group": "linear",
+   "description": "Represents a task or issue in Linear, which can be assigned, prioritized, and tracked through workflow states."
+  },
+  {
+   "type": "LinearState",
+   "group": "linear",
+   "description": "Represents a workflow state (e.g., Todo, In Progress, Done) within a team’s issue lifecycle."
+  },
+  {
+   "type": "LinearLabel",
+   "group": "linear",
+   "description": "Represents a tag or label used to categorize issues within a team, including color and grouping."
+  },
+  {
+   "type": "LinearProject",
+   "group": "linear",
+   "description": "Represents a project in Linear used to group related issues and track progress toward goals."
+  },
+  {
+   "type": "LinearComment",
+   "group": "linear",
+   "description": "Represents a comment made on an issue in Linear, supporting markdown and threaded replies."
+  },
+  {
+   "type": "LinearNotification",
+   "group": "linear",
+   "description": "Represents an inbox notification for a user, such as mentions, assignments, or status changes."
+  },
+  {
+   "type": "LinearCustomView",
+   "group": "linear",
+   "description": "Represents a saved filtered view of issues created by a user, allowing customized issue filtering and display."
+  },
+  {
+   "type": "Issueupdate",
+   "group": "linear",
+   "description": "Issueupdate entity"
+  },
+  {
+   "type": "Commentcreate",
+   "group": "linear",
+   "description": "Commentcreate entity"
+  },
+  {
+   "type": "Inbox",
+   "group": "linear",
+   "description": "Inbox entity"
+  },
+  {
+   "type": "Searchissue",
+   "group": "linear",
+   "description": "Searchissue entity"
+  },
+  {
+   "type": "Parent",
+   "group": "linear",
+   "description": "Parent entity"
+  },
+  {
+   "type": "Issueid",
+   "group": "linear",
+   "description": "Issueid entity"
+  },
+  {
+   "type": "Added_label",
+   "group": "linear",
+   "description": "Added_label entity"
+  },
+  {
+   "type": "Removed_label",
+   "group": "linear",
+   "description": "Removed_label entity"
+  },
+  {
+   "type": "Cycle",
+   "group": "linear",
+   "description": "Cycle entity"
+  },
+  {
+   "type": "Viewer",
+   "group": "linear",
+   "description": "Viewer entity"
+  },
+  {
+   "type": "Issuecreate",
+   "group": "linear",
+   "description": "Issuecreate entity"
+  },
+  {
+   "type": "Assignee",
+   "group": "linear",
+   "description": "Assignee entity"
+  },
+  {
+   "type": "View",
+   "group": "linear",
+   "description": "View entity"
+  },
+  {
+   "type": "Customview",
+   "group": "linear",
+   "description": "Customview entity"
+  },
+  {
+   "type": "Workspace",
+   "group": "core",
+   "description": "An Actron workspace (tenant)"
+  },
+  {
+   "type": "Person",
+   "group": "core",
+   "description": "One human across all tools."
+  },
+  {
+   "type": "Identity",
+   "group": "core",
+   "description": "One account of a person in one tool, and how it was matched."
+  },
+  {
+   "type": "Team",
+   "group": "core",
+   "description": "A group of people (from a Linear team or a Slack user group)."
+  },
+  {
+   "type": "Reference",
+   "group": "core",
+   "description": "A reference found in text (ENG-17, #123, a URL, a path, a symbol)"
+  },
+  {
+   "type": "Feature",
+   "group": "core",
+   "description": "A named behaviour of the product (for example 'report export'), linked to the code that implements it and the text that discusses it."
+  },
+  {
+   "type": "Decision",
+   "group": "core",
+   "description": "A statement of how the software should or should not behave, with its exact source quote"
+  },
+  {
+   "type": "Procedure",
+   "group": "core",
+   "description": "How changes are usually made in an area of the code: test command, files that change together, review norms"
+  },
+  {
+   "type": "Request",
+   "group": "core",
+   "description": "A feature request, bug report or question raised through Slack or the UI"
+  },
+  {
+   "type": "Investigation",
+   "group": "core",
+   "description": "What the investigator agent found for a request: the evidence it handed to the builder."
+  },
+  {
+   "type": "BuildRun",
+   "group": "core",
+   "description": "One run of the coding agent for an approved request."
+  }
+ ],
+ "relationships": [
+  {
+   "name": "COMPONENT_IN_REPO",
+   "from": "CodeComponent",
+   "to": "CodeRepository",
+   "group": "code"
+  },
+  {
+   "name": "FILE_IN_REPO",
+   "from": "CodeFile",
+   "to": "CodeRepository",
+   "group": "code"
+  },
+  {
+   "name": "FILE_IN_COMPONENT",
+   "from": "CodeFile",
+   "to": "CodeComponent",
+   "group": "code"
+  },
+  {
+   "name": "COMPONENT_DEPENDS_ON",
+   "from": "CodeComponent",
+   "to": "CodeComponent",
+   "group": "code"
+  },
+  {
+   "name": "USES_PACKAGE",
+   "from": "CodeComponent",
+   "to": "CodeDependency",
+   "group": "code"
+  },
+  {
+   "name": "CLASS_DEFINED_IN",
+   "from": "CodeClass",
+   "to": "CodeFile",
+   "group": "code"
+  },
+  {
+   "name": "FUNCTION_DEFINED_IN",
+   "from": "CodeFunction",
+   "to": "CodeFile",
+   "group": "code"
+  },
+  {
+   "name": "METHOD_OF",
+   "from": "CodeFunction",
+   "to": "CodeClass",
+   "group": "code"
+  },
+  {
+   "name": "NESTED_IN",
+   "from": "CodeFunction",
+   "to": "CodeFunction",
+   "group": "code"
+  },
+  {
+   "name": "INHERITS_FROM",
+   "from": "CodeClass",
+   "to": "CodeClass",
+   "group": "code"
+  },
+  {
+   "name": "CHUNK_OF",
+   "from": "CodeChunk",
+   "to": "CodeFile",
+   "group": "code"
+  },
+  {
+   "name": "SECTION_OF",
+   "from": "CodeDocument",
+   "to": "CodeFile",
+   "group": "code"
+  },
+  {
+   "name": "SUBSECTION_OF",
+   "from": "CodeDocument",
+   "to": "CodeDocument",
+   "group": "code"
+  },
+  {
+   "name": "IMPORTS",
+   "from": "CodeFile",
+   "to": "CodeFile",
+   "group": "code"
+  },
+  {
+   "name": "IMPORTS_PACKAGE",
+   "from": "CodeFile",
+   "to": "CodeDependency",
+   "group": "code"
+  },
+  {
+   "name": "CALLS",
+   "from": "CodeFunction",
+   "to": "CodeFunction",
+   "group": "code"
+  },
+  {
+   "name": "INSTANTIATES",
+   "from": "CodeFunction",
+   "to": "CodeClass",
+   "group": "code"
+  },
+  {
+   "name": "TESTS",
+   "from": "CodeFunction",
+   "to": "CodeFunction",
+   "group": "code"
+  },
+  {
+   "name": "TESTS_CLASS",
+   "from": "CodeFunction",
+   "to": "CodeClass",
+   "group": "code"
+  },
+  {
+   "name": "TEST_FILE_FOR",
+   "from": "CodeFile",
+   "to": "CodeFile",
+   "group": "code"
+  },
+  {
+   "name": "DOC_MENTIONS_FILE",
+   "from": "CodeDocument",
+   "to": "CodeFile",
+   "group": "code"
+  },
+  {
+   "name": "DOC_MENTIONS_FUNCTION",
+   "from": "CodeDocument",
+   "to": "CodeFunction",
+   "group": "code"
+  },
+  {
+   "name": "DOC_MENTIONS_CLASS",
+   "from": "CodeDocument",
+   "to": "CodeClass",
+   "group": "code"
+  },
+  {
+   "name": "MATCHES_OWNER_RULE",
+   "from": "CodeFile",
+   "to": "CodeOwnerRule",
+   "group": "code"
+  },
+  {
+   "name": "HEAD_COMMIT",
+   "from": "CodeRepository",
+   "to": "GitCommit",
+   "group": "code"
+  },
+  {
+   "name": "COMMIT_IN_REPO",
+   "from": "GitCommit",
+   "to": "CodeRepository",
+   "group": "code"
+  },
+  {
+   "name": "HAS_PARENT",
+   "from": "GitCommit",
+   "to": "GitCommit",
+   "group": "code"
+  },
+  {
+   "name": "AUTHORED_BY",
+   "from": "GitCommit",
+   "to": "GitAuthor",
+   "group": "code"
+  },
+  {
+   "name": "HAS_FILE_CHANGE",
+   "from": "GitCommit",
+   "to": "GitFileChange",
+   "group": "code"
+  },
+  {
+   "name": "CHANGE_OF_FILE",
+   "from": "GitFileChange",
+   "to": "CodeFile",
+   "group": "code"
+  },
+  {
+   "name": "TOUCHED",
+   "from": "GitCommit",
+   "to": "CodeFunction",
+   "group": "code"
+  },
+  {
+   "name": "TOUCHED_CLASS",
+   "from": "GitCommit",
+   "to": "CodeClass",
+   "group": "code"
+  },
+  {
+   "name": "BLAME_OWNS",
+   "from": "GitAuthor",
+   "to": "CodeFunction",
+   "group": "code"
+  },
+  {
+   "name": "BLAME_OWNS_FILE",
+   "from": "GitAuthor",
+   "to": "CodeFile",
+   "group": "code"
+  },
+  {
+   "name": "GIT_BRANCH_IN_REPO",
+   "from": "GitBranch",
+   "to": "CodeRepository",
+   "group": "code"
+  },
+  {
+   "name": "BRANCH_HEAD",
+   "from": "GitBranch",
+   "to": "GitCommit",
+   "group": "code"
+  },
+  {
+   "name": "RENAMED_TO",
+   "from": "CodeFunction",
+   "to": "CodeFunction",
+   "group": "code"
+  },
+  {
+   "name": "CLASS_RENAMED_TO",
+   "from": "CodeClass",
+   "to": "CodeClass",
+   "group": "code"
+  },
+  {
+   "name": "FILE_RENAMED_TO",
+   "from": "CodeFile",
+   "to": "CodeFile",
+   "group": "code"
+  },
+  {
+   "name": "TAGS_COMMIT",
+   "from": "GitTag",
+   "to": "GitCommit",
+   "group": "code"
+  },
+  {
+   "name": "BELONGS_TO_ORG",
+   "from": "GithubRepository",
+   "to": "GithubOrganization",
+   "group": "github"
+  },
+  {
+   "name": "MEMBER_OF_ORG",
+   "from": "GithubUser",
+   "to": "GithubOrganization",
+   "group": "github"
+  },
+  {
+   "name": "COLLABORATES_ON",
+   "from": "GithubUser",
+   "to": "GithubRepository",
+   "group": "github"
+  },
+  {
+   "name": "PR_IN_REPO",
+   "from": "GithubPullRequest",
+   "to": "GithubRepository",
+   "group": "github"
+  },
+  {
+   "name": "OPENED_BY",
+   "from": "GithubPullRequest",
+   "to": "GithubUser",
+   "group": "github"
+  },
+  {
+   "name": "MERGED_BY",
+   "from": "GithubPullRequest",
+   "to": "GithubUser",
+   "group": "github"
+  },
+  {
+   "name": "PR_ASSIGNED_TO",
+   "from": "GithubPullRequest",
+   "to": "GithubUser",
+   "group": "github"
+  },
+  {
+   "name": "REVIEW_REQUESTED_FROM",
+   "from": "GithubPullRequest",
+   "to": "GithubUser",
+   "group": "github"
+  },
+  {
+   "name": "PR_HAS_LABEL",
+   "from": "GithubPullRequest",
+   "to": "GithubLabel",
+   "group": "github"
+  },
+  {
+   "name": "PR_IN_MILESTONE",
+   "from": "GithubPullRequest",
+   "to": "GithubMilestone",
+   "group": "github"
+  },
+  {
+   "name": "FROM_BRANCH",
+   "from": "GithubPullRequest",
+   "to": "GithubBranch",
+   "group": "github"
+  },
+  {
+   "name": "INTO_BRANCH",
+   "from": "GithubPullRequest",
+   "to": "GithubBranch",
+   "group": "github"
+  },
+  {
+   "name": "CHANGES_FILE",
+   "from": "GithubPullRequest",
+   "to": "GithubPullRequestFile",
+   "group": "github"
+  },
+  {
+   "name": "HAS_REVIEW",
+   "from": "GithubPullRequest",
+   "to": "GithubReview",
+   "group": "github"
+  },
+  {
+   "name": "REVIEWED_BY",
+   "from": "GithubReview",
+   "to": "GithubUser",
+   "group": "github"
+  },
+  {
+   "name": "PART_OF_REVIEW",
+   "from": "GithubReviewComment",
+   "to": "GithubReview",
+   "group": "github"
+  },
+  {
+   "name": "COMMENTS_ON_PR",
+   "from": "GithubReviewComment",
+   "to": "GithubPullRequest",
+   "group": "github"
+  },
+  {
+   "name": "COMMENTS_ON_FILE",
+   "from": "GithubReviewComment",
+   "to": "GithubPullRequestFile",
+   "group": "github"
+  },
+  {
+   "name": "REPLIES_TO",
+   "from": "GithubReviewComment",
+   "to": "GithubReviewComment",
+   "group": "github"
+  },
+  {
+   "name": "REVIEW_COMMENT_BY",
+   "from": "GithubReviewComment",
+   "to": "GithubUser",
+   "group": "github"
+  },
+  {
+   "name": "PR_DISCUSSED_IN",
+   "from": "GithubPullRequest",
+   "to": "GithubIssueComment",
+   "group": "github"
+  },
+  {
+   "name": "ISSUE_IN_REPO",
+   "from": "GithubIssue",
+   "to": "GithubRepository",
+   "group": "github"
+  },
+  {
+   "name": "ISSUE_OPENED_BY",
+   "from": "GithubIssue",
+   "to": "GithubUser",
+   "group": "github"
+  },
+  {
+   "name": "ISSUE_ASSIGNED_TO",
+   "from": "GithubIssue",
+   "to": "GithubUser",
+   "group": "github"
+  },
+  {
+   "name": "ISSUE_HAS_LABEL",
+   "from": "GithubIssue",
+   "to": "GithubLabel",
+   "group": "github"
+  },
+  {
+   "name": "ISSUE_IN_MILESTONE",
+   "from": "GithubIssue",
+   "to": "GithubMilestone",
+   "group": "github"
+  },
+  {
+   "name": "ISSUE_DISCUSSED_IN",
+   "from": "GithubIssue",
+   "to": "GithubIssueComment",
+   "group": "github"
+  },
+  {
+   "name": "COMMENT_BY",
+   "from": "GithubIssueComment",
+   "to": "GithubUser",
+   "group": "github"
+  },
+  {
+   "name": "CLOSES_ISSUE",
+   "from": "GithubPullRequest",
+   "to": "GithubIssue",
+   "group": "github"
+  },
+  {
+   "name": "BRANCH_IN_REPO",
+   "from": "GithubBranch",
+   "to": "GithubRepository",
+   "group": "github"
+  },
+  {
+   "name": "LABEL_IN_REPO",
+   "from": "GithubLabel",
+   "to": "GithubRepository",
+   "group": "github"
+  },
+  {
+   "name": "MILESTONE_IN_REPO",
+   "from": "GithubMilestone",
+   "to": "GithubRepository",
+   "group": "github"
+  },
+  {
+   "name": "RELEASE_IN_REPO",
+   "from": "GithubRelease",
+   "to": "GithubRepository",
+   "group": "github"
+  },
+  {
+   "name": "RELEASED_BY",
+   "from": "GithubRelease",
+   "to": "GithubUser",
+   "group": "github"
+  },
+  {
+   "name": "RUN_IN_REPO",
+   "from": "GithubWorkflowRun",
+   "to": "GithubRepository",
+   "group": "github"
+  },
+  {
+   "name": "RUN_FOR_PR",
+   "from": "GithubWorkflowRun",
+   "to": "GithubPullRequest",
+   "group": "github"
+  },
+  {
+   "name": "CHECK_FOR_PR",
+   "from": "GithubCheckRun",
+   "to": "GithubPullRequest",
+   "group": "github"
+  },
+  {
+   "name": "CHECK_PART_OF_RUN",
+   "from": "GithubCheckRun",
+   "to": "GithubWorkflowRun",
+   "group": "github"
+  },
+  {
+   "name": "FORK_OF",
+   "from": "GithubRepository",
+   "to": "GithubRepository",
+   "group": "github"
+  },
+  {
+   "name": "RELATED_TO",
+   "from": "SlackChannel",
+   "to": "SlackWorkspace",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO",
+   "from": "SlackDirectMessage",
+   "to": "SlackWorkspace",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO",
+   "from": "SlackMessage",
+   "to": "SlackWorkspace",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO",
+   "from": "SlackUser",
+   "to": "SlackWorkspace",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO",
+   "from": "SlackBookmark",
+   "to": "SlackWorkspace",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO",
+   "from": "SlackEmoji",
+   "to": "SlackWorkspace",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO",
+   "from": "SlackReaction",
+   "to": "SlackWorkspace",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO",
+   "from": "SlackFile",
+   "to": "SlackWorkspace",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO",
+   "from": "SlackPin",
+   "to": "SlackWorkspace",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO",
+   "from": "SlackUserGroup",
+   "to": "SlackWorkspace",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "from": "SlackChannel",
+   "to": "SlackConversation",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "from": "SlackMessage",
+   "to": "SlackConversation",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "from": "SlackPermalink",
+   "to": "SlackConversation",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "from": "SlackUser",
+   "to": "SlackConversation",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CHANNEL",
+   "from": "SlackMessage",
+   "to": "SlackChannel",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CHANNEL",
+   "from": "SlackPermalink",
+   "to": "SlackChannel",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CHANNEL",
+   "from": "SlackConversation",
+   "to": "SlackChannel",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_MESSAGE",
+   "from": "SlackChannel",
+   "to": "SlackMessage",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_MESSAGE",
+   "from": "SlackPermalink",
+   "to": "SlackMessage",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_MESSAGE",
+   "from": "SlackConversation",
+   "to": "SlackMessage",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "from": "SlackChannel",
+   "to": "SlackPermalink",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "from": "SlackMessage",
+   "to": "SlackPermalink",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "from": "SlackConversation",
+   "to": "SlackPermalink",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "from": "SlackAll",
+   "to": "SlackPermalink",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "from": "SlackChannel",
+   "to": "SlackReaction",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "from": "SlackMessage",
+   "to": "SlackReaction",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "from": "SlackPermalink",
+   "to": "SlackReaction",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "from": "SlackConversation",
+   "to": "SlackReaction",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "from": "SlackFile",
+   "to": "SlackReaction",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "from": "SlackAll",
+   "to": "SlackReaction",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "from": "SlackChannel",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "from": "SlackMessage",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "from": "SlackPermalink",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "from": "SlackConversation",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "from": "SlackUser",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "from": "SlackAll",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "from": "SlackConversation",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "from": "SlackChannel",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "from": "SlackMessage",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "from": "SlackPermalink",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_FILE",
+   "from": "SlackAll",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PIN",
+   "from": "SlackChannel",
+   "to": "SlackPin",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PIN",
+   "from": "SlackMessage",
+   "to": "SlackPin",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PIN",
+   "from": "SlackPermalink",
+   "to": "SlackPin",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PIN",
+   "from": "SlackConversation",
+   "to": "SlackPin",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "from": "SlackConversation",
+   "to": "SlackBookmark",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "from": "SlackChannel",
+   "to": "SlackBookmark",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "from": "SlackMessage",
+   "to": "SlackBookmark",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_CHANNEL",
+   "from": "SlackPermalink",
+   "to": "SlackBookmark",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "from": "SlackUser",
+   "to": "SlackUserGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "from": "SlackConversation",
+   "to": "SlackUserGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "from": "SlackChannel",
+   "to": "SlackUserGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "from": "SlackMessage",
+   "to": "SlackUserGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "from": "SlackPermalink",
+   "to": "SlackUserGroup",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_CHANNELS",
+   "from": "SlackConversation",
+   "to": "SlackChannel",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_RESPONSE_METADATA",
+   "from": "SlackConversation",
+   "to": "SlackResponse_metadata",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "SlackChannel",
+   "to": "SlackTeam",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_RENAME",
+   "from": "SlackChannel",
+   "to": "SlackRename",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_MEMBERS",
+   "from": "SlackUser",
+   "to": "SlackMember",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_RESPONSE_METADATA",
+   "from": "SlackUser",
+   "to": "SlackResponse_metadata",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "SlackUser",
+   "to": "SlackTeam",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PAGING",
+   "from": "SlackFile",
+   "to": "SlackPaging",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_COMPLETE_RESPONSE",
+   "from": "SlackFile",
+   "to": "SlackComplete_response",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_ENTITY",
+   "from": "SlackBookmark",
+   "to": "SlackEntity",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_PARENT",
+   "from": "SlackBookmark",
+   "to": "SlackParent",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_QUIP_SECTION",
+   "from": "SlackBookmark",
+   "to": "SlackQuip_section",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_USERGROUPS",
+   "from": "SlackUserGroup",
+   "to": "SlackUserGroup",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "SlackUserGroup",
+   "to": "SlackTeam",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_USERGROUP",
+   "from": "SlackUserGroup",
+   "to": "SlackUserGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "from": "SlackArchived",
+   "to": "SlackConversation",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CONVERSATION",
+   "from": "SlackMember",
+   "to": "SlackConversation",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_HISTORY",
+   "from": "SlackChannel",
+   "to": "SlackHistory",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_HISTORY",
+   "from": "SlackMessage",
+   "to": "SlackHistory",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_HISTORY",
+   "from": "SlackPermalink",
+   "to": "SlackHistory",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_HISTORY",
+   "from": "SlackConversation",
+   "to": "SlackHistory",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REPLY",
+   "from": "SlackChannel",
+   "to": "SlackReply",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REPLY",
+   "from": "SlackMessage",
+   "to": "SlackReply",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REPLY",
+   "from": "SlackPermalink",
+   "to": "SlackReply",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REPLY",
+   "from": "SlackConversation",
+   "to": "SlackReply",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_MEMBER",
+   "from": "SlackChannel",
+   "to": "SlackMember",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_MEMBER",
+   "from": "SlackMessage",
+   "to": "SlackMember",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_MEMBER",
+   "from": "SlackPermalink",
+   "to": "SlackMember",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_MEMBER",
+   "from": "SlackConversation",
+   "to": "SlackMember",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "SlackTest",
+   "to": "SlackChannel",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "SlackInfo",
+   "to": "SlackChannel",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_ARCHIVED",
+   "from": "SlackChannel",
+   "to": "SlackArchived",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_ARCHIVED",
+   "from": "SlackMessage",
+   "to": "SlackArchived",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_ARCHIVED",
+   "from": "SlackPermalink",
+   "to": "SlackArchived",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_ARCHIVED",
+   "from": "SlackConversation",
+   "to": "SlackArchived",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CHANNEL",
+   "from": "SlackUser",
+   "to": "SlackChannel",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_CHANNEL",
+   "from": "SlackTest",
+   "to": "SlackChannel",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_READ",
+   "from": "SlackChannel",
+   "to": "SlackRead",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_READ",
+   "from": "SlackMessage",
+   "to": "SlackRead",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_READ",
+   "from": "SlackPermalink",
+   "to": "SlackRead",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_READ",
+   "from": "SlackConversation",
+   "to": "SlackRead",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_MESSAGE",
+   "from": "SlackReply",
+   "to": "SlackMessage",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_MESSAGE",
+   "from": "SlackEmoji",
+   "to": "SlackMessage",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "from": "SlackHistory",
+   "to": "SlackPermalink",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_PERMALINK",
+   "from": "SlackReply",
+   "to": "SlackPermalink",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "SlackTest",
+   "to": "SlackUser",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "SlackInfo",
+   "to": "SlackUser",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_USER",
+   "from": "SlackTest",
+   "to": "SlackUser",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_REACTION",
+   "from": "SlackInfo",
+   "to": "SlackReaction",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "from": "SlackTest",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_FILE",
+   "from": "SlackInfo",
+   "to": "SlackFile",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_INFO",
+   "from": "SlackFile",
+   "to": "SlackInfo",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_INFO",
+   "from": "SlackAll",
+   "to": "SlackInfo",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_FILE",
+   "from": "SlackFile",
+   "to": "SlackInfo",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_FILE",
+   "from": "SlackFile",
+   "to": "SlackAll",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_BOOKMARK",
+   "from": "SlackEmoji",
+   "to": "SlackBookmark",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "from": "SlackUser",
+   "to": "SlackGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "from": "SlackTest",
+   "to": "SlackGroup",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "SlackTest",
+   "to": "SlackGroup",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "SlackInfo",
+   "to": "SlackGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "from": "SlackConversation",
+   "to": "SlackGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "from": "SlackChannel",
+   "to": "SlackGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "from": "SlackMessage",
+   "to": "SlackGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_GROUP",
+   "from": "SlackPermalink",
+   "to": "SlackGroup",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_USER",
+   "from": "SlackGroup",
+   "to": "SlackUser",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "SlackTest",
+   "to": "SlackInfo",
+   "group": "slack"
+  },
+  {
+   "name": "HAS_USER",
+   "from": "SlackTest",
+   "to": "SlackUser",
+   "group": "slack"
+  },
+  {
+   "name": "RELATED_TO_INFO",
+   "from": "SlackTest",
+   "to": "SlackInfo",
+   "group": "slack"
+  },
+  {
+   "name": "ASSIGNED_TO",
+   "from": "LinearIssue",
+   "to": "LinearUser",
+   "group": "linear"
+  },
+  {
+   "name": "CREATED_BY",
+   "from": "LinearComment",
+   "to": "LinearUser",
+   "group": "linear"
+  },
+  {
+   "name": "MENTIONS_USER",
+   "from": "LinearComment",
+   "to": "LinearUser",
+   "group": "linear"
+  },
+  {
+   "name": "BELONGS_TO_TEAM",
+   "from": "LinearIssue",
+   "to": "LinearTeam",
+   "group": "linear"
+  },
+  {
+   "name": "HAS_STATE",
+   "from": "LinearIssue",
+   "to": "LinearState",
+   "group": "linear"
+  },
+  {
+   "name": "HAS_LABEL",
+   "from": "LinearIssue",
+   "to": "LinearLabel",
+   "group": "linear"
+  },
+  {
+   "name": "BELONGS_TO_PROJECT",
+   "from": "LinearIssue",
+   "to": "LinearProject",
+   "group": "linear"
+  },
+  {
+   "name": "CONTAINS_ISSUE",
+   "from": "LinearProject",
+   "to": "LinearIssue",
+   "group": "linear"
+  },
+  {
+   "name": "HAS_COMMENT",
+   "from": "LinearIssue",
+   "to": "LinearComment",
+   "group": "linear"
+  },
+  {
+   "name": "REPLIES_TO",
+   "from": "LinearComment",
+   "to": "LinearComment",
+   "group": "linear"
+  },
+  {
+   "name": "RECEIVES_NOTIFICATION",
+   "from": "LinearUser",
+   "to": "LinearNotification",
+   "group": "linear"
+  },
+  {
+   "name": "TRIGGERS_NOTIFICATION",
+   "from": "LinearUser",
+   "to": "LinearNotification",
+   "group": "linear"
+  },
+  {
+   "name": "FILTERS_ISSUES",
+   "from": "LinearCustomView",
+   "to": "LinearIssue",
+   "group": "linear"
+  },
+  {
+   "name": "OWNED_BY",
+   "from": "LinearCustomView",
+   "to": "LinearUser",
+   "group": "linear"
+  },
+  {
+   "name": "SCOPED_TO_TEAM",
+   "from": "LinearCustomView",
+   "to": "LinearTeam",
+   "group": "linear"
+  },
+  {
+   "name": "DEFINES_WORKFLOW",
+   "from": "LinearTeam",
+   "to": "LinearState",
+   "group": "linear"
+  },
+  {
+   "name": "USES_LABEL",
+   "from": "LinearTeam",
+   "to": "LinearLabel",
+   "group": "linear"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "Team",
+   "to": "Customview",
+   "group": "linear"
+  },
+  {
+   "name": "HAS_TEAM",
+   "from": "Team",
+   "to": "View",
+   "group": "linear"
+  },
+  {
+   "name": "HAS_IDENTITY",
+   "from": "Person",
+   "to": "Identity",
+   "group": "core"
+  },
+  {
+   "name": "IS_SLACK_USER",
+   "from": "Identity",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "IS_GITHUB_USER",
+   "from": "Identity",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "IS_LINEAR_USER",
+   "from": "Identity",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "IS_GIT_AUTHOR",
+   "from": "Identity",
+   "to": "GitAuthor",
+   "group": "core"
+  },
+  {
+   "name": "MEMBER_OF_TEAM",
+   "from": "Person",
+   "to": "Team",
+   "group": "core"
+  },
+  {
+   "name": "TEAM_IS_LINEAR_TEAM",
+   "from": "Team",
+   "to": "LinearTeam",
+   "group": "core"
+  },
+  {
+   "name": "TEAM_IS_SLACK_GROUP",
+   "from": "Team",
+   "to": "SlackUserGroup",
+   "group": "core"
+  },
+  {
+   "name": "HOSTED_AS",
+   "from": "CodeRepository",
+   "to": "GithubRepository",
+   "group": "core"
+  },
+  {
+   "name": "INCLUDES_COMMIT",
+   "from": "GithubPullRequest",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MERGED_AS",
+   "from": "GithubPullRequest",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "PR_FILE_IS",
+   "from": "GithubPullRequestFile",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "PR_TOUCHED",
+   "from": "GithubPullRequest",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "COMMENT_ON_FUNCTION",
+   "from": "GithubReviewComment",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "COMMENT_ON_CODE_FILE",
+   "from": "GithubReviewComment",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "CHECK_ON_COMMIT",
+   "from": "GithubCheckRun",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "GITHUB_BRANCH_AT",
+   "from": "GithubBranch",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "RELEASES_COMMIT",
+   "from": "GithubRelease",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "CODEOWNER_IS",
+   "from": "CodeOwnerRule",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "IMPLEMENTED_BY",
+   "from": "LinearIssue",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "TRACKS_GITHUB_ISSUE",
+   "from": "LinearIssue",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "THREAD_OF",
+   "from": "SlackMessage",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "POSTED_BY",
+   "from": "SlackMessage",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "PREVIOUS_VERSION",
+   "from": "SlackMessage",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "ISSUE_CREATED_BY",
+   "from": "LinearIssue",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "SUBISSUE_OF",
+   "from": "LinearIssue",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "SlackMessage",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearIssue",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "LinearComment",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubPullRequest",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssue",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubIssueComment",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReview",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GithubReviewComment",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "GitCommit",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "MENTIONS",
+   "from": "CodeDocument",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "from": "SlackMessage",
+   "to": "Reference",
+   "group": "core"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "from": "LinearIssue",
+   "to": "Reference",
+   "group": "core"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "from": "LinearComment",
+   "to": "Reference",
+   "group": "core"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "from": "GithubPullRequest",
+   "to": "Reference",
+   "group": "core"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "from": "GithubIssue",
+   "to": "Reference",
+   "group": "core"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "from": "GithubIssueComment",
+   "to": "Reference",
+   "group": "core"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "from": "GithubReview",
+   "to": "Reference",
+   "group": "core"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "from": "GithubReviewComment",
+   "to": "Reference",
+   "group": "core"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "from": "GitCommit",
+   "to": "Reference",
+   "group": "core"
+  },
+  {
+   "name": "CONTAINS_REFERENCE",
+   "from": "CodeDocument",
+   "to": "Reference",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "SlackUser",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "LinearUser",
+   "group": "core"
+  },
+  {
+   "name": "RESOLVES_TO",
+   "from": "Reference",
+   "to": "GithubUser",
+   "group": "core"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "from": "Decision",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "from": "Decision",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "from": "Decision",
+   "to": "LinearComment",
+   "group": "core"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "from": "Decision",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "from": "Decision",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "from": "Decision",
+   "to": "GithubIssueComment",
+   "group": "core"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "from": "Decision",
+   "to": "GithubReview",
+   "group": "core"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "from": "Decision",
+   "to": "GithubReviewComment",
+   "group": "core"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "from": "Decision",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "EXTRACTED_FROM",
+   "from": "Decision",
+   "to": "CodeDocument",
+   "group": "core"
+  },
+  {
+   "name": "APPROVED_IN",
+   "from": "Decision",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "APPROVED_IN",
+   "from": "Decision",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "APPROVED_IN",
+   "from": "Decision",
+   "to": "LinearComment",
+   "group": "core"
+  },
+  {
+   "name": "APPROVED_IN",
+   "from": "Decision",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "APPROVED_IN",
+   "from": "Decision",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "APPROVED_IN",
+   "from": "Decision",
+   "to": "GithubIssueComment",
+   "group": "core"
+  },
+  {
+   "name": "APPROVED_IN",
+   "from": "Decision",
+   "to": "GithubReview",
+   "group": "core"
+  },
+  {
+   "name": "APPROVED_IN",
+   "from": "Decision",
+   "to": "GithubReviewComment",
+   "group": "core"
+  },
+  {
+   "name": "APPROVED_IN",
+   "from": "Decision",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "APPROVED_IN",
+   "from": "Decision",
+   "to": "CodeDocument",
+   "group": "core"
+  },
+  {
+   "name": "DECIDED_BY",
+   "from": "Decision",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "CONSTRAINS",
+   "from": "Decision",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "CONSTRAINS",
+   "from": "Decision",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "CONSTRAINS",
+   "from": "Decision",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "CONSTRAINS",
+   "from": "Decision",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "CONSTRAINS",
+   "from": "Decision",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "SUPERSEDES",
+   "from": "Decision",
+   "to": "Decision",
+   "group": "core"
+  },
+  {
+   "name": "IMPLEMENTED_IN",
+   "from": "Feature",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "IMPLEMENTED_IN",
+   "from": "Feature",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "IMPLEMENTED_IN",
+   "from": "Feature",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "IMPLEMENTED_IN",
+   "from": "Feature",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "from": "Feature",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "from": "Feature",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "from": "Feature",
+   "to": "LinearComment",
+   "group": "core"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "from": "Feature",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "from": "Feature",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "from": "Feature",
+   "to": "GithubIssueComment",
+   "group": "core"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "from": "Feature",
+   "to": "GithubReview",
+   "group": "core"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "from": "Feature",
+   "to": "GithubReviewComment",
+   "group": "core"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "from": "Feature",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "DISCUSSED_IN",
+   "from": "Feature",
+   "to": "CodeDocument",
+   "group": "core"
+  },
+  {
+   "name": "KNOWS_ABOUT",
+   "from": "Person",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "KNOWS_ABOUT",
+   "from": "Person",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "KNOWS_ABOUT",
+   "from": "Person",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "KNOWS_ABOUT",
+   "from": "Person",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "KNOWS_ABOUT",
+   "from": "Person",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "OWNS",
+   "from": "Person",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "OWNS",
+   "from": "Person",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "OWNS",
+   "from": "Person",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "OWNS",
+   "from": "Person",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "APPLIES_TO",
+   "from": "Procedure",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "APPLIES_TO",
+   "from": "Procedure",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "APPLIES_TO",
+   "from": "Procedure",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "APPLIES_TO",
+   "from": "Procedure",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "APPLIES_TO",
+   "from": "Procedure",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_PR",
+   "from": "Procedure",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_BUILD",
+   "from": "Procedure",
+   "to": "BuildRun",
+   "group": "core"
+  },
+  {
+   "name": "RAISED_IN",
+   "from": "Request",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "REQUESTED_BY",
+   "from": "Request",
+   "to": "Person",
+   "group": "core"
+  },
+  {
+   "name": "ABOUT",
+   "from": "Request",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "ABOUT",
+   "from": "Request",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "ABOUT",
+   "from": "Request",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "ABOUT",
+   "from": "Request",
+   "to": "CodeComponent",
+   "group": "core"
+  },
+  {
+   "name": "ABOUT",
+   "from": "Request",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "TRACKED_BY",
+   "from": "Request",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "DELIVERED_BY",
+   "from": "Request",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "HAS_INVESTIGATION",
+   "from": "Request",
+   "to": "Investigation",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "Decision",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "Feature",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "GithubReviewComment",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "CodeClass",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "CodeFile",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "CodeDocument",
+   "group": "core"
+  },
+  {
+   "name": "FOUND",
+   "from": "Investigation",
+   "to": "Procedure",
+   "group": "core"
+  },
+  {
+   "name": "HANDED_TO",
+   "from": "Investigation",
+   "to": "BuildRun",
+   "group": "core"
+  },
+  {
+   "name": "USED_PROCEDURE",
+   "from": "BuildRun",
+   "to": "Procedure",
+   "group": "core"
+  },
+  {
+   "name": "PRODUCED",
+   "from": "BuildRun",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "BUILD_TOUCHED",
+   "from": "BuildRun",
+   "to": "CodeFunction",
+   "group": "core"
+  },
+  {
+   "name": "ISSUE_PREVIOUS_VERSION",
+   "from": "LinearIssue",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "COMMENT_PREVIOUS_VERSION",
+   "from": "LinearComment",
+   "to": "LinearComment",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "from": "Procedure",
+   "to": "SlackMessage",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "from": "Procedure",
+   "to": "LinearIssue",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "from": "Procedure",
+   "to": "LinearComment",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "from": "Procedure",
+   "to": "GithubPullRequest",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "from": "Procedure",
+   "to": "GithubIssue",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "from": "Procedure",
+   "to": "GithubIssueComment",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "from": "Procedure",
+   "to": "GithubReview",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "from": "Procedure",
+   "to": "GithubReviewComment",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "from": "Procedure",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "LEARNED_FROM_TEXT",
+   "from": "Procedure",
+   "to": "CodeDocument",
+   "group": "core"
+  },
+  {
+   "name": "DECISION_IMPLEMENTED_BY",
+   "from": "Decision",
+   "to": "GitCommit",
+   "group": "core"
+  },
+  {
+   "name": "DECISION_IMPLEMENTED_BY",
+   "from": "Decision",
+   "to": "GithubPullRequest",
+   "group": "core"
+  }
+ ]
+}

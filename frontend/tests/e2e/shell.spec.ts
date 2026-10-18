@@ -1,0 +1,81 @@
+import { expect, test } from '@playwright/test'
+import { FIXTURE_IDS, open } from './helpers'
+
+test('command palette navigates to a screen and a request', async ({ page }) => {
+  await open(page, '/app')
+  await page.keyboard.press('Control+k')
+  const input = page.getByRole('combobox', { name: /Search requests/ })
+  await input.fill('inbox')
+  await page.keyboard.press('Enter')
+  await page.waitForURL('**/app/inbox')
+  await page.keyboard.press('Control+k')
+  await input.fill('Inbox')
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog', { name: 'Command palette' })).toBeHidden()
+})
+
+test('g-sequences move between screens and ? opens the sheet', async ({ page }) => {
+  await open(page, '/app')
+  await page.locator('body').click()
+  await page.keyboard.press('g')
+  await page.keyboard.press('i')
+  await page.waitForURL('**/app/inbox')
+  await page.keyboard.press('g')
+  await page.keyboard.press('g')
+  await page.waitForURL('**/app/graph')
+  await page.keyboard.press('Shift+?')
+  await expect(page.getByRole('dialog', { name: 'Shortcuts' })).toBeVisible()
+})
+
+test('n focuses the composer; Cmd+Enter creates a request', async ({ page }) => {
+  await open(page, '/app')
+  await page.locator('body').click()
+  await page.keyboard.press('n')
+  const box = page.getByRole('textbox', { name: 'NEW REQUEST' })
+  await expect(box).toBeFocused()
+  await box.fill('Why does evaluation sometimes print results twice?')
+  await expect(page.getByRole('radio', { name: 'QUESTION' })).toHaveAttribute('aria-checked', 'true')
+  await page.keyboard.press('Control+Enter')
+  await page.waitForURL('**/app/requests/**')
+})
+
+test('inbox items open the request at the right tab and j/k move focus', async ({ page }) => {
+  await open(page, '/app/inbox')
+  const items = page.locator('[data-row]')
+  await expect(items.first()).toBeVisible()
+  await page.locator('body').click()
+  await page.keyboard.press('j')
+  await expect(items.first()).toBeFocused()
+  const href = await items.first().getAttribute('href')
+  expect(href).toMatch(/tab=/)
+  await page.keyboard.press('Enter')
+  await page.waitForURL(/\/app\/requests\/.+tab=/)
+})
+
+test('cancel asks for confirmation naming what stops', async ({ page }) => {
+  await open(page, `/app/requests/${FIXTURE_IDS.building}`)
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  const dialog = page.getByRole('dialog', { name: 'Cancel this request?' })
+  await expect(dialog).toContainText('The running build stops')
+  await dialog.getByRole('button', { name: 'Keep it running' }).click()
+  await expect(dialog).toBeHidden()
+})
+
+test('C-AC-43 ticket editor validates inline and warns before leaving', async ({ page }) => {
+  await open(page, `/app/requests/${FIXTURE_IDS.stale}?tab=ticket`)
+  await page.getByRole('button', { name: 'Edit ticket' }).click()
+  const save = page.getByRole('button', { name: 'Save as new revision' })
+  await expect(save).toBeDisabled()
+  const objective = page.getByLabel('Objective')
+  await objective.fill('Short')
+  await objective.blur()
+  await expect(page.getByText('Write the objective as one full sentence.')).toBeVisible()
+  await objective.fill('Show evaluation results inline next to the evaluated top-level form.')
+  await expect(save).toBeEnabled()
+  page.once('dialog', (d) => {
+    expect(d.message()).toContain('unsaved changes')
+    void d.dismiss()
+  })
+  await page.getByRole('link', { name: 'Inbox' }).first().click()
+  await expect(page).toHaveURL(/tab=ticket/)
+})

@@ -1,0 +1,150 @@
+/* Animated states for Actron glyphs (spec C, C1.4 "glyph animated states"). Only parts with .g-a move. */
+.glyph {
+  flex: none;
+  overflow: visible;
+}
+
+.glyph .g-a {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.glyph[data-animated='true'][data-motion='draw'] .g-a,
+.glyph[data-animated='true'][data-motion='trace'] .g-a {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: glyph-draw var(--dur-5) var(--ease-emphasized) forwards;
+}
+
+.glyph[data-animated='true'][data-motion='trace'] .g-a {
+  animation: glyph-trace 1800ms var(--ease-standard) infinite;
+}
+
+.glyph[data-animated='true'][data-motion='draw'] .g-a:nth-of-type(2),
+.glyph[data-animated='true'][data-motion='trace'] .g-a:nth-of-type(2) {
+  animation-delay: 120ms;
+}
+
+.glyph[data-animated='true'][data-motion='draw'] .g-a:nth-of-type(3),
+.glyph[data-animated='true'][data-motion='trace'] .g-a:nth-of-type(3) {
+  animation-delay: 240ms;
+}
+
+.glyph[data-animated='true'][data-motion='ripple'] .g-a {
+  animation: glyph-ripple 1600ms var(--ease-standard) infinite;
+}
+
+.glyph[data-animated='true'][data-motion='ripple'] .g-a + .g-a {
+  animation-delay: 400ms;
+}
+
+.glyph[data-animated='true'][data-motion='rise'] .g-a {
+  transform-origin: bottom;
+  animation: glyph-rise 1200ms var(--ease-emphasized) infinite;
+}
+
+.glyph[data-animated='true'][data-motion='rise'] .g-a:nth-of-type(3) {
+  animation-delay: 150ms;
+}
+
+.glyph[data-animated='true'][data-motion='rise'] .g-a:nth-of-type(4) {
+  animation-delay: 300ms;
+}
+
+.glyph[data-animated='true'][data-motion='slide'] .g-a {
+  animation: glyph-slide 1400ms var(--ease-standard) infinite;
+}
+
+.glyph[data-animated='true'][data-motion='pulse'] .g-a {
+  animation: glyph-pulse 1400ms var(--ease-standard) infinite;
+}
+
+@keyframes glyph-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes glyph-trace {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  60%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes glyph-ripple {
+  0% {
+    opacity: 1;
+    scale: 0.55;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.1;
+  }
+}
+
+@keyframes glyph-rise {
+  0%,
+  100% {
+    scale: 1 0.5;
+  }
+  50% {
+    scale: 1 1;
+  }
+}
+
+@keyframes glyph-slide {
+  0%,
+  100% {
+    translate: -7px 0;
+  }
+  50% {
+    translate: 7px 0;
+  }
+}
+
+@keyframes glyph-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.actron-mark[data-draw='true'] .actron-mark-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: glyph-draw 1400ms var(--ease-emphasized) 200ms forwards;
+}
+
+.actron-mark[data-draw='true'] .actron-mark-end {
+  opacity: 0;
+  animation: glyph-pulse-in var(--dur-3) var(--ease-standard) 1400ms forwards;
+}
+
+@keyframes glyph-pulse-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .actron-mark[data-draw='true'] .actron-mark-path,
+  .actron-mark[data-draw='true'] .actron-mark-end {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+    opacity: 1 !important;
+  }
+  .glyph[data-animated='true'] .g-a {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+    scale: 1 !important;
+    translate: 0 0 !important;
+    opacity: 1 !important;
+  }
+}

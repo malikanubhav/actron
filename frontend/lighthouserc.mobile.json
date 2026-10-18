@@ -1,0 +1,17 @@
+{
+  "$comment": "Mobile Lighthouse run of the landing page (spec C, C-AC-45): Performance at least 0.85. Measures the running compose frontend (`make up`) through infra/lhci/Caddyfile on :3400 (compression as in production).",
+  "ci": {
+    "collect": {
+      "url": ["http://127.0.0.1:3400/"],
+      "numberOfRuns": 1,
+      "settings": { "formFactor": "mobile", "screenEmulation": { "mobile": true, "width": 375, "height": 812, "deviceScaleFactor": 2 }, "chromeFlags": "--no-sandbox --headless=new" }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.85 }],
+        "categories:accessibility": ["error", { "minScore": 0.95 }]
+      }
+    },
+    "upload": { "target": "filesystem", "outputDir": ".lighthouseci/mobile" }
+  }
+}

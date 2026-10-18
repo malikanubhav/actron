@@ -1,0 +1,50 @@
+{
+  "$comment": "One map of state names, chip colours and chip text, shared by the UI (lib/states.ts) and the Slack blocks (backend/actron/integrations/slack_blocks.py). Spec C, C-AC-10. Hex values must equal the tokens in frontend/styles/tokens.css.",
+  "tones": {
+    "running": { "token": "--state-running", "hex": "#5BC0EB" },
+    "ok": { "token": "--state-ok", "hex": "#4CC38A" },
+    "conflict": { "token": "--state-conflict", "hex": "#F2555A" },
+    "possible": { "token": "--state-possible", "hex": "#F0A44B" },
+    "idle": { "token": "--state-idle", "hex": "#8C8C8C" },
+    "needs_you": { "token": "--accent", "hex": "#E4F24C" }
+  },
+  "requestStates": {
+    "Investigating": { "tone": "running", "text": "INVESTIGATING", "needsYou": false, "final": false },
+    "Needs your input": { "tone": "needs_you", "text": "NEEDS YOUR INPUT", "needsYou": true, "final": false },
+    "Ticket ready": { "tone": "running", "text": "TICKET READY", "needsYou": false, "final": false },
+    "Awaiting approval": { "tone": "needs_you", "text": "AWAITING APPROVAL", "needsYou": true, "final": false },
+    "Building": { "tone": "running", "text": "BUILDING", "needsYou": false, "final": false },
+    "Needs attention": { "tone": "conflict", "text": "NEEDS ATTENTION", "needsYou": true, "final": false },
+    "PR ready for review": { "tone": "needs_you", "text": "PR READY FOR REVIEW", "needsYou": true, "final": false },
+    "Changes requested": { "tone": "running", "text": "CHANGES REQUESTED", "needsYou": false, "final": false },
+    "Done": { "tone": "ok", "text": "DONE", "needsYou": false, "final": true },
+    "Cancelled": { "tone": "idle", "text": "CANCELLED", "needsYou": false, "final": true }
+  },
+  "ingestionStates": {
+    "NOT CONNECTED": { "tone": "idle", "text": "NOT CONNECTED" },
+    "BACKFILLING": { "tone": "running", "text": "BACKFILLING" },
+    "SYNCING": { "tone": "running", "text": "SYNCING" },
+    "PARTIAL": { "tone": "possible", "text": "PARTIAL" },
+    "FAILED": { "tone": "conflict", "text": "FAILED" },
+    "UP TO DATE": { "tone": "ok", "text": "UP TO DATE" }
+  },
+  "labels": {
+    "conflict": { "tone": "conflict", "text": "CONFLICT" },
+    "possible_conflict": { "tone": "possible", "text": "POSSIBLE CONFLICT" },
+    "nothing_found": { "tone": "idle", "text": "NOTHING FOUND" },
+    "clear": { "tone": "ok", "text": "CLEAR" }
+  },
+  "tiers": {
+    "HIGH": { "text": "HIGH", "min": 0.8, "bars": 3 },
+    "MEDIUM": { "text": "MEDIUM", "min": 0.6, "bars": 2 },
+    "POSSIBLE": { "text": "POSSIBLE", "min": 0, "bars": 1 }
+  },
+  "pipeline": [
+    { "n": 1, "text": "Investigate" },
+    { "n": 2, "text": "Clarify" },
+    { "n": 3, "text": "Ticket" },
+    { "n": 4, "text": "Approve" },
+    { "n": 5, "text": "Build" },
+    { "n": 6, "text": "Review" }
+  ]
+}

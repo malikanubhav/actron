@@ -1,0 +1,70 @@
+<Step n={1} id="create" title="Create the app from Actron's manifest">
+
+Actron's manifest sets the bot's name, scopes, events and the `/actron` command in one paste.
+
+<Manifest />
+
+<Clicks>Create New App → From an app manifest → choose your workspace → paste → Create</Clicks>
+
+<DeepLink href="https://api.slack.com/apps?new_app=1">Open Slack app creation</DeepLink>
+
+<ManifestLink />
+
+</Step>
+
+<Step n={2} id="install" title="Install the app to your workspace">
+
+Install the app, then either use "Add to Slack" on the card or copy the bot token into the form.
+
+<Clicks>Install App → Install to Workspace → Allow</Clicks>
+
+The token starts with `xoxb-` and sits under OAuth & Permissions → Bot User OAuth Token. Paste it only into the form on the Slack card.
+
+</Step>
+
+<Step n={3} id="socket" title="Turn on Socket Mode and create the app-level token" hideOnHttps>
+
+On a laptop Slack cannot reach Actron over HTTPS, so it sends events over Socket Mode instead.
+
+<Clicks>Socket Mode → Enable</Clicks>
+
+<Clicks>Basic Information → App-Level Tokens → Generate token, scope connections:write</Clicks>
+
+Paste the `xapp-` token into the App-level token field on the Slack card.
+
+</Step>
+
+<Step n={4} id="scopes" title="Check the permissions">
+
+Actron asks for these bot scopes, each for one reason. The check reads the scopes granted to your token.
+
+<ScopeTable />
+
+</Step>
+
+<Step n={5} id="invite" title="Invite Actron to your channels">
+
+Actron reads only the channels it is a member of. Run this in each channel, then pick them on the card.
+
+<CopyValue value="/invite @Actron" label="Copy command" />
+
+</Step>
+
+<Step n={6} id="try" title="Try it">
+
+Type this in any channel Actron is in. The check turns green when Actron receives the command and replies.
+
+<CopyValue value="/actron hello" label="Copy command" />
+
+</Step>
+
+<Troubleshooting>
+  <Troubleshoot code="invalid_auth">The token is wrong or was revoked. Copy it again from OAuth & Permissions.</Troubleshoot>
+  <Troubleshoot code="not_authed">No token reached Slack. Paste the bot token into the form again.</Troubleshoot>
+  <Troubleshoot code="missing_scope">Some scopes are missing; the check lists them. Add them in OAuth & Permissions, then reinstall the app.</Troubleshoot>
+  <Troubleshoot code="not_in_channel">Invite Actron with /invite @Actron.</Troubleshoot>
+  <Troubleshoot code="account_inactive">The app's installer was deactivated. Reinstall the app as an active member.</Troubleshoot>
+  <Troubleshoot code="token_revoked">The app was uninstalled or the token revoked. Reinstall the app and paste the new token.</Troubleshoot>
+  <Troubleshoot code="ratelimited">Slack asked us to slow down; we retry automatically.</Troubleshoot>
+  <Troubleshoot code="socket_mode">Turn on Socket Mode and check the app-level token has connections:write.</Troubleshoot>
+</Troubleshooting>

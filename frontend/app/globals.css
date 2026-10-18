@@ -1,0 +1,326 @@
+@import 'tailwindcss';
+@import '../styles/tokens.css';
+@config '../tailwind.config.ts';
+
+@layer base {
+  html {
+    background: var(--ink-0);
+    color: var(--text-1);
+    font-family: var(--font-ui);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-color: var(--line-2) var(--ink-0);
+    scrollbar-width: thin;
+  }
+
+  body {
+    background: var(--ink-0);
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  :focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring) solid var(--accent);
+    outline-offset: var(--focus-offset);
+    border-radius: var(--radius-sm);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Native selects keep the dark surface on Windows high-contrast and dark-mode defaults. */
+  select {
+    background-color: var(--ink-1);
+    color: var(--text-1);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-3);
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-2);
+    border-radius: var(--radius-lg);
+    border: 3px solid var(--ink-0);
+  }
+
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  summary {
+    cursor: pointer;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Section and field labels: UI face, sentence case. Mono caps are kept for data only (.data-label). */
+  .eyebrow {
+    font-family: var(--font-ui);
+    font-size: var(--fs-caption);
+    line-height: var(--lh-caption);
+    font-weight: 500;
+    color: var(--text-3);
+  }
+  /* Real data: ids, hashes, counts, timestamps, the footer status. */
+  .data-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-eyebrow);
+    line-height: var(--lh-eyebrow);
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+  .display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 400;
+  }
+  .hairline {
+    border-color: var(--line-1);
+  }
+  .overscroll-contain {
+    overscroll-behavior: contain;
+  }
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .press {
+    transition-property: scale, background-color, border-color, color, opacity;
+    transition-duration: var(--dur-1);
+    transition-timing-function: var(--ease-standard);
+  }
+  .press:not(:disabled):active {
+    scale: 0.96;
+  }
+  .spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    flex: none;
+    border-radius: 9999px;
+    border: 1.5px solid currentColor;
+    border-right-color: transparent;
+    animation: actron-spin 700ms linear infinite;
+  }
+  .skeleton {
+    background: var(--ink-3);
+    border-radius: var(--radius-sm);
+  }
+  /* Inside the app the footer carries the badge; elsewhere it sits bottom-right, clear of every navigation. */
+  body:has([data-testid='footer-status']) .dev-badge-fixed {
+    display: none;
+  }
+  .progress-indeterminate {
+    animation: actron-progress 1200ms var(--ease-standard) infinite;
+  }
+  /* Request page: the three columns fill the viewport below the header and scroll on their own. */
+  @media (min-width: 1024px) {
+    /* Fallback where the page is not inside the app shell (public replay): a guess at the header's height. */
+    .request-columns {
+      height: max(400px, calc(100dvh - 364px));
+    }
+    /*
+     * Inside the app shell the frame is at least the visible height (the status bar sits below it) and the columns
+     * take whatever the header leaves, however tall it is (a long title, a banner, an open question). When the header
+     * plus 480 px does not fit, the frame grows and the page scrolls: a fixed height here let the columns spill past
+     * the frame and the sticky status bar landed in the middle of the page.
+     */
+    .request-frame {
+      min-height: calc(100dvh - var(--status-h));
+    }
+    .request-frame > [data-testid='request-workspace'] {
+      flex: 1 1 auto;
+    }
+    .request-frame .request-columns {
+      flex: 1 1 0;
+      height: auto;
+      min-height: 480px;
+      grid-template-rows: minmax(0, 1fr);
+    }
+  }
+  /* The highlighter: evidence on the traced path is marked like a quote on paper. */
+  .quote-highlight {
+    background-image: linear-gradient(var(--accent-wash), var(--accent-wash));
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    padding: 0 2px;
+    margin: 0 -2px;
+    animation: actron-highlight var(--dur-5) var(--ease-emphasized) both;
+  }
+}
+
+@keyframes actron-highlight {
+  from {
+    background-size: 0% 100%;
+  }
+}
+
+@keyframes actron-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Allowed motions only (spec C, C1.4). Each one explains a change of state. */
+@keyframes actron-enter {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes actron-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes actron-draw {
+  from {
+    stroke-dashoffset: var(--draw-length, 64);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes actron-ripple {
+  0% {
+    opacity: 0.9;
+    scale: 0.6;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.25;
+  }
+}
+
+@keyframes actron-rise {
+  0%,
+  100% {
+    scale: 1 0.55;
+  }
+  50% {
+    scale: 1 1;
+  }
+}
+
+@keyframes actron-slide {
+  0% {
+    translate: -3px 0;
+  }
+  50% {
+    translate: 3px 0;
+  }
+  100% {
+    translate: -3px 0;
+  }
+}
+
+@keyframes actron-progress {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 100% 0;
+  }
+}
+
+.enter,
+.headline-swap {
+  animation: actron-enter var(--dur-3) var(--ease-emphasized) both;
+}
+
+.fade-in {
+  animation: actron-fade var(--dur-2) var(--ease-standard) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: var(--dur-1) !important;
+    /* The default transition-property is `all`; with the forced duration every scale or translate change
+       (glyph parts switching their animated state) would glide. Only colour and opacity may fade (C-AC-7). */
+    transition-property: opacity, color, background-color, border-color, fill, stroke !important;
+    scroll-behavior: auto !important;
+  }
+  .enter,
+  .headline-swap {
+    animation-name: actron-fade;
+  }
+  .press:not(:disabled):active {
+    scale: 1;
+  }
+}

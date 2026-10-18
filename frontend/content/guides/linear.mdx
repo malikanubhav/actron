@@ -1,0 +1,27 @@
+<Step n={1} id="key" title="Create a personal API key">
+
+Actron reads issues and creates tickets with a personal API key.
+
+<DeepLink href="https://linear.app/settings/account/security">Open Linear security settings</DeepLink>
+
+<Clicks>Personal API keys → New key → name it Actron → Create</Clicks>
+
+</Step>
+
+<Step n={2} id="paste" title="Paste the key">
+
+Paste the key on the Linear card and choose Check connection. Actron shows your name and organisation.
+
+</Step>
+
+<Step n={3} id="team" title="Choose the team">
+
+Choose the team whose issues Actron reads and where it creates tickets. Optionally choose a label for Actron's tickets.
+
+</Step>
+
+<Troubleshooting>
+  <Troubleshoot code="AUTHENTICATION_ERROR">The key is wrong or was revoked. Create a new personal API key and paste it again.</Troubleshoot>
+  <Troubleshoot code="FORBIDDEN">Your account cannot see this team. Ask a Linear admin to add you, then check again.</Troubleshoot>
+  <Troubleshoot code="RATELIMITED">Linear asked us to slow down; we retry automatically.</Troubleshoot>
+</Troubleshooting>

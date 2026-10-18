@@ -1,0 +1,41 @@
+<Step n={1} id="token" title="Create a fine-grained access token">
+
+Give the token access to the repository and to the push target, with these permissions.
+
+<DeepLink href="https://github.com/settings/personal-access-tokens/new">Open GitHub token creation</DeepLink>
+
+<Clicks>Token name: Actron → Repository access: Only select repositories → choose the repository and the push target → Permissions → Generate token</Clicks>
+
+<PermissionTable />
+
+</Step>
+
+<Step n={2} id="repository" title="Paste the token and the repository">
+
+Paste the token and the repository on the Repository card, then choose Check connection. Actron shows the default branch, the number of pull requests and whether it can push.
+
+</Step>
+
+<Step n={3} id="branch" title="Choose the working branch">
+
+The working branch is the branch Actron keeps in memory: its code is read into the graph, merges into it update memory, and requests target it by default. Choose the branch your team builds on.
+
+</Step>
+
+<Step n={4} id="webhook" title="Add the webhook for instant updates">
+
+With a webhook, merges reach memory at once. Without one, Actron polls GitHub every few minutes. This needs a deployed Actron with a public HTTPS address.
+
+<WebhookValues />
+
+<Clicks>Repository → Settings → Webhooks → Add webhook → paste the payload URL and secret → content type application/json → Let me select individual events → Add webhook</Clicks>
+
+</Step>
+
+<Troubleshooting>
+  <Troubleshoot code="401">The token is wrong or has expired. Create a new token and paste it again.</Troubleshoot>
+  <Troubleshoot code="403">A permission is missing; the check names it. Edit the token, add the permission and check again.</Troubleshoot>
+  <Troubleshoot code="404">The repository name is wrong, or the token has no access to it. Add the repository to the token.</Troubleshoot>
+  <Troubleshoot code="rate_limit">GitHub's rate limit is reached; the check shows when it resets. Actron resumes then.</Troubleshoot>
+  <Troubleshoot code="bad_signature">The webhook secret does not match. Copy the secret from the Repository card into the webhook again.</Troubleshoot>
+</Troubleshooting>
