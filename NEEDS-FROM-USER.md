@@ -47,15 +47,10 @@ Everything here blocks a live integration or a decision only the user can make. 
 
 ## Publishing
 
-### Git identity not exported
-- The four variables `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL`, `GIT_COMMITTER_NAME`, `GIT_COMMITTER_EMAIL` are not set in the agent's shell. Export them for the GitHub account you want to publish with, then run `prompts/GIT-PUSH-PROMPT.md` again.
-
-### Blocked git command
-- The permission check blocked the step that points `dev` at `origin/main` and runs `git reset` (nothing ran). Allow it, or run these three commands yourself in the repo: `git update-ref refs/heads/dev origin/main`, `git symbolic-ref HEAD refs/heads/dev`, `git reset`.
-
-### Done so far
-- Pre-push checks passed (no secrets, MIT `LICENSE` present, no file over 5 MB). `origin` was added and fetched. `.gitignore` now excludes `.claude/`, `skills-lock.json`, `prompts/`, `docs/blog-research.md` and `video/`; remove those lines to publish any of them. The README "Timeline" section is added.
-- Still to do after the commands above: copy `docs/implementation-review.md` from `origin/main`, make the six commits, push `dev` and `prod`, verify from a clean clone.
+### Published (18 Oct 2026)
+- `dev` and `prod` are pushed to `malikanubhav/actron` on top of the two earlier commits; `main` is untouched. The prompts and blog notes are published too. `.claude/`, `skills-lock.json` and `video/` stay git-ignored.
+- Still to do on GitHub: set `prod` as the default branch (Settings, Branches), add a description and topics.
+- See `HANDOFF.md` for the current state and next steps.
 
 ### Done in the live setup run (for reference)
 - Slack tokens, GitHub token and fork, Linear key and team (`LINEAR_TEAM_ID` was written by the run), Jev key, DeepSeek and Gemini keys, bot identity, demo repository: set and checked by `./scripts/live_smoke.sh` (models, github, slack, linear, jev, pi all pass).
