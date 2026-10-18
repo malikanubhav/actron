@@ -1,0 +1,36 @@
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "On it. Investigating your request.",
+        "type": "mrkdwn"
+      },
+      "type": "section"
+    },
+    {
+      "elements": [
+        {
+          "text": "REQUEST P6R7S8T9 · INVESTIGATING",
+          "type": "mrkdwn"
+        }
+      ],
+      "type": "context"
+    },
+    {
+      "block_id": "ack_actions",
+      "elements": [
+        {
+          "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+          "text": {
+            "text": "Open in Actron",
+            "type": "plain_text"
+          },
+          "type": "button",
+          "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+        }
+      ],
+      "type": "actions"
+    }
+  ],
+  "text": "On it. Investigating your request."
+}

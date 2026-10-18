@@ -1,0 +1,12 @@
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "3 questions need your answer on Export invoices as CSV. <https://acme.slack.com/archives/C1/p1|Open the thread>",
+        "type": "mrkdwn"
+      },
+      "type": "section"
+    }
+  ],
+  "text": "3 questions need your answer on Export invoices as CSV."
+}

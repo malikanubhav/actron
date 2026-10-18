@@ -1,0 +1,43 @@
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "Exports are Finance-only since March.",
+        "type": "mrkdwn"
+      },
+      "type": "section"
+    },
+    {
+      "text": {
+        "text": "> Invoice exports stay Finance-only.\n> No exceptions for project admins &lt;yet&gt; &amp; later.",
+        "type": "mrkdwn"
+      },
+      "type": "section"
+    },
+    {
+      "elements": [
+        {
+          "text": "<https://acme.slack.com/archives/C1/p11|Slack message> · Maya",
+          "type": "mrkdwn"
+        }
+      ],
+      "type": "context"
+    },
+    {
+      "block_id": "answer_actions",
+      "elements": [
+        {
+          "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+          "text": {
+            "text": "Open in Actron",
+            "type": "plain_text"
+          },
+          "type": "button",
+          "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+        }
+      ],
+      "type": "actions"
+    }
+  ],
+  "text": "Exports are Finance-only since March."
+}

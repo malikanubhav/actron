@@ -1,0 +1,71 @@
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "PR #18 is ready for review. 14 of 14 tests passed.",
+        "type": "mrkdwn"
+      },
+      "type": "section"
+    },
+    {
+      "block_id": "build_finished_actions",
+      "elements": [
+        {
+          "action_id": "approve_pr:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9:3f2a1c9d8e7b6a5f4e3d2c1b0a9f8e7d6c5b4a39",
+          "confirm": {
+            "confirm": {
+              "text": "Approve",
+              "type": "plain_text"
+            },
+            "deny": {
+              "text": "Cancel",
+              "type": "plain_text"
+            },
+            "text": {
+              "text": "You are approving PR #18 at head 3f2a1c9. If the branch moves, the approval is refused.",
+              "type": "plain_text"
+            },
+            "title": {
+              "text": "Approve this pull request",
+              "type": "plain_text"
+            }
+          },
+          "style": "primary",
+          "text": {
+            "text": "Approve PR #18 (head 3f2a1c9)",
+            "type": "plain_text"
+          },
+          "type": "button"
+        },
+        {
+          "action_id": "request_changes:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+          "text": {
+            "text": "Request changes",
+            "type": "plain_text"
+          },
+          "type": "button"
+        },
+        {
+          "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+          "text": {
+            "text": "Review in Actron",
+            "type": "plain_text"
+          },
+          "type": "button",
+          "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+        },
+        {
+          "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9:pr",
+          "text": {
+            "text": "Open PR",
+            "type": "plain_text"
+          },
+          "type": "button",
+          "url": "https://github.com/acme/app/pull/18"
+        }
+      ],
+      "type": "actions"
+    }
+  ],
+  "text": "PR #18 is ready for review. 14 of 14 tests passed."
+}

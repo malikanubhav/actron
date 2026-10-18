@@ -1,0 +1,46 @@
+# A-AC-36 / A-AC-43 hand-checked expectations for BetterThanTomorrow/calva at the pinned commit.
+# Written by reading the files at that commit (W2, 18 Oct 2026). Line ranges are 1-based and inclusive;
+# a range starts at `export` when the declaration is exported, and excludes leading JSDoc comments.
+repo: betterthantomorrow/calva
+branch: published
+sha: b2476a7fa428b09351c9142a2605893e3e2de71d
+files:
+  src/analytics.ts:
+    classes:
+      - {name: Analytics, start: 16, end: 73}
+    functions:
+      - {name: userAllowsTelemetry, kind: function, start: 5, end: 14, public: false}
+      - {name: Analytics.constructor, kind: constructor, start: 21, end: 23}
+      - {name: Analytics.userID, kind: method, start: 25, end: 35, public: false}
+      - {name: Analytics.logGA4Pageview, kind: method, start: 37, end: 72, async: true}
+  src/files-cache.ts:
+    classes: []
+    functions:
+      - {name: writeToCache, kind: function, start: 7, end: 15, public: false}
+      - {name: content, kind: function, start: 21, end: 33, public: true}
+  src/providers/codelense.ts:
+    classes:
+      - {name: PrintStackTraceCodelensProvider, start: 7, end: 42}
+    functions:
+      - {name: PrintStackTraceCodelensProvider.constructor, kind: constructor, start: 12, end: 16}
+      - {name: PrintStackTraceCodelensProvider.provideCodeLenses, kind: method, start: 18, end: 31}
+      - {name: PrintStackTraceCodelensProvider.resolveCodeLens, kind: method, start: 33, end: 41}
+  src/cljs-lib/src/calva/js_utils.cljs:
+    classes: []
+    functions:
+      - {name: jsify, kind: function, start: 4, end: 7}
+      - {name: cljify, kind: function, start: 9, end: 10}
+# A-AC-43: a function whose five most recent touching commits are compared with `git log -L` (filled by the
+# spot check in tests/integration/test_ingest_calva.py; the shas are recorded below after that check).
+history_function:
+  path: src/extension.ts
+  qualname: activate
+  start: 86
+  end: 675
+  # `git log --no-merges -L 86,675:src/extension.ts -n 5` at the pinned sha (spot check, 18 Oct 2026)
+  recent_commits:
+    - 0fac7dbebe2fd03e98861f03ba75875eafe88379
+    - 5b2d8962c6bf0d26e921ce5a71f7cd6c8333498e
+    - f154bdc7cbc24f89840756f86fe17fab03e69568
+    - bad61fc87aa39107a16e4df038ae04e85570e4cd
+    - 40185aeb52065eed175ff2522b20e43e8b8574ae

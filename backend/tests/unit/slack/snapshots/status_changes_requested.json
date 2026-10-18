@@ -1,0 +1,49 @@
+{
+  "attachments": [
+    {
+      "blocks": [
+        {
+          "text": {
+            "text": "Export invoices as CSV",
+            "type": "plain_text"
+          },
+          "type": "header"
+        },
+        {
+          "elements": [
+            {
+              "text": "STATE · CHANGES REQUESTED · 3m",
+              "type": "mrkdwn"
+            }
+          ],
+          "type": "context"
+        },
+        {
+          "text": {
+            "text": "Changes requested. Building a new revision.",
+            "type": "mrkdwn"
+          },
+          "type": "section"
+        },
+        {
+          "block_id": "status_actions",
+          "elements": [
+            {
+              "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+              "text": {
+                "text": "Open in Actron",
+                "type": "plain_text"
+              },
+              "type": "button",
+              "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+            }
+          ],
+          "type": "actions"
+        }
+      ],
+      "color": "#5BC0EB",
+      "fallback": "Export invoices as CSV: Changes requested. Building a new revision."
+    }
+  ],
+  "text": "Export invoices as CSV: Changes requested. Building a new revision."
+}

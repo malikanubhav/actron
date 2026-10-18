@@ -1,0 +1,27 @@
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "<@U1> Ticket v2 for Export invoices as CSV is ready for your approval.",
+        "type": "mrkdwn"
+      },
+      "type": "section"
+    },
+    {
+      "block_id": "thread_actions",
+      "elements": [
+        {
+          "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+          "text": {
+            "text": "Open in Actron",
+            "type": "plain_text"
+          },
+          "type": "button",
+          "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+        }
+      ],
+      "type": "actions"
+    }
+  ],
+  "text": "Ticket v2 for Export invoices as CSV is ready for your approval."
+}

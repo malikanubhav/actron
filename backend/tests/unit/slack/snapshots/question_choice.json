@@ -1,0 +1,52 @@
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "<@U1> *Question 1 of 3.* Should invoice exports stay Finance-only after this change?\nNo, project admins too: Needs a permission change",
+        "type": "mrkdwn"
+      },
+      "type": "section"
+    },
+    {
+      "block_id": "answers_q1",
+      "elements": [
+        {
+          "action_id": "answer:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9:q1:yes",
+          "style": "primary",
+          "text": {
+            "text": "Yes, keep Finance-only",
+            "type": "plain_text"
+          },
+          "type": "button",
+          "value": "yes"
+        },
+        {
+          "action_id": "answer:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9:q1:no",
+          "text": {
+            "text": "No, project admins too",
+            "type": "plain_text"
+          },
+          "type": "button",
+          "value": "no"
+        }
+      ],
+      "type": "actions"
+    },
+    {
+      "block_id": "open_q1",
+      "elements": [
+        {
+          "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+          "text": {
+            "text": "Open in Actron",
+            "type": "plain_text"
+          },
+          "type": "button",
+          "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+        }
+      ],
+      "type": "actions"
+    }
+  ],
+  "text": "Question 1 of 3: Should invoice exports stay Finance-only after this change?"
+}

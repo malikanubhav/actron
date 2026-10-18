@@ -1,0 +1,57 @@
+{
+  "attachments": [
+    {
+      "blocks": [
+        {
+          "text": {
+            "text": "Export invoices as CSV",
+            "type": "plain_text"
+          },
+          "type": "header"
+        },
+        {
+          "elements": [
+            {
+              "text": "STATE · NEEDS ATTENTION · 3m",
+              "type": "mrkdwn"
+            }
+          ],
+          "type": "context"
+        },
+        {
+          "text": {
+            "text": "The build needs attention.",
+            "type": "mrkdwn"
+          },
+          "type": "section"
+        },
+        {
+          "block_id": "status_actions",
+          "elements": [
+            {
+              "action_id": "retry:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+              "text": {
+                "text": "Retry",
+                "type": "plain_text"
+              },
+              "type": "button"
+            },
+            {
+              "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+              "text": {
+                "text": "Open in Actron",
+                "type": "plain_text"
+              },
+              "type": "button",
+              "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+            }
+          ],
+          "type": "actions"
+        }
+      ],
+      "color": "#F2555A",
+      "fallback": "Export invoices as CSV: The build needs attention."
+    }
+  ],
+  "text": "Export invoices as CSV: The build needs attention."
+}

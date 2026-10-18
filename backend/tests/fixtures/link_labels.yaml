@@ -1,0 +1,150 @@
+# Labelled link cases for the link-quality evaluation (spec A, A-AC-77). Synthetic, written for this test
+# suite in the style of a TypeScript/Clojure VS Code extension (Calva-like). Not product data.
+#
+# method: explicit -> scored with the reference patterns (A12.2): positive when `expect` is found.
+# method: inferred -> scored with J3 judge_link (A12.3): positive when probability >= threshold.
+# label: true when a person would say the text is about the candidate.
+context: {repo: betterthantomorrow/calva, team_keys: [CAL, ENG]}
+cases:
+  # explicit references
+  - {id: E01, method: explicit, label: true, text: "Fixed by CAL-118, paste no longer reindents the whole form.", expect: {kind: linear_issue, key: CAL-118}}
+  - {id: E02, method: explicit, label: true, text: "See #2417 for the jack-in menu change.", expect: {kind: github_pr, key: "betterthantomorrow/calva#2417"}}
+  - {id: E03, method: explicit, label: true, text: "The regression came in with commit 7c1e9a4b on dev.", expect: {kind: commit, key: 7c1e9a4b}}
+  - {id: E04, method: explicit, label: true, text: "Look at `src/cursor-doc/paredit.ts`, the slurp code is there.", expect: {kind: file, key: src/cursor-doc/paredit.ts}}
+  - {id: E05, method: explicit, label: true, text: "`forwardSexp` skips comments wrongly.", expect: {kind: symbol, key: forwardSexp}}
+  - {id: E06, method: explicit, label: true, text: "https://github.com/BetterThanTomorrow/calva/issues/1990 is the same bug.", expect: {kind: github_issue, key: "betterthantomorrow/calva#1990"}}
+  - {id: E07, method: explicit, label: true, text: "Ticket: https://linear.app/calva/issue/ENG-7/output-window-scroll", expect: {kind: linear_issue, key: ENG-7}}
+  - {id: E08, method: explicit, label: true, text: "As discussed in https://calva.slack.com/archives/C01ABCD/p1712345678000100", expect: {kind: slack_message, key: "C01ABCD:1712345678.000100"}}
+  - {id: E09, method: explicit, label: true, text: "clojure-lsp/clojure-lsp#1802 explains the hover delay.", expect: {kind: github_pr, key: "clojure-lsp/clojure-lsp#1802"}}
+  - {id: E10, method: explicit, label: true, text: "formatCode() is called twice on save.", expect: {kind: symbol, key: formatCode}}
+  - {id: E11, method: explicit, label: true, text: "src/nrepl/repl-session.ts:212 throws on disconnect", expect: {kind: file, key: src/nrepl/repl-session.ts}}
+  - {id: E12, method: explicit, label: true, text: "reverted `0a1b2c3d` because it broke the REPL window", expect: {kind: commit, key: 0a1b2c3d}}
+  - {id: E13, method: explicit, label: false, text: "The server answered HTTP-200 but the body was empty.", expect: {kind: linear_issue, key: HTTP-200}}
+  - {id: E14, method: explicit, label: false, text: "All files must be UTF-8 without BOM.", expect: {kind: linear_issue, key: UTF-8}}
+  - {id: E15, method: explicit, label: false, text: "Use the #fff background for the inline result.", expect: {kind: github_pr, key: "betterthantomorrow/calva#fff"}}
+  - {id: E16, method: explicit, label: false, text: "We released v2.0.481 yesterday.", expect: {kind: commit, key: "2.0.481"}}
+  - {id: E17, method: explicit, label: false, text: "```python\n# step #1: build the jar\n```", expect: {kind: github_pr, key: "betterthantomorrow/calva#1"}}
+  - {id: E18, method: explicit, label: false, text: "Timestamps follow ISO-8601 everywhere.", expect: {kind: linear_issue, key: ISO-8601}}
+  - {id: E19, method: explicit, label: false, text: "Should we hash with SHA-256 for the cache key?", expect: {kind: linear_issue, key: SHA-256}}
+  - {id: E20, method: explicit, label: false, text: "build 1a2b3c4d failed on CI again", expect: {kind: commit, key: 1a2b3c4d}}
+  # inferred (meaning) links
+  - id: I01
+    method: inferred
+    label: true
+    text: "When I paste a map into a let binding the indentation goes wild."
+    candidate: {kind: function, name: formatPaste, path: src/calva-fmt/src/paste.ts, signature: "formatPaste(editor: TextEditor)", docstring: "Formats text pasted into a Clojure document using the configured cljfmt rules."}
+  - id: I02
+    method: inferred
+    label: false
+    text: "When I paste a map into a let binding the indentation goes wild."
+    candidate: {kind: function, name: evaluateSelection, path: src/evaluate.ts, signature: "evaluateSelection(document, options)", docstring: "Sends the current form to the REPL and shows the result inline."}
+  - id: I03
+    method: inferred
+    label: true
+    text: "Jack-in hangs forever when the project uses deps.edn aliases."
+    candidate: {kind: function, name: jackIn, path: src/nrepl/jack-in.ts, signature: "jackIn(connectSequence)", docstring: "Starts a REPL process for the project and connects to it."}
+  - id: I04
+    method: inferred
+    label: false
+    text: "Jack-in hangs forever when the project uses deps.edn aliases."
+    candidate: {kind: function, name: forwardSexp, path: src/cursor-doc/paredit.ts, signature: "forwardSexp(doc)", docstring: "Moves the cursor forward over one form."}
+  - id: I05
+    method: inferred
+    label: true
+    text: "Slurping forward eats the closing bracket of the outer vector."
+    candidate: {kind: function, name: forwardSlurpSexp, path: src/cursor-doc/paredit.ts, signature: "forwardSlurpSexp(doc, start)", docstring: "Pulls the next form into the current list."}
+  - id: I06
+    method: inferred
+    label: false
+    text: "Slurping forward eats the closing bracket of the outer vector."
+    candidate: {kind: file, name: src/extension.ts, path: src/extension.ts}
+  - id: I07
+    method: inferred
+    label: true
+    text: "The output window keeps scrolling to the top after each evaluation."
+    candidate: {kind: file, name: src/results-output/results-doc.ts, path: src/results-output/results-doc.ts, docstring: "The REPL output window document and its scrolling behaviour."}
+  - id: I08
+    method: inferred
+    label: true
+    text: "Hovering a var shows no docs until clojure-lsp has finished starting."
+    candidate: {kind: function, name: provideHover, path: src/providers/hover.ts, signature: "provideHover(document, position)", docstring: "Returns docs for the symbol under the cursor from the REPL or clojure-lsp."}
+  - id: I09
+    method: inferred
+    label: false
+    text: "Hovering a var shows no docs until clojure-lsp has finished starting."
+    candidate: {kind: function, name: formatPaste, path: src/calva-fmt/src/paste.ts, docstring: "Formats text pasted into a Clojure document."}
+  - id: I10
+    method: inferred
+    label: true
+    text: "Can we stop the extension from activating for plain EDN files? Startup is slow."
+    candidate: {kind: function, name: activate, path: src/extension.ts, signature: "activate(context: ExtensionContext)", docstring: "Extension entry point: registers commands and providers."}
+  - id: I11
+    method: inferred
+    label: false
+    text: "Thanks everyone for the release, great work."
+    candidate: {kind: function, name: activate, path: src/extension.ts, docstring: "Extension entry point."}
+  - id: I12
+    method: inferred
+    label: true
+    text: "Rainbow parens are wrong colours inside reader conditionals."
+    candidate: {kind: function, name: updateHighlights, path: src/highlight/src/extension.ts, signature: "updateHighlights(editor)", docstring: "Colours matching brackets by nesting depth."}
+  - id: I13
+    method: inferred
+    label: false
+    text: "Rainbow parens are wrong colours inside reader conditionals."
+    candidate: {kind: function, name: jackIn, path: src/nrepl/jack-in.ts, docstring: "Starts a REPL process."}
+  - id: I14
+    method: inferred
+    label: true
+    text: "Evaluating a top-level form with a reader tag throws in the REPL."
+    candidate: {kind: function, name: evaluateTopLevelForm, path: src/evaluate.ts, signature: "evaluateTopLevelForm(document)", docstring: "Evaluates the top level form at the cursor."}
+  - id: I15
+    method: inferred
+    label: true
+    text: "We should let people choose the cljfmt config file path."
+    candidate: {kind: feature, name: Formatter configuration, docstring: "Settings that control how Clojure code is formatted, including cljfmt options."}
+  - id: I16
+    method: inferred
+    label: false
+    text: "We should let people choose the cljfmt config file path."
+    candidate: {kind: feature, name: REPL connect sequences, docstring: "Saved ways to start and connect to a project's REPL."}
+  - id: I17
+    method: inferred
+    label: true
+    text: "Test runner shows passed tests as failed when there are no assertions."
+    candidate: {kind: function, name: reportTestResults, path: src/testRunner.ts, signature: "reportTestResults(results)", docstring: "Shows clojure.test results as diagnostics."}
+  - id: I18
+    method: inferred
+    label: false
+    text: "Test runner shows passed tests as failed when there are no assertions."
+    candidate: {kind: class, name: NReplSession, path: src/nrepl/index.ts, docstring: "One nREPL session over a connection."}
+  - id: I19
+    method: inferred
+    label: true
+    text: "Session drops after laptop sleep and every eval says not connected."
+    candidate: {kind: class, name: NReplClient, path: src/nrepl/index.ts, docstring: "An nREPL connection over a socket, with reconnect handling."}
+  - id: I20
+    method: inferred
+    label: true
+    text: "Alt+Up should select the enclosing form, not the whole line."
+    candidate: {kind: function, name: selectUp, path: src/cursor-doc/paredit.ts, signature: "selectUp(doc)", docstring: "Expands the selection to the enclosing form."}
+  - id: I21
+    method: inferred
+    label: false
+    text: "Alt+Up should select the enclosing form, not the whole line."
+    candidate: {kind: file, name: CHANGELOG.md, path: CHANGELOG.md}
+  - id: I22
+    method: inferred
+    label: true
+    text: "Comment forms should not be indented like function calls."
+    candidate: {kind: function, name: indentFor, path: src/calva-fmt/src/indent.ts, signature: "indentFor(form, rules)", docstring: "Computes the indentation of a form from the indent rules."}
+  - id: I23
+    method: inferred
+    label: false
+    text: "Comment forms should not be indented like function calls."
+    candidate: {kind: function, name: provideHover, path: src/providers/hover.ts, docstring: "Returns docs for the symbol under the cursor."}
+  - id: I24
+    method: inferred
+    label: true
+    text: "The status bar says disconnected even though the REPL is up."
+    candidate: {kind: function, name: updateStatusBar, path: src/statusbar.ts, signature: "updateStatusBar()", docstring: "Shows the REPL connection state in the status bar."}

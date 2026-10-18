@@ -1,0 +1,20 @@
+# TEST FIXTURE: questions for the bonus Q&A mode (spec B, B.C1 question requests), answered from
+# tests/fixtures/graph_small.cypher. Each item lists the node ids a good answer must cite.
+version: 1
+questions:
+  - id: why-save-off
+    text: Why does auto-evaluate on save stay off by default?
+    must_cite: [actron:decision:fixture-save-off]
+    expected_label_any: [possible_conflict, conflict, clear]
+
+  - id: who-knows-send
+    text: Who knows sendMessage best?
+    must_cite: [actron:person:fixture-carol]
+
+  - id: nrepl-format
+    text: Can we change the nREPL message format in sendMessage?
+    must_cite: [actron:decision:fixture-nrepl-format]
+
+  - id: where-results-shown
+    text: Where are evaluation results shown, inline or in the output window?
+    must_cite: [actron:decision:fixture-output-window]

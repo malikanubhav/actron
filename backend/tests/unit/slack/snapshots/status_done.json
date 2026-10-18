@@ -1,0 +1,58 @@
+{
+  "attachments": [
+    {
+      "blocks": [
+        {
+          "text": {
+            "text": "Export invoices as CSV",
+            "type": "plain_text"
+          },
+          "type": "header"
+        },
+        {
+          "elements": [
+            {
+              "text": "STATE · DONE · 12m",
+              "type": "mrkdwn"
+            }
+          ],
+          "type": "context"
+        },
+        {
+          "text": {
+            "text": "Done. PR #18 was approved.",
+            "type": "mrkdwn"
+          },
+          "type": "section"
+        },
+        {
+          "elements": [
+            {
+              "text": "Approved by Priya in Actron.",
+              "type": "mrkdwn"
+            }
+          ],
+          "type": "context"
+        },
+        {
+          "block_id": "status_actions",
+          "elements": [
+            {
+              "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+              "text": {
+                "text": "Open in Actron",
+                "type": "plain_text"
+              },
+              "type": "button",
+              "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+            }
+          ],
+          "type": "actions"
+        }
+      ],
+      "color": "#4CC38A",
+      "fallback": "Export invoices as CSV: Done. PR #18 was approved."
+    }
+  ],
+  "text": "Export invoices as CSV: Done. PR #18 was approved."
+}

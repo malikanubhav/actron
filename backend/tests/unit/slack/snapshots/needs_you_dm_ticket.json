@@ -1,0 +1,12 @@
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "Ticket v2 for Export invoices as CSV is ready for your approval. <http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9|Open in Actron>",
+        "type": "mrkdwn"
+      },
+      "type": "section"
+    }
+  ],
+  "text": "Ticket v2 for Export invoices as CSV is ready for your approval."
+}

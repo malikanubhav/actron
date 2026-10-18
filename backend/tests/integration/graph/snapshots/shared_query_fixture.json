@@ -1,0 +1,417 @@
+{
+  "decisions": [
+    {
+      "conflict": {
+        "label": "none",
+        "probability": 0.0
+      },
+      "decidedAt": "2026-03-02T10:00:00Z",
+      "id": "actron:decision:fixture-save-off",
+      "path": [
+        "actron:request:req_fixture_save",
+        "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "actron:decision:fixture-save-off"
+      ],
+      "quote": "auto-evaluate on save stays off by default",
+      "source": {
+        "id": "slack:msg:CFIXTURE:1709200000.000100",
+        "type": "SlackMessage",
+        "url": "https://example.invalid/slack/CFIXTURE/p1709200000000100"
+      },
+      "statement": "Auto-evaluate on save stays off by default.",
+      "status": "approved"
+    }
+  ],
+  "graph": {
+    "edges": [
+      {
+        "from": "actron:decision:fixture-save-off",
+        "to": "actron:feature:evaluate-on-save",
+        "type": "CONSTRAINS"
+      },
+      {
+        "from": "actron:decision:fixture-save-off",
+        "to": "actron:person:fixture-alice",
+        "type": "DECIDED_BY"
+      },
+      {
+        "from": "actron:decision:fixture-save-off",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "CONSTRAINS"
+      },
+      {
+        "from": "actron:decision:fixture-save-off",
+        "to": "code:fn:fixture/calva-lite:src/settings.ts::autoEvaluateEnabled",
+        "type": "CONSTRAINS"
+      },
+      {
+        "from": "actron:decision:fixture-save-off",
+        "to": "github:pr:fixture/calva-lite#101",
+        "type": "DECISION_IMPLEMENTED_BY"
+      },
+      {
+        "from": "actron:decision:fixture-save-off",
+        "to": "slack:msg:CFIXTURE:1709200000.000100",
+        "type": "EXTRACTED_FROM"
+      },
+      {
+        "from": "actron:feature:evaluate-on-save",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "IMPLEMENTED_IN"
+      },
+      {
+        "from": "actron:feature:evaluate-on-save",
+        "to": "code:fn:fixture/calva-lite:src/settings.ts::autoEvaluateEnabled",
+        "type": "IMPLEMENTED_IN"
+      },
+      {
+        "from": "actron:feature:evaluate-on-save",
+        "to": "slack:msg:CFIXTURE:1709200000.000100",
+        "type": "DISCUSSED_IN"
+      },
+      {
+        "from": "actron:identity:git:alice@fixture.invalid",
+        "to": "git:author:alice@fixture.invalid",
+        "type": "IS_GIT_AUTHOR"
+      },
+      {
+        "from": "actron:person:fixture-alice",
+        "to": "actron:identity:git:alice@fixture.invalid",
+        "type": "HAS_IDENTITY"
+      },
+      {
+        "from": "actron:person:fixture-alice",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "KNOWS_ABOUT"
+      },
+      {
+        "from": "actron:procedure:src-evaluate",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "APPLIES_TO"
+      },
+      {
+        "from": "actron:procedure:src-evaluate",
+        "to": "github:pr:fixture/calva-lite#101",
+        "type": "LEARNED_FROM_PR"
+      },
+      {
+        "from": "actron:request:req_fixture_save",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "ABOUT"
+      },
+      {
+        "from": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "to": "code:fn:fixture/calva-lite:src/settings.ts::autoEvaluateEnabled",
+        "type": "CALLS"
+      },
+      {
+        "from": "code:fn:fixture/calva-lite:src/extension-test/evaluate.test.ts::evaluate > skips evaluation on save when disabled",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "CALLS"
+      },
+      {
+        "from": "code:fn:fixture/calva-lite:src/extension-test/evaluate.test.ts::evaluate > skips evaluation on save when disabled",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "TESTS"
+      },
+      {
+        "from": "code:fn:fixture/calva-lite:src/extension.ts::activate",
+        "to": "code:fn:fixture/calva-lite:src/extension.ts::registerCommands",
+        "type": "CALLS"
+      },
+      {
+        "from": "code:fn:fixture/calva-lite:src/extension.ts::registerCommands",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "CALLS"
+      },
+      {
+        "from": "git:author:alice@fixture.invalid",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "BLAME_OWNS"
+      },
+      {
+        "from": "github:issue:fixture/calva-lite#55",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "MENTIONS"
+      },
+      {
+        "from": "github:pr:fixture/calva-lite#101",
+        "to": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "type": "PR_TOUCHED"
+      },
+      {
+        "from": "github:pr:fixture/calva-lite#101",
+        "to": "code:fn:fixture/calva-lite:src/settings.ts::autoEvaluateEnabled",
+        "type": "PR_TOUCHED"
+      },
+      {
+        "from": "linear:issue:fx-cal-12",
+        "to": "github:pr:fixture/calva-lite#101",
+        "type": "IMPLEMENTED_BY"
+      },
+      {
+        "from": "slack:msg:CFIXTURE:1709200000.000100",
+        "to": "actron:feature:evaluate-on-save",
+        "type": "MENTIONS"
+      },
+      {
+        "from": "actron:request:req_fixture_save",
+        "to": "code:fn:fixture/calva-lite:src/settings.ts::autoEvaluateEnabled",
+        "type": "ABOUT"
+      },
+      {
+        "from": "actron:request:req_fixture_save",
+        "to": "actron:feature:evaluate-on-save",
+        "type": "ABOUT"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "actron:request:req_fixture_save",
+        "label": "Turn on auto-evaluate on save by default",
+        "type": "Request"
+      },
+      {
+        "id": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "label": "evaluateOnSave",
+        "type": "CodeFunction"
+      },
+      {
+        "id": "code:fn:fixture/calva-lite:src/settings.ts::autoEvaluateEnabled",
+        "label": "autoEvaluateEnabled",
+        "type": "CodeFunction"
+      },
+      {
+        "id": "actron:feature:evaluate-on-save",
+        "label": "Evaluate on save",
+        "type": "Feature"
+      },
+      {
+        "id": "actron:decision:fixture-save-off",
+        "label": "Auto-evaluate on save stays off by default.",
+        "type": "Decision"
+      },
+      {
+        "id": "github:issue:fixture/calva-lite#55",
+        "label": "Auto-evaluate on save is too eager",
+        "type": "GithubIssue"
+      },
+      {
+        "id": "github:pr:fixture/calva-lite#101",
+        "label": "Evaluate on save",
+        "type": "GithubPullRequest"
+      },
+      {
+        "id": "linear:issue:fx-cal-12",
+        "label": "Evaluate on save",
+        "type": "LinearIssue"
+      },
+      {
+        "id": "slack:msg:CFIXTURE:1709200000.000100",
+        "label": "Decision: auto-evaluate on save stays off by default. People lose work when a s\u2026",
+        "type": "SlackMessage"
+      },
+      {
+        "id": "code:fn:fixture/calva-lite:src/extension-test/evaluate.test.ts::evaluate > skips evaluation on save when disabled",
+        "label": "evaluate > skips evaluation on save when disabled",
+        "type": "CodeFunction"
+      },
+      {
+        "id": "code:fn:fixture/calva-lite:src/extension.ts::registerCommands",
+        "label": "registerCommands",
+        "type": "CodeFunction"
+      },
+      {
+        "id": "code:fn:fixture/calva-lite:src/extension.ts::activate",
+        "label": "activate",
+        "type": "CodeFunction"
+      },
+      {
+        "id": "git:author:alice@fixture.invalid",
+        "label": "Alice Fixture",
+        "type": "GitAuthor"
+      },
+      {
+        "id": "actron:identity:git:alice@fixture.invalid",
+        "label": "alice@fixture.invalid",
+        "type": "Identity"
+      },
+      {
+        "id": "actron:person:fixture-alice",
+        "label": "Alice Fixture",
+        "type": "Person"
+      },
+      {
+        "id": "actron:procedure:src-evaluate",
+        "label": "Changing evaluation",
+        "type": "Procedure"
+      }
+    ]
+  },
+  "impact": {
+    "callers": [
+      {
+        "depth": 1,
+        "id": "code:fn:fixture/calva-lite:src/extension.ts::registerCommands",
+        "path": [
+          "actron:request:req_fixture_save",
+          "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+          "code:fn:fixture/calva-lite:src/extension.ts::registerCommands"
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "code:fn:fixture/calva-lite:src/extension.ts::activate",
+        "path": [
+          "actron:request:req_fixture_save",
+          "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+          "code:fn:fixture/calva-lite:src/extension.ts::registerCommands",
+          "code:fn:fixture/calva-lite:src/extension.ts::activate"
+        ]
+      }
+    ],
+    "criticality": [
+      {
+        "id": "code:fn:fixture/calva-lite:src/settings.ts::autoEvaluateEnabled",
+        "path": [
+          "actron:request:req_fixture_save",
+          "code:fn:fixture/calva-lite:src/settings.ts::autoEvaluateEnabled"
+        ],
+        "percentile": 45.0
+      },
+      {
+        "id": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "path": [
+          "actron:request:req_fixture_save",
+          "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave"
+        ],
+        "percentile": 35.0
+      }
+    ],
+    "tests": [
+      {
+        "id": "code:fn:fixture/calva-lite:src/extension-test/evaluate.test.ts::evaluate > skips evaluation on save when disabled",
+        "path": [
+          "actron:request:req_fixture_save",
+          "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+          "code:fn:fixture/calva-lite:src/extension-test/evaluate.test.ts::evaluate > skips evaluation on save when disabled"
+        ]
+      }
+    ]
+  },
+  "label": "clear",
+  "owners": [
+    {
+      "basis": [
+        "commits",
+        "blame"
+      ],
+      "name": "Alice Fixture",
+      "path": [
+        "actron:request:req_fixture_save",
+        "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "git:author:alice@fixture.invalid",
+        "actron:identity:git:alice@fixture.invalid",
+        "actron:person:fixture-alice"
+      ],
+      "personId": "actron:person:fixture-alice",
+      "score": 1.0
+    }
+  ],
+  "procedures": [
+    {
+      "id": "actron:procedure:src-evaluate",
+      "path": [
+        "actron:request:req_fixture_save",
+        "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "actron:procedure:src-evaluate"
+      ],
+      "testCommand": "npm run unit-test -- --grep evaluate"
+    }
+  ],
+  "relatedWork": [
+    {
+      "at": "2026-04-05T10:00:00Z",
+      "id": "github:issue:fixture/calva-lite#55",
+      "path": [
+        "actron:request:req_fixture_save",
+        "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "github:issue:fixture/calva-lite#55"
+      ],
+      "state": "open",
+      "title": "Auto-evaluate on save is too eager",
+      "type": "GithubIssue",
+      "url": "https://example.invalid/fixture/calva-lite/issues/55"
+    },
+    {
+      "at": "2026-03-04T10:00:00Z",
+      "id": "linear:issue:fx-cal-12",
+      "path": [
+        "actron:request:req_fixture_save",
+        "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "github:pr:fixture/calva-lite#101",
+        "linear:issue:fx-cal-12"
+      ],
+      "state": "completed",
+      "title": "Evaluate on save",
+      "type": "LinearIssue",
+      "url": "https://example.invalid/linear/CAL-12"
+    },
+    {
+      "at": "2026-03-03T12:00:00Z",
+      "id": "github:pr:fixture/calva-lite#101",
+      "path": [
+        "actron:request:req_fixture_save",
+        "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+        "github:pr:fixture/calva-lite#101"
+      ],
+      "state": "merged",
+      "title": "Evaluate on save",
+      "type": "GithubPullRequest",
+      "url": "https://example.invalid/fixture/calva-lite/pull/101"
+    },
+    {
+      "at": "2026-03-02T10:00:00Z",
+      "id": "slack:msg:CFIXTURE:1709200000.000100",
+      "path": [
+        "actron:request:req_fixture_save",
+        "actron:feature:evaluate-on-save",
+        "slack:msg:CFIXTURE:1709200000.000100"
+      ],
+      "state": null,
+      "title": "Decision: auto-evaluate on save stays off by default. People lose work when a save runs code.",
+      "type": "SlackMessage",
+      "url": "https://example.invalid/slack/CFIXTURE/p1709200000000100"
+    }
+  ],
+  "requestId": "actron:request:req_fixture_save",
+  "seeds": [
+    {
+      "id": "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave",
+      "path": [
+        "actron:request:req_fixture_save",
+        "code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave"
+      ],
+      "score": 0.95,
+      "type": "CodeFunction"
+    },
+    {
+      "id": "code:fn:fixture/calva-lite:src/settings.ts::autoEvaluateEnabled",
+      "path": [
+        "actron:request:req_fixture_save",
+        "code:fn:fixture/calva-lite:src/settings.ts::autoEvaluateEnabled"
+      ],
+      "score": 0.7,
+      "type": "CodeFunction"
+    },
+    {
+      "id": "actron:feature:evaluate-on-save",
+      "path": [
+        "actron:request:req_fixture_save",
+        "actron:feature:evaluate-on-save"
+      ],
+      "score": 0.6,
+      "type": "Feature"
+    }
+  ]
+}

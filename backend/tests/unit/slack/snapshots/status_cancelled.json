@@ -1,0 +1,49 @@
+{
+  "attachments": [
+    {
+      "blocks": [
+        {
+          "text": {
+            "text": "Export invoices as CSV",
+            "type": "plain_text"
+          },
+          "type": "header"
+        },
+        {
+          "elements": [
+            {
+              "text": "STATE · CANCELLED · 12m",
+              "type": "mrkdwn"
+            }
+          ],
+          "type": "context"
+        },
+        {
+          "text": {
+            "text": "Cancelled by Priya.",
+            "type": "mrkdwn"
+          },
+          "type": "section"
+        },
+        {
+          "block_id": "status_actions",
+          "elements": [
+            {
+              "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+              "text": {
+                "text": "Open in Actron",
+                "type": "plain_text"
+              },
+              "type": "button",
+              "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+            }
+          ],
+          "type": "actions"
+        }
+      ],
+      "color": "#8C8C8C",
+      "fallback": "Export invoices as CSV: Cancelled by Priya."
+    }
+  ],
+  "text": "Export invoices as CSV: Cancelled by Priya."
+}

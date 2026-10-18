@@ -1,0 +1,32 @@
+{
+  "blocks": [
+    {
+      "block_id": "feedback",
+      "element": {
+        "action_id": "text",
+        "multiline": true,
+        "type": "plain_text_input"
+      },
+      "label": {
+        "text": "What should change in PR #18?",
+        "type": "plain_text"
+      },
+      "type": "input"
+    }
+  ],
+  "callback_id": "request_changes",
+  "close": {
+    "text": "Cancel",
+    "type": "plain_text"
+  },
+  "private_metadata": "req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+  "submit": {
+    "text": "Send feedback",
+    "type": "plain_text"
+  },
+  "title": {
+    "text": "Request changes",
+    "type": "plain_text"
+  },
+  "type": "modal"
+}

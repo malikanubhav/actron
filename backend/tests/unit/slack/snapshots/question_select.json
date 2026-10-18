@@ -1,0 +1,92 @@
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "*Question 2 of 3.* Which branch should this change go into?",
+        "type": "mrkdwn"
+      },
+      "type": "section"
+    },
+    {
+      "block_id": "answers_target_branch",
+      "elements": [
+        {
+          "action_id": "answer:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9:target_branch:~select",
+          "options": [
+            {
+              "text": {
+                "text": "branch-0",
+                "type": "plain_text"
+              },
+              "value": "branch-0"
+            },
+            {
+              "text": {
+                "text": "branch-1",
+                "type": "plain_text"
+              },
+              "value": "branch-1"
+            },
+            {
+              "text": {
+                "text": "branch-2",
+                "type": "plain_text"
+              },
+              "value": "branch-2"
+            },
+            {
+              "text": {
+                "text": "branch-3",
+                "type": "plain_text"
+              },
+              "value": "branch-3"
+            },
+            {
+              "text": {
+                "text": "branch-4",
+                "type": "plain_text"
+              },
+              "value": "branch-4"
+            },
+            {
+              "text": {
+                "text": "branch-5",
+                "type": "plain_text"
+              },
+              "value": "branch-5"
+            },
+            {
+              "text": {
+                "text": "branch-6",
+                "type": "plain_text"
+              },
+              "value": "branch-6"
+            }
+          ],
+          "placeholder": {
+            "text": "Choose an answer",
+            "type": "plain_text"
+          },
+          "type": "static_select"
+        }
+      ],
+      "type": "actions"
+    },
+    {
+      "block_id": "open_target_branch",
+      "elements": [
+        {
+          "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+          "text": {
+            "text": "Open in Actron",
+            "type": "plain_text"
+          },
+          "type": "button",
+          "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+        }
+      ],
+      "type": "actions"
+    }
+  ],
+  "text": "Question 2 of 3: Which branch should this change go into?"
+}

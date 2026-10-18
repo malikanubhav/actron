@@ -1,0 +1,27 @@
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "*Question 3 of 3.* Which currency formats must the export keep?\nReply in this thread starting with 3.",
+        "type": "mrkdwn"
+      },
+      "type": "section"
+    },
+    {
+      "block_id": "open_q3",
+      "elements": [
+        {
+          "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+          "text": {
+            "text": "Open in Actron",
+            "type": "plain_text"
+          },
+          "type": "button",
+          "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+        }
+      ],
+      "type": "actions"
+    }
+  ],
+  "text": "Question 3 of 3: Which currency formats must the export keep?"
+}

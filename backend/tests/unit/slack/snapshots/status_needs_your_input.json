@@ -1,0 +1,138 @@
+{
+  "attachments": [
+    {
+      "blocks": [
+        {
+          "text": {
+            "text": "Export invoices as CSV",
+            "type": "plain_text"
+          },
+          "type": "header"
+        },
+        {
+          "elements": [
+            {
+              "text": "STATE · NEEDS YOUR INPUT · 3m",
+              "type": "mrkdwn"
+            }
+          ],
+          "type": "context"
+        },
+        {
+          "text": {
+            "text": "Two earlier decisions affect this request. Two questions need your answer.",
+            "type": "mrkdwn"
+          },
+          "type": "section"
+        },
+        {
+          "elements": [
+            {
+              "text": "LABEL · CONFLICT",
+              "type": "mrkdwn"
+            }
+          ],
+          "type": "context"
+        },
+        {
+          "text": {
+            "text": "> Invoice exports stay Finance-only.\n> No exceptions for project admins &lt;yet&gt; &amp; later.",
+            "type": "mrkdwn"
+          },
+          "type": "section"
+        },
+        {
+          "elements": [
+            {
+              "text": "<https://acme.slack.com/archives/C1/p11|Slack message> · Maya",
+              "type": "mrkdwn"
+            }
+          ],
+          "type": "context"
+        },
+        {
+          "text": {
+            "text": "> ENG-40 Export limits",
+            "type": "mrkdwn"
+          },
+          "type": "section"
+        },
+        {
+          "elements": [
+            {
+              "text": "<https://linear.app/acme/issue/ENG-40|Linear issue>",
+              "type": "mrkdwn"
+            }
+          ],
+          "type": "context"
+        },
+        {
+          "text": {
+            "text": "> We tried CSV export before and rolled it back.",
+            "type": "mrkdwn"
+          },
+          "type": "section"
+        },
+        {
+          "elements": [
+            {
+              "text": "<https://github.com/acme/app/pull/12|GitHub PR> · dana",
+              "type": "mrkdwn"
+            }
+          ],
+          "type": "context"
+        },
+        {
+          "text": {
+            "text": "*Question 1 of 3.* Should invoice exports stay Finance-only after this change?\nNo, project admins too: Needs a permission change",
+            "type": "mrkdwn"
+          },
+          "type": "section"
+        },
+        {
+          "block_id": "answers_q1",
+          "elements": [
+            {
+              "action_id": "answer:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9:q1:yes",
+              "style": "primary",
+              "text": {
+                "text": "Yes, keep Finance-only",
+                "type": "plain_text"
+              },
+              "type": "button",
+              "value": "yes"
+            },
+            {
+              "action_id": "answer:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9:q1:no",
+              "text": {
+                "text": "No, project admins too",
+                "type": "plain_text"
+              },
+              "type": "button",
+              "value": "no"
+            }
+          ],
+          "type": "actions"
+        },
+        {
+          "block_id": "status_actions",
+          "elements": [
+            {
+              "action_id": "open:req_01J9ZK3Q8M2V7XH4N5P6R7S8T9",
+              "text": {
+                "text": "Open in Actron",
+                "type": "plain_text"
+              },
+              "type": "button",
+              "url": "http://localhost:3000/app/requests/req_01J9ZK3Q8M2V7XH4N5P6R7S8T9"
+            }
+          ],
+          "type": "actions"
+        }
+      ],
+      "color": "#E4F24C",
+      "fallback": "Export invoices as CSV: Two earlier decisions affect this request. Two questions need your answer."
+    }
+  ],
+  "text": "Export invoices as CSV: Two earlier decisions affect this request. Two questions need your answer."
+}

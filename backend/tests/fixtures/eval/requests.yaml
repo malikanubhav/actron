@@ -1,0 +1,62 @@
+# TEST FIXTURE: evaluation requests for the investigator (spec B, B-AC-29), built on
+# tests/fixtures/graph_small.cypher (the made-up "calva-lite" extension). Not real data.
+#
+# expected_label: the label when J6 answers as written under `judgments` (restricts probability per
+#   decision; any decision not listed is judged 0.05). This is what a working live model should give.
+# expected_stub_label: the label with no model keys (every judgment a stub). An approved decision that
+#   no model judged counts as a possible conflict (0.5), so stubs never produce "conflict".
+version: 1
+requests:
+  - id: save-default-on
+    kind: feature
+    text: Turn on auto-evaluate on save by default for every project.
+    expected_label: conflict
+    expected_stub_label: possible_conflict
+    expected_seeds: [code:fn:fixture/calva-lite:src/evaluate.ts::evaluateOnSave]
+    expected_decisions: [actron:decision:fixture-save-off]
+    judgments:
+      actron:decision:fixture-save-off: 0.93
+
+  - id: nrepl-retry
+    kind: feature
+    text: Add a retry with backoff to sendMessage when the nREPL transport is busy.
+    expected_label: possible_conflict
+    expected_stub_label: possible_conflict
+    expected_seeds: [code:fn:fixture/calva-lite:src/connector.ts::sendMessage]
+    expected_decisions: [actron:decision:fixture-nrepl-format]
+    judgments:
+      actron:decision:fixture-nrepl-format: 0.6
+
+  - id: print-width-maps
+    kind: feature
+    text: Let pretty printing of maps ignore the print width.
+    expected_label: possible_conflict
+    expected_stub_label: clear
+    expected_decisions: [actron:decision:fixture-print-width]
+    judgments:
+      actron:decision:fixture-print-width: 0.65
+
+  - id: helm-charts
+    kind: feature
+    text: Add Kubernetes deployment manifests with Helm charts.
+    expected_label: nothing_found
+    expected_stub_label: nothing_found
+    judgments: {}
+
+  - id: output-spinner
+    kind: feature
+    text: Show a progress spinner in the output window while results stream.
+    expected_label: clear
+    expected_stub_label: possible_conflict
+    expected_seeds: [code:fn:fixture/calva-lite:src/results/output.ts::showResult]
+    judgments:
+      actron:decision:fixture-output-window: 0.05
+      actron:decision:fixture-inline-only: 0.1
+
+  - id: evaluate-faster
+    kind: bug
+    text: evaluateCode is slow when the REPL session is reused; make it faster.
+    expected_label: possible_conflict
+    expected_stub_label: possible_conflict
+    expected_seeds: [code:fn:fixture/calva-lite:src/evaluate.ts::evaluateCode]
+    judgments: {}
