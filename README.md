@@ -368,3 +368,6 @@ The team can explain the graph model, the queries, the architecture and the deci
 ## License
 
 Actron is open source under the [MIT License](LICENSE). Calva (used as the demo repository) is MIT licensed by its authors and is not included in this repository. Third-party libraries keep their own licenses. Brand marks belong to their owners (see `frontend/public/brands/LICENSES.md`).
+
+
+Built By https://www.anubhavmalik.com 
