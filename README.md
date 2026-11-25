@@ -2,7 +2,7 @@
 
 **Actron checks what your team already decided and built before an AI writes code, then carries the change from a Slack request to a tested pull request, and shows the exact graph path behind every step.**
 
-Built for the FalkorDB Graph Hacks hackathon (WeMakeDevs, October 2026), Track 01: agents that act because of the graph.
+Built by [Anubhav Malik](https://www.anubhavmalik.com) for the FalkorDB Graph Hacks hackathon (WeMakeDevs, October 2026), Track 01: agents that act because of the graph.
 
 **The problem in short.** A coding agent can change one function and never see the Slack thread that said "keep this strict", the review comment that explains a retry, or the five functions and hundreds of tests that depend on it. It satisfies the new request and quietly breaks an old decision. Actron reads your code, git history, GitHub, Slack and Linear into one FalkorDB graph and walks that graph before anything is written. It asks a person only when the graph says it must. Every finding shows its source quote and the path through the graph that led to it.
 
@@ -369,5 +369,6 @@ The team can explain the graph model, the queries, the architecture and the deci
 
 Actron is open source under the [MIT License](LICENSE). Calva (used as the demo repository) is MIT licensed by its authors and is not included in this repository. Third-party libraries keep their own licenses. Brand marks belong to their owners (see `frontend/public/brands/LICENSES.md`).
 
+## Author
 
-Built By https://www.anubhavmalik.com 
+Built by **[Anubhav Malik](https://www.anubhavmalik.com)**, AI engineer at Wexa in Hyderabad. [GitHub](https://github.com/malikanubhav) · [LinkedIn](https://www.linkedin.com/in/anubhavmaliksde) · [X](https://x.com/anubhavmalik_)
